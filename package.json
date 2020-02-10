@@ -1,0 +1,43 @@
+{
+  "name": "mifly-vr",
+  "version": "0.1.0",
+  "description": "mifly webVR standing on Shoulder of Giants",
+  "keywords": [
+    "ARToolKit",
+    "AR",
+    "Augmented Reality"
+  ],
+  "author": "mifly",
+  "repository": "git clone https://fefe78523@bitbucket.org/fefe78523/mifly-webar-nft.git",
+  "homepage": "https://www.makerar.com/en/",
+  "contributors": [
+    "bitbucket Contributors (https://www.makerar.com/)"
+  ],
+  "bugs": {
+    "url": "https://bitbucket.org/fefe78523/mifly-webar-nft/src/developVR/"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-jsdoc": "^1.1.0",
+    "ink-docstrap": "^1.1.4",
+    "jsdoc": "^3.4.0",
+    "watch": "^0.18.0"
+  },
+  "scripts": {
+    "build": "node tools/makem.js; echo Built at `date`",
+    "watch": "watch 'npm run build' ./js/"
+  },
+  "license": "no",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "aframe": "^0.9.2",
+    "browserfs": "^1.4.3",
+    "html-minifier": "^3.5.21",
+    "terser": "^3.17.0",
+    "text-encoding": "^0.7.0",
+    "three": "^0.97.0",
+    "three.js": "^0.77.1",
+    "zlibjs": "^0.3.1"
+  }
+}
