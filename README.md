@@ -1,31 +1,46 @@
-# README #
+# Mifly develop webVR 0.1.5
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Author: thonsha, known as one of the Elite Four (there are still three 
+vacancies) under the king Mojo Jojo in Mifly design.
 
-developVR
+![Alt text](https://s3-ap-northeast-1.amazonaws.com/howtest.bk/temp/images/Mojo_with_EliteFour.png "Mojo Jojo with Elite Four")
 
-### What is this repository for? ###
+---
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Introduction
 
-### How do I get set up? ###
+This is a develop version of webVR based on MAKAR editor.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+If you wnat to edit the project, please click [here](https://www.makerar.com/) to MAKAR website.
 
-### Contribution guidelines ###
+Click [here]() to the demo webVR website. Enter the username and select one of the projects, then start your own webVR experience.
 
-* Writing tests
-* Code review
-* Other guidelines
+---
 
-### Who do I talk to? ###
+## Launch webVR server
 
-* Repo owner or admin
-* Other community or team contact
+```
+$ git clone https://thonsha@bitbucket.org/fefe78523/makarvr.git
+$ cd  /mifly-webar-nft
+$ git checkout developVR 
+$ http-server -S -C .\conf\cert.pem -K .\conf\key.pem -p [YOUR_PORT]
+```
+
+---
+
+## Connect to EC2 
+
+```
+$ ssh -i [YOUE_KEY.pem] [YOUR_EC2]
+$ scp -i [YOUE_KEY.pem] [YOUR_FILE] [YOUR_EC2]:[YOUR_FOLDER]
+```
+
+---
+
+## minify html and JS files
+
+use node modula terser to make the javascript file minify and compress
+
+    terser js/networkAgentVR.js js/whiteList.min.js js/aframe-gif-shader.js js/aframe-extras.js js/VRFunc.js -o lib/appVR.min.js -c -m
+
+---
