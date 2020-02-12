@@ -40201,11 +40201,16 @@ module.exports = anime;
 					onProgress: onProgress,
 					onError: onError
 
-				} );
+        } );
 
 				var request = new XMLHttpRequest();
 
-				request.open( 'GET', url, true );
+        request.open( 'GET', url, true );
+        
+//20200106-start-thonsha-add
+        request.timeout = 5000; // time in milliseconds
+        // request.withCredentials = true;
+//20200106-end-thonsha-add
 
 				request.addEventListener( 'load', function ( event ) {
 

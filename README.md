@@ -20,8 +20,8 @@ Click [here]() to the demo webVR website. Enter the username and select one of t
 ## Launch webVR server
 
 ```
-$ git clone https://thonsha@bitbucket.org/fefe78523/makarvr.git
-$ cd  /makarvr
+$ git clone https://thonsha@bitbucket.org/fefe78523/mifly-webar-nft.git
+$ cd  /mifly-webar-nft
 $ git checkout developVR 
 $ http-server -S -C .\conf\cert.pem -K .\conf\key.pem -p [YOUR_PORT]
 ```

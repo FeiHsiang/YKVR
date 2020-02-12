@@ -339,7 +339,14 @@
 									console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
 								}
 								//20191025-end-thonsha-mod
-							}else{
+							}
+							else if(scene_objs[i].sub_type == 'gltf'){
+								setTimeout( function(){
+									self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+								}, 5);
+							}
+							
+							else{
 								console.log("%cVRFunc.js: _loadSceneObjects: model res_id not exist!", "color:red" , i );	
 							}
 							
@@ -494,11 +501,25 @@
 							}
 						});
 						//20191031-end-thonsha-mod
+
+						//20191227-start-thonsha-add
+						console.log("image behav_reference: ",obj.behav_reference);
+						if(obj.behav_reference){
+							for(let i=0; i<obj.behav_reference.length;i++){
+								if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+									plane.setAttribute("visible", false);
+									plane.setAttribute('class', "unclickable" );
+									break;
+								}
+							}
+							
+						}
+						//20191227-end-thonsha-add
 	
-						//20181029-start-thonhsa-add
+						//20191029-start-thonhsa-add
 						if(obj.obj_parent_id){
-							plane.setAttribute("visible", false);
-							plane.setAttribute('class', "unclickable" );
+							// plane.setAttribute("visible", false);
+							// plane.setAttribute('class', "unclickable" );
 							let timeoutID = setInterval( function () {
 								let parent = document.getElementById(obj.obj_parent_id);
 								if (parent){ 
@@ -512,7 +533,7 @@
 						else{
 							self.vrScene.appendChild(plane);
 						}
-						//20181029-end-thonhsa-add
+						//20191029-end-thonhsa-add
 						
 						console.log("VRFunc.js: VRController: loadTexture,obj=", obj );
 
@@ -601,7 +622,6 @@
 				// self.makarObjects.push( textEntity );
 
 				textEntity.addEventListener("loaded", function(evt){
-					console.log("VRFunc.js: loaded trigger");
 					if (evt.target == evt.currentTarget){
 
 						let r = new THREE.Vector3();
@@ -622,9 +642,21 @@
 				anchor.appendChild(textEntity);
 				///
 
+				//20191227-start-thonsha-add
+				if(obj.behav_reference){
+					for(let i=0; i<obj.behav_reference.length;i++){
+						if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+							textEntity.setAttribute("visible", false);
+							textEntity.setAttribute('class', "unclickable" );
+							break;
+						}
+					}
+					
+				}
+				//20191227-end-thonsha-add
 				if(obj.obj_parent_id){
-					textEntity.setAttribute("visible", false);
-					textEntity.setAttribute('class', "unclickable" );
+					// textEntity.setAttribute("visible", false);
+					// textEntity.setAttribute('class', "unclickable" );
 					let timeoutID = setInterval( function () {
 						let parent = document.getElementById(obj.obj_parent_id);
 						if (parent){ 
@@ -652,6 +684,7 @@
 				let assetsitem = document.createElement("a-asset-item")
 				assetsitem.setAttribute("id", obj.obj_id+"_"+obj.res_id);
 				assetsitem.setAttribute("src",obj.res_url);
+				assetsitem.setAttribute('crossorigin', 'anonymous');
 				assets.appendChild(assetsitem);
 
 				//20191128-start-thonsha-add
@@ -692,6 +725,7 @@
 				modelEntity.setAttribute( "id", obj.obj_id );//// fei add 
 				modelEntity.setAttribute("makarVRIndex", i ); //// fei add
 				modelEntity.setAttribute("cursor-listener", true ); //// fei add
+				modelEntity.setAttribute('crossorigin', 'anonymous');
 
 				self.setTransform(modelEntity, position, rotation, scale);
 				self.makarObjects.push( modelEntity );
@@ -735,10 +769,21 @@
 
 				//20191125-end-thonsha-add
 
-				//20181029-start-thonhsa-add
+				//20191226-start-thonsha-mod
+				if(obj.behav_reference){
+					for(let i=0; i<obj.behav_reference.length;i++){
+						if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+							modelEntity.setAttribute("visible", false);
+							modelEntity.setAttribute('class', "unclickable" );
+							break;
+						}
+					}
+					
+				}
+				//20191029-start-thonhsa-add
 				if(obj.obj_parent_id){
-					modelEntity.setAttribute("visible", false);
-					modelEntity.setAttribute('class', "unclickable" );
+					// modelEntity.setAttribute("visible", false);
+					// modelEntity.setAttribute('class', "unclickable" );
 					let timeoutID = setInterval( function () {
 						let parent = document.getElementById(obj.obj_parent_id);
 						if (parent){ 
@@ -752,7 +797,9 @@
 				else{
 					self.vrScene.appendChild(modelEntity);
 				}
-				//20181029-end-thonhsa-add
+				//20191029-end-thonhsa-add
+
+				//20191226-end-thonsha-mod
 			}
 
 			//20191025-end-thonsha-add
@@ -783,10 +830,23 @@
 
 				self.setTransform(modelEntity, position, rotation, scale);
 				self.makarObjects.push( modelEntity );
-				//20181029-start-thonhsa-add
+
+				//20191227-start-thonsha-mod
+				if(obj.behav_reference){
+					for(let i=0; i<obj.behav_reference.length;i++){
+						if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+							modelEntity.setAttribute("visible", false);
+							modelEntity.setAttribute('class', "unclickable" );
+							break;
+						}
+					}
+					
+				}
+				//20191227-end-thonsha-mod
+				//20191029-start-thonhsa-add
 				if(obj.obj_parent_id){
-					modelEntity.setAttribute("visible", false);
-					modelEntity.setAttribute('class', "unclickable" );
+					// modelEntity.setAttribute("visible", false);
+					// modelEntity.setAttribute('class', "unclickable" );
 					let timeoutID = setInterval( function () {
 						let parent = document.getElementById(obj.obj_parent_id);
 						if (parent){ 
@@ -800,7 +860,7 @@
 				else{	
 					self.vrScene.appendChild(modelEntity);
 				}
-				//20181029-end-thonhsa-add
+				//20191029-end-thonhsa-add
 				modelEntity.addEventListener("model-loaded", function(evt){
 
 					if (evt.target == evt.currentTarget){
@@ -836,10 +896,23 @@
 					// soundEntity.setAttribute("")
 
 					self.makarObjects.push( soundEntity );
+					//20191227-start-thonsha-mod
+					if(obj.behav_reference){
+						for(let i=0; i<obj.behav_reference.length;i++){
+							if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+								soundEntity.setAttribute("visible", false);
+								soundEntity.setAttribute('class', "unclickable" );
+								break;
+							}
+						}
+						
+					}
+					//20191227-end-thonsha-mod
+
 					if(obj.obj_parent_id){
 						soundEntity.setAttribute("sound", "autoplay: false");
-						soundEntity.setAttribute("visible", false);
-						soundEntity.setAttribute('class', "unclickable" );
+						// soundEntity.setAttribute("visible", false);
+						// soundEntity.setAttribute('class', "unclickable" );
 						let timeoutID = setInterval( function () {
 							let parent = document.getElementById(obj.obj_parent_id);
 							if (parent){ 
@@ -993,10 +1066,24 @@
 					});
 					
 					self.makarObjects.push( videoPlane );
-					//20181029-start-thonhsa-add
+
+					//20191227-start-thonsha-mod
+					if(obj.behav_reference){
+						for(let i=0; i<obj.behav_reference.length;i++){
+							if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+								videoPlane.setAttribute("visible", false);
+								videoPlane.setAttribute('class', "unclickable" );
+								break;
+							}
+						}
+						
+					}
+					//20191227-end-thonsha-mod
+
+					//20191029-start-thonhsa-add
 					if(obj.obj_parent_id){
-						videoPlane.setAttribute("visible", false);
-						videoPlane.setAttribute('class', "unclickable" );
+						// videoPlane.setAttribute("visible", false);
+						// videoPlane.setAttribute('class', "unclickable" );
 						mp4Video.autoplay = false;
 						let timeoutID = setInterval( function () {
 							let parent = document.getElementById(obj.obj_parent_id);
@@ -1012,7 +1099,7 @@
 						// mp4Video.autoplay = true;
 						self.vrScene.appendChild(videoPlane);
 					}
-					//20181029-end-thonhsa-add
+					//20191029-end-thonhsa-add
 				
 
 					// }, 1 );
@@ -1113,6 +1200,7 @@
 
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
+								child.el.setAttribute('class', "unclickable" );
 								if(child.el.localName=="a-video"){
 									let id = child.el.getAttribute("src");
 									if(id!=undefined){
@@ -1152,6 +1240,9 @@
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
 								if (child.el.getAttribute("visible")){
+									if(child.el.object3D.behav){
+										child.el.setAttribute('class', "clickable" );
+									}
 									if(child.el.localName=="a-video"){
 										let id = child.el.getAttribute("src");
 										if(id!=undefined){
@@ -1187,6 +1278,7 @@
 
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
+								child.el.setAttribute('class', "unclickable" );
 								if(child.el.localName=="a-video"){
 									let id = child.el.getAttribute("src");
 									if(id!=undefined){
@@ -1225,6 +1317,9 @@
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
 								if (child.el.getAttribute("visible")){
+									if(child.el.object3D.behav){
+										child.el.setAttribute('class', "clickable" );
+									}
 									if(child.el.localName=="a-video"){
 										let id = child.el.getAttribute("src");
 										if(id!=undefined){
@@ -1289,6 +1384,7 @@
 
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
+								child.el.setAttribute('class', "unclickable" );
 								if(child.el.localName=="a-video"){
 									let id = child.el.getAttribute("src");
 									if(id!=undefined){
@@ -1338,6 +1434,9 @@
 						target.object3D.traverse(function(child){
 							if (child.type=="Group"){
 								if (child.el.getAttribute("visible")){
+									if(child.el.object3D.behav){
+										child.el.setAttribute('class', "clickable" );
+									}
 									if(child.el.localName=="a-video"){
 										let id = child.el.getAttribute("src");
 										if(id!=undefined){
@@ -1510,6 +1609,9 @@
 
 
 		window.showVRProjList = function(){
+//20200102-start-thonsha-add
+			requestDeviceMotionPermission();
+//20200102-end-thonsha-add
 			let url = window.serverUrl;
 			let makarID;
 			let uid = document.getElementById("uid");

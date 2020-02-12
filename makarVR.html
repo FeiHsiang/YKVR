@@ -210,6 +210,27 @@
 			return Math.random();
 		}
 
+//20200102-start-thonsha-add
+		window.requestDeviceMotionPermission = function (){
+            console.log("makarVR.html: requestDeviceMotionPermission  " );
+            if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function') {
+                DeviceMotionEvent.requestPermission().then(response => {
+                    console.log("makarVR.html: requestPermission response =", response );
+                    // alert('Orientation tracking '+ response);
+                    if (response == 'granted') {
+                        window.addEventListener('devicemotion', (e) => {
+                            // but.style.visibility='hidden';
+                        })
+                    }
+                }).catch(console.error)
+            }else {
+                // alert('DeviceMotionEvent is not defined');
+                console.log("makarVR.html: requestPermission: DeviceMotionEvent is not defined " );
+            }
+		}
+//20200102-end-thonsha-add
+
+
 	</script>
 	<!-- 20191028-start-thonsha-add -->
 	<script src = "js/networkAgentVR.js"></script>
@@ -219,9 +240,9 @@
 	<script src = "js/VRFunc.js"></script>
 	<!-- 20191028-end-thonsha-add -->
 	<!-- 20191129-start-thonsha-add -->
-	<script src="js/ammo.js"></script>
+	<!-- <script src="js/ammo.js"></script>
 	<script src="https://cdn.rawgit.com/feiss/aframe-environment-component/ad57b15d/dist/aframe-environment-component.min.js"></script>
-    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v2.1.0/dist/aframe-physics-system.min.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v2.1.0/dist/aframe-physics-system.min.js"></script> -->
 	<!-- 20191129-end-thonsha-add -->
 	<!-- release -->
 	<!-- <script src = "lib/appVR.min.js"> </script> -->
