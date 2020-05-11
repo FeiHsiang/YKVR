@@ -242,52 +242,57 @@
 			// getResByUserID(url, user_id, main_type, sub_type, function(){
 			getResByUserID(url, user_id, main_type, sub_type, function( userProjResDict ){
 
-				// console.log("netWorkAgent.js: _getUserPublishProjs: getResByUserID: callback");
+				getUsrOnlineRes(url, user_id, main_type, sub_type , "" , function( userOnlineResDict ){
+					// console.log("netWorkAgent.js: _getUserPublishProjs: getResByUserID: callback");
 
-				let specificUrl = url+"get_usr_publish_projs";
-				let request = {
-					"ver":"3.0.0",
-					"cid": 5,
-					"data":data
-				};
-				let jsonReq = JSON.stringify(request);
-				// console.log("netWorkAgent.js: _getUserPublishProjs: POST open, specificUrl=", specificUrl);
-				xhr.open( 'POST', specificUrl , true );
-	
-				xhr.setRequestHeader('Content-Type', 'application/json');
-				xhr.responseType = 'json' // set reponse as "arraybuffer" or "text" or "json"
-				xhr.onload = function(e) {
-					// console.log("networkAgent.js: _getUserPublishProjs,  onload xhr.response = ", xhr.response );
-					let userPublishProjs;
-					if (!xhr.response.error){
-	
-						if (xhr.response.data){
-							userPublishProjs = xhr.response.data;
-							//// save the userData in window  
-							if (!window.userPublishProjs){
-								window.userPublishProjs = userPublishProjs; 
+					let specificUrl = url+"get_usr_publish_projs";
+					let request = {
+						"ver":"3.0.0",
+						"cid": 5,
+						"data":data
+					};
+					let jsonReq = JSON.stringify(request);
+					// console.log("netWorkAgent.js: _getUserPublishProjs: POST open, specificUrl=", specificUrl);
+					xhr.open( 'POST', specificUrl , true );
+		
+					xhr.setRequestHeader('Content-Type', 'application/json');
+					xhr.responseType = 'json' // set reponse as "arraybuffer" or "text" or "json"
+					xhr.onload = function(e) {
+						// console.log("networkAgent.js: _getUserPublishProjs,  onload xhr.response = ", xhr.response );
+						let userPublishProjs;
+						if (!xhr.response.error){
+		
+							if (xhr.response.data){
+								userPublishProjs = xhr.response.data;
+								//// save the userData in window  
+								if (!window.userPublishProjs){
+									window.userPublishProjs = userPublishProjs; 
+								}else{
+									// console.log("networkAgent.js: _getUserPublishProjs: window.userPublishProjs already exist, replace it..");
+									window.userPublishProjs = userPublishProjs; 
+								}
+		
+								if (callback){
+									// console.log("networkAgent.js: _getUserPublishProjs,  onload, do callback");
+									// callback(userPublishProjs);
+									callback(userPublishProjs , userProjResDict , userOnlineResDict );
+								}  
 							}else{
-								// console.log("networkAgent.js: _getUserPublishProjs: window.userPublishProjs already exist, replace it..");
-								window.userPublishProjs = userPublishProjs; 
+								if (callback) callback("networkAgent.js:error: no xhr.response.data"); 
 							}
-	
-							if (callback){
-								// console.log("networkAgent.js: _getUserPublishProjs,  onload, do callback");
-								// callback(userPublishProjs);
-								callback(userPublishProjs , userProjResDict );
-							}  
+		
 						}else{
-							if (callback) callback("networkAgent.js:error: no xhr.response.data"); 
+							if (callback) callback( xhr.response.error ); 
+							console.log('%cnetworkAgent.js: _getUserPublishProjs: oops something wrong: ', 'color:red', xhr.response.error);
 						}
-	
-					}else{
-						if (callback) callback( xhr.response.error ); 
-						console.log('%cnetworkAgent.js: _getUserPublishProjs: oops something wrong: ', 'color:red', xhr.response.error);
+		
 					}
-	
-				}
-				// console.log("networkAgent.js: _getUserPublishProjs, jsonReq=", jsonReq );
-				xhr.send( jsonReq );
+					// console.log("networkAgent.js: _getUserPublishProjs, jsonReq=", jsonReq );
+					xhr.send( jsonReq );
+
+				});
+
+				
 
 			}); // get the ARResList and create ARResDict 
 
@@ -410,6 +415,77 @@
 
 //[end---20190904-fei0073-add]//
 
+//[start-20200511-fei0093-add]//
+	window.getUsrOnlineRes = function( url, user_id, main_type, sub_type , category , callback ){
+			
+		if (!user_id) user_id = "fefe";
+		if (!main_type) main_type = "";
+		if (!sub_type) sub_type = "";
+		if (!category) category = ""
+
+		//get_usr_online_res
+		let specificUrl = url+"get_usr_online_res";
+		let xhr = new XMLHttpRequest(); // dont use var!!! will override the previous one
+		let data = {
+			"user_id": user_id , //miflytest
+			"main_type": main_type , // ar, vr 
+			"sub_type": sub_type ,
+			"category": category ,
+		}
+		let request = {
+			"ver":"3.0.0",
+			"cid": 5,
+			"data":data
+		};
+		let jsonReq = JSON.stringify(request);
+		xhr.open( 'POST', specificUrl , true );
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.responseType = 'json' // set reponse as "arraybuffer" or "text" or "json"
+		xhr.onload = function(e) {
+			console.log("networkAgentVR.js: _getUsrOnlineRes: res = ", xhr.response );
+
+			if ( xhr.response.error ){
+				console.log('networkAgent.js: _getUsrOnlineRes,  onload error ', xhr.response );  //// color: #bada55
+			}else{
+				console.log('networkAgent.js: _getUsrOnlineRes,  onload save ' , xhr.response );  //// color: #bada55
+				
+				if ( xhr.response.data.online_res_list.length > 0 ){
+					createOnlineResDictFromResList( xhr.response.data.online_res_list , function( userOnlineResDict ){
+						if (callback){
+							callback( userOnlineResDict );
+						}
+					});
+				}else{
+					if (callback){
+						console.log('networkAgent: _getUsrOnlineRes,  onload  use res is empty ' );  //// color: #bada55
+						callback( {} ); // "use res is empty"
+					}
+				}
+			}
+
+		}
+		xhr.send( jsonReq );
+	}
+
+
+	var createOnlineResDictFromResList = function( userOnlineResList , callback ){
+		if (!userOnlineResList) return -1;
+		let userOnlineResDict = {};
+		for (let i = 0; i < userOnlineResList.length; i++ ){
+			userOnlineResDict[ userOnlineResList[i].res_id ] = userOnlineResList[i];
+
+			if ( i == userOnlineResList.length-1 ){
+				console.log("netWorkAgent.js: createProjResDictFromResList: i == userARResList.length, callback", i, userOnlineResList.length ); // Object.keys(userARResDict).length
+				if (callback){
+					callback( userOnlineResDict );
+				}
+			}
+		}
+		// window.userOnlineResDict = userOnlineResDict;
+	}
+
+//[end---20200511-fei0093-add]//
+
 //[start-20191113-thonsha-add]//
 	function readTextFile(fileUrl, callback)
 	{
@@ -452,7 +528,7 @@
 			var main_type = "";
 			var sub_type = "";
 
-			var getUserPublishProjsCallback = function(userPublishProjs, userProjResDict){
+			var getUserPublishProjsCallback = function(userPublishProjs, userProjResDict, userOnlineResDict ){
 			// getUserPublishProjsByUserID(url, user_id, main_type, sub_type, function(userPublishProjs , userProjResDict ){
 				console.log("networkAgent.js: getVRSceneByUserID: getUserPublishProjsByUserID: userPublishProjs=", userPublishProjs);
 				if ( typeof(userPublishProjs) != "string" ){
@@ -514,42 +590,43 @@
 										////// save the res_url into scene
 										//////
 
-										for ( let k = 0; k < VRSceneResult[j].scenes.length; k++ ){
-											if ( VRSceneResult[j].scenes[k].scene_objs ){
-												for ( let m = 0; m < VRSceneResult[j].scenes[k].scene_objs.length; m++ ){
-													let res = VRSceneResult[j].scenes[k].scene_objs[m];
-													let res_id = res.res_id ;
+										// for ( let k = 0; k < VRSceneResult[j].scenes.length; k++ ){
+										// 	if ( VRSceneResult[j].scenes[k].scene_objs ){
+										// 		for ( let m = 0; m < VRSceneResult[j].scenes[k].scene_objs.length; m++ ){
+										// 			let res = VRSceneResult[j].scenes[k].scene_objs[m];
+										// 			let res_id = res.res_id ;
 
-													if (  res.res_id == "" ){
-														if (res.main_type == "camera" && res.res_name == "VR Camera" && res.sub_type == "VRcamera" ){
-															// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res camera");
-														}else{
-															console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res error: ", res, i, j, k ); 
-														}
-													} else {
-														if (userProjResDict[res_id]){
-															if ( userProjResDict[res_id].res_url == res.res_url ){
-																// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: publish.res_url is same as res.url "  );
-															} else {
-																console.log("%cnetworkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: publish.res_url different as res.url, replace it", "color:red" , i, j, k );
-															}
+										// 			if (  res.res_id == "" ){
+										// 				if (res.main_type == "camera" && res.res_name == "VR Camera" && res.sub_type == "VRcamera" ){
+										// 					// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res camera");
+										// 				}else{
+										// 					console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res error: ", res, i, j, k ); 
+										// 				}
+										// 			} else {
+										// 				if (userProjResDict[res_id]){
+										// 					if ( userProjResDict[res_id].res_url == res.res_url ){
+										// 						// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: publish.res_url is same as res.url "  );
+										// 					} else {
+										// 						console.log("%cnetworkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: publish.res_url different as res.url, replace it", "color:red" , i, j, k );
+										// 					}
 
-															if (userProjResDict[res_id].main_type=="model"){
-																if (userProjResDict[res_id].res_url_fbx){
-																	// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res model: ", res, i, j, k ); 
-																	res.res_url_fbx = userProjResDict[res_id].res_url_fbx;
-																}
-															}
-														}
-													}
-												}
-											}
-										}
+										// 					if (userProjResDict[res_id].main_type=="model"){
+										// 						if (userProjResDict[res_id].res_url_fbx){
+										// 							// console.log("networkAgentVR.js: _getVRSceneByUserID: _getUSerPublishProjs: res model: ", res, i, j, k ); 
+										// 							res.res_url_fbx = userProjResDict[res_id].res_url_fbx;
+										// 						}
+										// 					}
+										// 				}
+										// 			}
+										// 		}
+										// 	}
+										// }
 										
 										if ( count == publishVRProjs.result.length ){
 											// console.log("%cnetworkAgent.js: get_vr_proj_scene: onload, save VRSceneResult ", "color:red", count );
 											window.VRSceneResult = VRSceneResult;
 											window.userProjResDict = userProjResDict;
+											window.userOnlineResDict = userOnlineResDict;
 											if (callback) callback(VRSceneResult);
 										}
 

@@ -231,7 +231,45 @@
 					return -1;
 				}
 				//20191029-start-thonsha-mod
-				let scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+				
+				// let scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+				let scene_objs;
+				console.log("______________ self.VRSceneResult[projIndex]=", projIndex, self.VRSceneResult[projIndex].scenes[sceneIndex] );
+				var editor_version ;
+				if (typeof(self.VRSceneResult[projIndex].editor_ver) != "string" ){
+					console.log("VRFunc.js: _loadSceneObjects: the editor_ver is not string, error and return ");
+					return -1;
+				}else{
+					editor_version = self.VRSceneResult[projIndex].editor_ver.split(".");
+				}
+
+				if ( self.VRSceneResult[projIndex].editor_ver == "" ){
+					////// the empty editor_ver , do version below 3.0.6 
+					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
+						console.log("VRFunc.js: _loadSceneObjects the scene_objs_v2 is not Array, error", self.VRSceneResult[projIndex].scenes[sceneIndex] );
+						return -1;
+					}
+					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+
+				}else if ( editor_version[0] == 3 && editor_version[2] <= 6  ){
+					////// the version below 3.0.6, before about 2020 03 
+					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
+						console.log("VRFunc.js: _loadSceneObjects the scenes[sceneIndex] is not Array, error", self.VRSceneResult[projIndex].scenes[sceneIndex] );
+						return -1;
+					}
+					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+				} else if ( editor_version[0] >= 3 && editor_version[2] >= 7 ){
+					////// the version below 3.0.5, before about 2020 03 
+					console.log("VRFunc.js: _loadSceneObjects: the editor version after 3.0.7", self.VRSceneResult[projIndex].scenes[sceneIndex] );
+					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
+				}else{
+					//// the unknown version do version below 3.0.6 
+					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+
+				}
+
+
+
 				for (let i = 0; i < scene_objs.length ; i++  ){
 					// console.log("VRFunc.js: _loadSceneObjects: obj=", self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs[i] );
 					// obj_parent = null;
@@ -317,43 +355,89 @@
 
 						case "model":
 
-							// console.log("VRFunc.js: _loadSceneObjects: model", i, scene_objs[i]  );
-							
-							if (userProjResDict[ scene_objs[i].res_id ] ){
-								// console.log("VRFunc.js: _loadSceneObjects: model res_url", i, obj.res_url, userProjResDict[obj.res_id].res_url  );
-								//20191025-start-thonsha-mod
-								if (scene_objs[i].res_url == userProjResDict[scene_objs[i].res_id].res_url){
-									setTimeout( function(){
-										self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-									}, 1 );
-									// self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-								}
-								else if (scene_objs[i].res_url_fbx == userProjResDict[scene_objs[i].res_id].res_url_fbx ){
-									// console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is same as userProjResDict", "color:blue"   );
+							////// check by user resource 
+							console.log("VRFunc.js: _loadSceneObjects: model", i, scene_objs[i]  );
+							if ( userProjResDict[ scene_objs[i].res_id ]  ){
+								// console.log("VRFunc.js: _loadSceneObjects: model from user resource");
+								scene_objs[i].res_url = userProjResDict[scene_objs[i].res_id].res_url ;
+							} else if ( userOnlineResDict[ scene_objs[i].res_id ] ) { 
+								// console.log("VRFunc.js: _loadSceneObjects: model from online resource" , userOnlineResDict[scene_objs[i].res_id].res_url );
+								scene_objs[i].res_url = userOnlineResDict[scene_objs[i].res_id].res_url ;
+							} else {
+								// console.log(" __________VRFunc.js: _loadSceneObjects: model not exist");
 
-									setTimeout( function(){
-										self.loadFBXModel(scene_objs[i], position, rotation, scale );
-									}, 1 );
-
-								}else{
-									console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
+								switch(scene_objs[i].res_id){
+									case "Cube":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Cube.glb";
+										break;
+									case "Capsule":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Capsule.glb";
+										break;
+									case "Sphere":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Sphere.glb";
+										break;
+									case "ch_Bojue":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Bojue.glb";
+										break;
+									case "ch_Fei":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Fei.glb";
+										break;
+									case "ch_Lina":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Lina.glb";
+										break;
+									case "ch_Poyuan":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Poyuan.glb";
+										break;
+									case "ch_Roger":
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Roger.glb";
+										break;
+									default:
+										
+										if (scene_objs[i].res_gltf_resource){												
+											break;
+										}
+										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/MissingFileBox.glb";
+										break;
 								}
-								//20191025-end-thonsha-mod
 							}
-							else if(scene_objs[i].sub_type == 'gltf'){
-								setTimeout( function(){
-									self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-								}, 5);
-							}
+							self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+
+
+							// if (userProjResDict[ scene_objs[i].res_id ] ){
+							// 	// console.log("VRFunc.js: _loadSceneObjects: model res_url", i, obj.res_url, userProjResDict[obj.res_id].res_url  );
+							// 	//20191025-start-thonsha-mod
+							// 	if (scene_objs[i].res_url == userProjResDict[scene_objs[i].res_id].res_url){
+							// 		setTimeout( function(){
+							// 			self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+							// 		}, 1 );
+							// 		// self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+							// 	}
+							// 	else if (scene_objs[i].res_url_fbx == userProjResDict[scene_objs[i].res_id].res_url_fbx ){
+							// 		// console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is same as userProjResDict", "color:blue"   );
+
+							// 		setTimeout( function(){
+							// 			self.loadFBXModel(scene_objs[i], position, rotation, scale );
+							// 		}, 1 );
+
+							// 	}else{
+							// 		console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
+							// 	}
+							// 	//20191025-end-thonsha-mod
+							// }
+							// else if(scene_objs[i].sub_type == 'gltf'){
+							// 	setTimeout( function(){
+							// 		self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+							// 	}, 5);
+							// }
 							
-							else{
-								console.log("%cVRFunc.js: _loadSceneObjects: model res_id not exist!", "color:red" , i );	
-							}
+							// else{
+							// 	console.log("%cVRFunc.js: _loadSceneObjects: model res_id not exist!", "color:red" , i );	
+							// }
 							
 							break;
 						
 						default:
-							console.log("VRFunc.js: _loadSceneObjects: default", i, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs[i] );
+							console.log("VRFunc.js: _loadSceneObjects: default", i, scene_objs[i] );
 							
 					}
 
@@ -744,17 +828,41 @@
 							if (obj.material){
 
 								for(let i = 0; i < obj.material.length; i++){
+
 									let rgb = obj.material[i].color.split(",");
 									let color = new THREE.Color(parseFloat(rgb[0]),parseFloat(rgb[1]),parseFloat(rgb[2]));
-			
 									const objj = modelEntity.getObject3D('mesh');
-									objj.traverse(node => {
-										if(node.material){
-											if (node.material.name == obj.material[i].name) {
-												node.material.color = color;
-											}
-										}
-									});
+
+									switch (obj.material[i].shader) {
+										case "Unlit/Color":
+											objj.traverse(node => {
+												if (node.isMesh) {
+													if (node.material.name === obj.material[i].name) {
+														if (node.material.skinning === true ){
+															node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: true});;
+														}else{
+															node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: false});;
+														}
+													}
+												}
+											});
+											break;
+										case "Standard":
+											objj.traverse(node => {
+												if(node.material){
+													if (node.material.name == obj.material[i].name) {
+														node.material.color = color;
+													}
+												}
+											});
+											break;
+										case "Unlit/Transparent":
+										case "Unlit/Transparent Cutout":
+										case "Unlit/Texture":
+										default:
+											console.log(`The shader of no. ${i} material is not supported currently.`);
+											break;
+									}
 								}
 
 							}
