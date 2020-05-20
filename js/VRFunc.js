@@ -175,11 +175,11 @@
 					case "image":
 						var aSky = document.createElement('a-sky');
 						if(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url == "DefaultResource/Spherical_Image/SphericalImage.png"){
-							aSky.setAttribute("material", {src: "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png" });
+							self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png"
 						}
-						else{
-							aSky.setAttribute("material", {src: self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url }); //  
-						}
+
+						aSky.setAttribute("material", {"src": self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url }); 
+
 						aSky.setAttribute("radius", 2000 ); // if not set this, will be infinite
 						aSky.setAttribute('id', "sky" );
 						self.vrScene.appendChild(aSky);
@@ -400,7 +400,17 @@
 										break;
 								}
 							}
-							self.loadGLTFModel(scene_objs[i], position, rotation, scale );
+							if(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url == "DefaultResource/Spherical_Image/SphericalImage.png"){
+								self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png"
+							}
+
+							if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type == 'spherical_video'){
+								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png" );
+							}
+							else{
+								self.loadGLTFModel(scene_objs[i], position, rotation, scale, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url );
+							}
+							
 
 
 							// if (userProjResDict[ scene_objs[i].res_id ] ){
@@ -761,7 +771,7 @@
 
 			//20191025-start-thonsha-add
 			
-			this.loadGLTFModel = function(obj, position, rotation, scale){
+			this.loadGLTFModel = function(obj, position, rotation, scale, skyTexture){
 
 				let assets = document.getElementById("makarAssets");
 
@@ -823,14 +833,15 @@
 							if ( obj.behav ){
 								modelEntity.object3D["behav"] = obj.behav ;
 							}
-
+					
+							
 				//20191203-start-thonsha-add
 							if (obj.material){
-
 								for(let i = 0; i < obj.material.length; i++){
 
-									let rgb = obj.material[i].color.split(",");
-									let color = new THREE.Color(parseFloat(rgb[0]),parseFloat(rgb[1]),parseFloat(rgb[2]));
+									let rgba = obj.material[i].color.split(",");
+									console.log(rgba)
+									let color = new THREE.Color(parseFloat(rgba[0]),parseFloat(rgba[1]),parseFloat(rgba[2]));
 									const objj = modelEntity.getObject3D('mesh');
 
 									switch (obj.material[i].shader) {
@@ -844,21 +855,114 @@
 															node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: false});;
 														}
 													}
+													console.log('20200511_color',node.material);
 												}
 											});
 											break;
 										case "Standard":
+											//20200512-thonsha-mod-start
+											var targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
+											var renderer = modelEntity.sceneEl.renderer
+											var texture = new THREE.TextureLoader().load(
+												skyTexture,
+												function() {
+													var cubeTex = targetCube.fromEquirectangularTexture(renderer, texture);
+													objj.traverse(node => {
+														if (node.material) {
+															if (node.material.name == obj.material[i].name) {
+																node.material.color = color;
+																node.material.metalness = obj.material[i].metallic;
+																node.material.roughness = 1 - obj.material[i].smoothness;
+																node.material.envMap = cubeTex.texture;
+																node.material.envMap.intensity = 3;
+																node.material.needsUpdate = true;
+																node.material.reflectivity = 0;
+																// console.log('obj.material',obj.material);
+																// console.log('standard node.material',node.material);
+																
+																if(obj.material[i].mode == 0){
+																	node.material.opacity = 1;
+																	renderer.setClearAlpha(1);
+
+																	node.material.blending = THREE.CustomBlending;
+																	node.material.blendEquation = THREE.AddEquation;
+																	node.material.blendSrc = THREE.OneFactor;
+																	node.material.blendDst = THREE.ZeroFactor;
+																	node.material.blendSrcAlpha = THREE.ZeroFactor;
+																	node.material.blendDstAlpha = THREE.OneFactor;
+
+																}
+																else if(obj.material[i].mode == 1){
+																	node.material.opacity = 1;
+																	node.material.alphaTest = obj.material[i].cut_off;
+																	renderer.setClearAlpha(1);
+
+																	node.material.blending = THREE.CustomBlending;
+																	node.material.blendEquation = THREE.AddEquation;
+																	node.material.blendSrc = THREE.OneFactor;
+																	node.material.blendDst = THREE.ZeroFactor;
+																	node.material.blendSrcAlpha = THREE.ZeroFactor;
+																	node.material.blendDstAlpha = THREE.OneFactor;
+																}
+																else if(obj.material[i].mode == 2){
+																	node.material.opacity = parseFloat(rgba[3]);
+																	node.material.depthWrite = false;
+																
+																}
+																else if(obj.material[i].mode == 3){
+																	node.material.opacity = Math.max(parseFloat(rgba[3]), obj.material[i].metallic);
+																	node.material.depthWrite = false;
+																	node.material.blending = THREE.CustomBlending;
+																	node.material.blendEquation = THREE.AddEquation;
+																	node.material.blendSrc = THREE.OneFactor;
+																	node.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+																	node.material.blendSrcAlpha = THREE.OneFactor;
+																	node.material.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
+																}
+
+
+															}
+														}
+													});
+													renderer.toneMapping = THREE.ACESFilmicToneMapping;
+													renderer.outputEncoding = THREE.sRGBEncoding;
+												}
+											);
+											//20200512-thonsha-mod-end
+											break;
+										case "Unlit/Transparent": // 光源
 											objj.traverse(node => {
-												if(node.material){
+												if (node.material) {
 													if (node.material.name == obj.material[i].name) {
-														node.material.color = color;
+														node.material.opacity = 1;
+														node.material.depthWrite = false;
 													}
 												}
 											});
 											break;
-										case "Unlit/Transparent":
-										case "Unlit/Transparent Cutout":
+										case "Unlit/Transparent Cutout": //去背
+											objj.traverse(node => {
+												if (node.material) {
+													if (node.material.name == obj.material[i].name) {
+														node.material.opacity = 1;
+														node.material.alphaTest = 0.5;
+													}
+												}
+											});
+											break;
 										case "Unlit/Texture":
+											objj.traverse(node => {
+												if (node.material) {
+													if (node.material.name == obj.material[i].name) {
+														node.material.metalness = 0;
+														node.material.opacity = 1;
+														node.material.transparent = false;
+														node.material.emissiveIntensity = 0;
+
+													}
+												}
+											});
+											break;
 										default:
 											console.log(`The shader of no. ${i} material is not supported currently.`);
 											break;
@@ -866,7 +970,7 @@
 								}
 
 							}
-				//20191203-start-thonsha-add							
+				//20191203-end-thonsha-add							
 							
 							evt.detail.model.animationSlices = animationSlices;
 						}
@@ -1934,25 +2038,25 @@
 				let ambientLight = document.createElement("a-light");
 				ambientLight.setAttribute("id", "ambientLight");
 				ambientLight.setAttribute("type", "ambient" );
-				ambientLight.setAttribute("color", "#353535" ); // white / gray / #fff 
-				ambientLight.setAttribute("ground-color", "#fff" ); // #fff , Fei dont know how it work
-				ambientLight.setAttribute("intensity", 1.0 );
+				ambientLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
+				// ambientLight.setAttribute("ground-color", "#fff" ); // #fff , Fei dont know how it work
+				ambientLight.setAttribute("intensity", 1 );
 
 				vrScene.appendChild(ambientLight);// this = vrScene
 
 
-				let directLight = document.createElement("a-light");
-				directLight.setAttribute("id", "directLight");
-				directLight.setAttribute("type", "directional" );
-				directLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
-				directLight.setAttribute("intensity", 1.0 );
-				var a = new THREE.Euler( 50/180*3.1416, 30/180*3.1416, 0, 'XYZ' );
-				var b = new THREE.Vector3( 0, 0, -1 );
-				b.applyEuler(a);
-				console.log("directLight: ",b)
-				directLight.setAttribute("position",b);
+				// let directLight = document.createElement("a-light");
+				// directLight.setAttribute("id", "directLight");
+				// directLight.setAttribute("type", "directional" );
+				// directLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
+				// directLight.setAttribute("intensity", 1.0 );
+				// var a = new THREE.Euler( 50/180*3.1416, 30/180*3.1416, 0, 'XYZ' );
+				// var b = new THREE.Vector3( 0, 0, -1 );
+				// b.applyEuler(a);
+				// console.log("directLight: ",b)
+				// directLight.setAttribute("position",b);
 
-				vrScene.appendChild(directLight);// this = vrScene
+				// vrScene.appendChild(directLight);// this = vrScene
 
 //20191203-end-thonsha-mod
 
