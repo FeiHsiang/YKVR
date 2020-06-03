@@ -114,6 +114,11 @@
 
 			this.makarObjects = [];
 
+//20200528-thonsha-add-start
+			// this.cubeCamera = null;
+			// this.cubeRenderTarget = new THREE.WebGLRenderTargetCube( 256, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+//20200528-thonsha-add-end
+
 			//// for update
 			this.FUNCTION_ENABLED = false;
 			this.clock = new THREE.Clock();
@@ -251,19 +256,19 @@
 					}
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
 
-				}else if ( editor_version[0] == 3 && editor_version[2] <= 6  ){
+				}else if ( editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] <= 6  ){
 					////// the version below 3.0.6, before about 2020 03 
 					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
 						console.log("VRFunc.js: _loadSceneObjects the scenes[sceneIndex] is not Array, error", self.VRSceneResult[projIndex].scenes[sceneIndex] );
 						return -1;
 					}
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-				} else if ( editor_version[0] >= 3 && editor_version[2] >= 7 ){
+				} else if ((editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] >= 7) || (editor_version[0] >= 3 && editor_version[1] >= 0 ) ){
 					////// the version below 3.0.5, before about 2020 03 
 					console.log("VRFunc.js: _loadSceneObjects: the editor version after 3.0.7", self.VRSceneResult[projIndex].scenes[sceneIndex] );
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
 				}else{
-					//// the unknown version do version below 3.0.6 
+					//// the unknown version do version above 3.0.6 
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
 
 				}
@@ -446,6 +451,13 @@
 							
 							break;
 						
+						// 20200521-thonsha-add-start
+
+						case "light":
+
+							self.loadLight(scene_objs[i], position, rotation, scale);
+							break;
+
 						default:
 							console.log("VRFunc.js: _loadSceneObjects: default", i, scene_objs[i] );
 							
@@ -863,6 +875,82 @@
 											//20200512-thonsha-mod-start
 											var targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
 											var renderer = modelEntity.sceneEl.renderer
+											// var textureLoader = new THREE.TextureLoader();
+
+											// textureLoader.load( skyTexture, function ( texture ) {
+											// 	texture.mapping = THREE.UVMapping;
+											// 	init( texture );
+											// } );
+											
+											// function init( texture ) {
+											// 	var options = {
+											// 		generateMipmaps: true,
+											// 		minFilter: THREE.LinearMipmapLinearFilter,
+											// 		magFilter: THREE.LinearFilter
+											// 	};
+												
+											// 	modelEntity.sceneEl.object3D.background = new THREE.WebGLRenderTargetCube( 1024, options ).fromEquirectangularTexture( renderer, texture );
+											// 	console.log("20200528 background", modelEntity.sceneEl.object3D)
+											// }
+											// objj.traverse(node => {
+											// 	if (node.material) {
+											// 		if (node.material.name == obj.material[i].name) {
+											// 			node.material.color = color;
+											// 			node.material.metalness = obj.material[i].metallic;
+											// 			node.material.roughness = 1 - obj.material[i].smoothness;
+											// 			node.material.envMap = self.cubeCamera.renderTarget.texture;
+											// 			node.material.envMapIntensity = 1;
+											// 			node.material.needsUpdate = true;
+											// 			node.material.reflectivity = 0;
+											// 			node.material.side = THREE.DoubleSide;
+											// 			node.material.transparent = true;
+											// 			console.log('obj.material',obj.material);
+											// 			console.log('standard node.material',node.material);
+														
+											// 			if(obj.material[i].mode == 0){
+											// 				node.material.opacity = 1;
+											// 				renderer.setClearAlpha(1);
+
+											// 				node.material.blending = THREE.CustomBlending;
+											// 				node.material.blendEquation = THREE.AddEquation;
+											// 				node.material.blendSrc = THREE.OneFactor;
+											// 				node.material.blendDst = THREE.ZeroFactor;
+											// 				node.material.blendSrcAlpha = THREE.ZeroFactor;
+											// 				node.material.blendDstAlpha = THREE.OneFactor;
+
+											// 			}
+											// 			else if(obj.material[i].mode == 1){
+											// 				node.material.opacity = 1;
+											// 				node.material.alphaTest = obj.material[i].cut_off;
+											// 				renderer.setClearAlpha(1);
+
+											// 				node.material.blending = THREE.CustomBlending;
+											// 				node.material.blendEquation = THREE.AddEquation;
+											// 				node.material.blendSrc = THREE.OneFactor;
+											// 				node.material.blendDst = THREE.ZeroFactor;
+											// 				node.material.blendSrcAlpha = THREE.ZeroFactor;
+											// 				node.material.blendDstAlpha = THREE.OneFactor;
+											// 			}
+											// 			else if(obj.material[i].mode == 2){
+											// 				node.material.opacity = parseFloat(rgba[3]);
+											// 				node.material.depthWrite = false;
+														
+											// 			}
+											// 			else if(obj.material[i].mode == 3){
+											// 				node.material.opacity = Math.max(parseFloat(rgba[3]), obj.material[i].metallic);
+											// 				node.material.depthWrite = false;
+											// 				node.material.blending = THREE.CustomBlending;
+											// 				node.material.blendEquation = THREE.AddEquation;
+											// 				node.material.blendSrc = THREE.OneFactor;
+											// 				node.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+											// 				node.material.blendSrcAlpha = THREE.OneFactor;
+											// 				node.material.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
+											// 			}
+
+
+											// 		}
+											// 	}
+											// });
 											var texture = new THREE.TextureLoader().load(
 												skyTexture,
 												function() {
@@ -874,11 +962,13 @@
 																node.material.metalness = obj.material[i].metallic;
 																node.material.roughness = 1 - obj.material[i].smoothness;
 																node.material.envMap = cubeTex.texture;
-																node.material.envMap.intensity = 3;
+																node.material.envMapIntensity = 1;
 																node.material.needsUpdate = true;
 																node.material.reflectivity = 0;
-																// console.log('obj.material',obj.material);
-																// console.log('standard node.material',node.material);
+																node.material.side = THREE.DoubleSide;
+																node.material.transparent = true;
+																console.log('obj.material',obj.material);
+																console.log('standard node.material',node.material);
 																
 																if(obj.material[i].mode == 0){
 																	node.material.opacity = 1;
@@ -1008,6 +1098,7 @@
 				}
 				else{
 					self.vrScene.appendChild(modelEntity);
+					// self.vrScene.object3D.add(modelEntity.object3D);
 				}
 				//20191029-end-thonhsa-add
 
@@ -1114,6 +1205,7 @@
 							if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
 								soundEntity.setAttribute("visible", false);
 								soundEntity.setAttribute('class', "unclickable" );
+								soundEntity.setAttribute("loop", false);
 								break;
 							}
 						}
@@ -1301,6 +1393,30 @@
 							let parent = document.getElementById(obj.obj_parent_id);
 							if (parent){
 								if(parent.object3D.children.length > 0){
+
+									parent.addEventListener("child-attached", function(el){
+                                        console.log("VRFunc.js: VRController: _loadVideo,: parent child-attached, el=", el );
+                                        let parentVisible = true;
+                                        videoPlane.object3D.traverseAncestors( function(parent) {
+                                            if (parent.type != "Scene"){
+                                                console.log("VRFunc.js: VRController: _loadVideo,: traverseAncestors: not Scene parent=", parent );
+                                                if (parent.visible == false){
+                                                    parentVisible = false;
+                                                }
+                                            } else {
+                                                if (parentVisible == true && videoPlane.object3D.visible == true ){
+                                                    console.log("VRFunc.js: VRController: _loadVideo,: traverseAncestors: all parent visible true=", videoPlane.object3D );
+                                                    mp4Video.autoplay = true;
+                                                    mp4Video.play();
+                                                }else{
+                                                    console.log("VRFunc.js: VRController: _loadVideo,: traverseAncestors: not all parent visible true=", videoPlane.object3D );
+                                                    //// rootObject.visible = false;
+                                                    mp4Video.autoplay = false;
+                                                }
+                                            }
+                                        });
+                                    });
+
 									parent.appendChild(videoPlane);
 									window.clearInterval(timeoutID);
 								} 
@@ -1321,6 +1437,35 @@
 				}
 				
 				
+			}
+
+			this.loadLight = function( obj, position, rotation, scale ){
+				console.log("20200521 add light", obj);
+				let Light = document.createElement("a-light");
+				Light.setAttribute("id", obj.obj_id);
+				Light.setAttribute("type", obj.light.light_type );
+				let rgb = obj.light.color.split(",");
+				let color = new THREE.Color(parseFloat(rgb[0]),parseFloat(rgb[1]),parseFloat(rgb[2]));
+				Light.setAttribute("color", "#"+color.getHexString()); // white / gray / #fff 
+				Light.setAttribute("intensity",  obj.light.intensity );
+				if (obj.light.shadow == "None"){
+					Light.setAttribute("castShadow", false);
+				}
+				else{
+					Light.setAttribute("castShadow", true);
+				}
+				
+				let a = new THREE.Vector3( 0, 0, -1 );
+				let b = new THREE.Euler();
+				let quaternion = obj.quaternionRotation.split(",");
+				let quaternionRotation = new THREE.Quaternion(parseFloat(quaternion[1]),parseFloat(quaternion[2]),parseFloat(quaternion[3]),parseFloat(quaternion[0]))
+				b.setFromQuaternion(quaternionRotation)
+				b.y = -b.y
+				b.z = -b.z
+				a.applyEuler(b);
+				Light.setAttribute( "position", a );//// origin
+
+				self.vrScene.appendChild(Light);// this = vrScene
 			}
 			
 
@@ -1426,7 +1571,7 @@
 								
 								
 								if(child.el.getAttribute("sound")){
-									child.el.components.sound.pauseSound();
+									child.el.components.sound.stopSound();
 										
 								}
 							}
@@ -1503,7 +1648,7 @@
 								}
 
 								if(child.el.getAttribute("sound")){
-									child.el.components.sound.pauseSound();
+									child.el.components.sound.stopSound();
 										
 								}
 							}
@@ -1565,7 +1710,7 @@
 					if(target.getAttribute("visible")){
 						target.setAttribute("visible",false);
 						target.setAttribute('class', "unclickable" );
-						target.components.sound.pauseSound();
+						target.components.sound.stopSound();
 					}
 					else{
 						target.setAttribute("visible",true);
@@ -1609,7 +1754,7 @@
 								}
 
 								if(child.el.getAttribute("sound")){
-									child.el.components.sound.pauseSound();
+									child.el.components.sound.stopSound();
 										
 								}
 							}
@@ -2060,6 +2205,13 @@
 
 //20191203-end-thonsha-mod
 
+//20200528-thonsha-add-start
+				// let cubeCamera = new THREE.CubeCamera( 1, 100000, 128 );
+				// vrController.cubeCamera = cubeCamera;
+				// console.log("20200528",  vrController.vrScene.camera)
+				// vrController.vrScene.object3D.add( cubeCamera );
+//20200528-thonsha-add-end
+
 				////// try to modify the aspect ratio of camera, 20190917 Fei fail, I check the vrScene.camera is same as aCamera.object3D.children[2].
 				////// But it need wait for the camera loading, at first, it is default camera, then it is the a-camera's object3D
 				// console.log("VRFunc.js: activeVRScenes: initvrscene: vrScene.camera = ", vrScene.camera );
@@ -2104,14 +2256,20 @@
 				// console.log("VRFunc.js: initvrscene, done", vrScene, vrScene.object3D );
 			}
 	
-			
+//20200528-thonsha-mod-start		
 			var renderTick = function() {
-				vrController.GLRenderer.clearDepth();
-				vrController.GLRenderer.render( vrController.scene2D, vrController.camera2D);
+				// vrController.GLRenderer.clearDepth();
+				// vrController.GLRenderer.render( vrController.scene2D, vrController.camera2D);
 				// console.log("renderTick");
 				requestAnimationFrame(renderTick); // dont use it, because of the haning problem
+				render();
 			};
-	
+
+			var render = function(){
+				vrController.cubeCamera.update(  vrController.vrScene.renderer, vrController.vrScene.object3D)
+				vrController.vrScene.renderer.render( vrController.vrScene.object3D, vrController.vrScene.camera );
+			}
+//20200528-thonsha-mod-start	
 
 		}
 
