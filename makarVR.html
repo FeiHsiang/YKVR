@@ -10,19 +10,23 @@
 		body {
 			margin: 0px;
 			padding:0px;
-			/* overflow: hidden; */
+			text-align: center;
+			overflow: hidden;
+			background-color: rgba( 50 , 50 , 50 , 1.0 );
+			width: 100vw;
+			height: 100vh;
 		}
 
 		.bgbox_pc {
 			background-image: url("images/makar_pc_bg.jpg");
 			/* background-color: #cccccc; */
-			/* width:100%; */
+			width:100%;
 			height: 720px;  
 			/* height: 100%;   */
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: cover; /* cover: Resize the background image to cover the entire container, contain: resize small to fit div */
-			position: relative;
+			position: fixed;
 			margin:0px;
 			padding:0px;
 			/* overflow: hidden; */
@@ -132,7 +136,25 @@
            }
        }
 
-
+	   #startPlayButton {
+			/* display: block; */
+			position: fixed;
+			/* top: 80px; */
+			bottom: 8%;
+			/* align: middle; */
+			/* text-align: center; */
+			left: 35%;
+			width: 30%;
+			z-index: 99;
+			font-size: 18px;
+			border: none;
+			outline: none;
+			background-color: rgba(0, 0, 0, 0.0);
+			color: rgba(255,255, 255, 0.0);
+			cursor: pointer;
+			padding: 10px;
+			border-radius: 3px;
+		}
 
 	</style>
 
@@ -186,7 +208,7 @@
 		} else{
 			window.makarID = "fefe"; // fefe/makarvr/varlamov5264, set MAKAR ID by default
 		}
-		// console.log("makarWebVRViewer: makarID=", makarID);
+		console.log("makarVR.html: makarID=", makarID);
 
 		// window.serverUrl = "https://ssl-api-makar-apps.miflyservice.com/Makar"; // makar server Amazon 
 		//////
@@ -194,62 +216,64 @@
 		//////
 		window.serverVersion = "3.0.0";
 
-		switch(serverVersion){
-			case "2.0.0":
-				window.serverUrl = "https://ssl-api-makar-apps.miflyservice.com/Makar/"; // makar V2 server Amazon 
-				// window.serverUrl = "https://makar-ali-sh-cn.miflyservice.com/Makar" ; // makar V2 server Ali-sh-cn
-			break;
-			
-			case "3.0.0":
-					// window.serverUrl = "https://60.250.125.146:8888/Makar/"; // local V3 makar server.
-					// window.serverUrl = "https://ssl-api-makar-v3-apps.miflyservice.com:8081/Makar/"; // official V3 makar server.
-					window.serverUrl = "https://makar.app/Makar/";	// local test server 20200316
-			break;
-			
-		}
+		// window.serverUrl = "https://60.250.125.146:8888/Makar/"; // local V3 makar server.
+		window.serverUrl = "https://ssl-api-makar-apps.miflyservice.com/Makar/"; // AWS test V3 makar server.
+		// window.serverUrl = "https://makar.app/Makar/";	// local test server 20200316
+
 		
 		var getRandom = function(){
 			return Math.random();
 		}
 
 //20200102-start-thonsha-add
+		//// iOS safari 會認為兩者都存在，需要透過用戶觸發事件，得到授權才能使用。
+		//// 目前判斷方式都有問題 android chrome 會認為 requestPermission 不存在，但是依然可以使用
+		//// PC firefox 會認為 requestPermission 不存在，但是無法使用 
+		var getDMP = false;
 		window.requestDeviceMotionPermission = function (){
-            console.log("makarVR.html: requestDeviceMotionPermission  " );
+            console.log("makarVR.html: requestDeviceMotionPermission  ", DeviceMotionEvent , typeof(DeviceMotionEvent)  );
             if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function') {
                 DeviceMotionEvent.requestPermission().then(response => {
                     console.log("makarVR.html: requestPermission response =", response );
                     // alert('Orientation tracking '+ response);
                     if (response == 'granted') {
+						getDMP = true;
                         window.addEventListener('devicemotion', (e) => {
                             // but.style.visibility='hidden';
                         })
                     }
                 }).catch(console.error)
             }else {
-                // alert('DeviceMotionEvent is not defined');
-                console.log("makarVR.html: requestPermission: DeviceMotionEvent is not defined " );
+				// alert('DeviceMotionEvent is not defined');
+				console.log("makarVR.html: requestPermission: DeviceMotionEvent is not defined "  );
+				getDMP = true;
             }
 		}
+		requestDeviceMotionPermission();
 //20200102-end-thonsha-add
 
 
 	</script>
-	<!-- 20191028-start-thonsha-add -->
+	<!-- develop -->
 	<script src = "js/networkAgentVR.js"></script>
 	<script src = "js/whiteList.min.js"></script>
 	<script src = "js/aframe-gif-shader.js"></script>
 	<script src = "js/aframe-extras.js"></script>
 	<script src = "js/VRFunc.js"></script>
-	<!-- 20191028-end-thonsha-add -->
-	<!-- 20191129-start-thonsha-add -->
-	<!-- <script src="js/ammo.js"></script>
-	<script src="https://cdn.rawgit.com/feiss/aframe-environment-component/ad57b15d/dist/aframe-environment-component.min.js"></script>
-    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v2.1.0/dist/aframe-physics-system.min.js"></script> -->
-	<!-- 20191129-end-thonsha-add -->
 	<!-- release -->
 	<!-- <script src = "lib/appVR.min.js"> </script> -->
 
-	<div id = "home" class="bgbox_pc" > 
+	<!-- <div id = "home" class="bgbox_pc" >  -->
+
+
+	<!-- <div id = "startPlayDiv" style=" display: none; position: fixed; bottom: 80px; z-index: 99; text-align: center;" >  -->
+	<div id = "startPlayDiv" style=" display: none; margin:auto; top:25%; text-align: center; width: 100%; height: 30%; position: absolute; color:white; font-size: 32pt; background-color: #4b4d55;" > 
+		<!-- <img id = "startPlayButton" src="images/icon01.png" alt=""  ></img> -->
+		<p>
+			點擊來開始體驗
+		</p>
+	</div>
+
 		
 	</div>
 	<div id="panel" class="collapsed">
@@ -289,10 +313,7 @@
 
 	<script>
 		var panel = document.getElementById("panel");
-		var home = document.getElementById("home");
 		
-		// var preMouse = new THREE.Vector2();
-		// var mouse = new THREE.Vector2();
 		
 		var expandButton = document.getElementById("expandButton");
 		expandButton.addEventListener('click', function(event){
@@ -300,30 +321,38 @@
 			panel.classList.toggle( 'collapsed' );
 		});
 
-		// panel.addEventListener("touchmove", function(event){
-		// 	switch (event.type){
-		// 		case "touchmove":////// 20190709 Fei: add this event type for cellphone
-		// 			if ( Math.abs(preMouse.y - event.changedTouches[0].clientY) > 100  ){
-		// 				event.preventDefault(); ////// work fine!
-		// 				console.log("moveEvent: event type=", event.type, ", diffMouseXY=",   preMouse.y - event.changedTouches[0].clientY );
-		// 			}
-		// 			break;
-		// 	}
-		// });
+		panel.style.display = "none";
+		expandButton.style.pointerEvents = "none";
 
-		home.addEventListener("touchstart", stopHomeTouch, false);
-		home.addEventListener("mousedown", stopHomeTouch, false);
-		function stopHomeTouch(event){
-			// switch ( event.type ) {
-			// 	case "touchstart":
-			// 		preMouse.x = event.changedTouches[0].clientX;
-			// 		preMouse.y = event.changedTouches[0].clientY;
-			// 		break;
-			// }			
-			
-			event.preventDefault(); ////// work fine!
-            // event.stopPropagation();
-		}
+		window.onload = function(){
+			setTimeout(function(){
+				console.log("makarVR.html: set startPlayDiv onclick");
+
+				if (getDMP == true){
+					startPlayDiv.style.display = "none";
+					// home.style.display = "none";
+					showVRProjList();
+				}else{
+					startPlayDiv.style.display = "block";
+					startPlayDiv.addEventListener("click", function(){
+						console.log("makarVR_directUrl.html: call startPlayDiv");
+						requestDeviceMotionPermission();
+						startPlayDiv.style.display = "none";
+						// home.style.display = "none";
+						showVRProjList();
+					});
+				}
+
+				// document.getElementById("startPlayButton").onclick = function(){
+
+				// 	showVRProjList();
+				// 	startPlayButton.style.display = "none";
+				// 	home.style.display = "none";
+
+				// }
+				
+			}, 50 );
+		};
 
 	</script>
 

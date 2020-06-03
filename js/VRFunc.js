@@ -1972,67 +1972,69 @@
 			let url = window.serverUrl;
 			let makarID;
 			let uid = document.getElementById("uid");
-			if (uid) {
-				makarID = uid.value;
-			}else{
+			if (window.makarID) {
 				makarID = window.makarID;
+			}else{
+				console.error("VRFunc.js: the window.makarID not exit, FYS");
 			}
 			////// show the panel by set the class = "" //////
-			var panel = document.getElementById("panel");
-			panel.className = "";
+			// var panel = document.getElementById("panel");
+			// panel.className = "";
 	
 			// console.log("VRFunc.js: showVRProjList: ", url, makarID);
 			getVRSceneByUserID(url, makarID, function(data){
 				// console.log("VRFunc.js: showVRProjList: getVRSceneByUserID: callback, data=", data);
 				
-				////// get the variables
-				let projs = document.getElementById("projs");
-				let snapShotRow = projs.rows.proj_snapshot;
-				let projNameRow = projs.rows.proj_name;
-				let snapShotNumber = snapShotRow.children.length;
-				let projNameNumber = projNameRow.children.length;
-				////// clear the table
-				for (let i=0; i<snapShotNumber; i++) snapShotRow.deleteCell(0);
-				for (let i=0; i<projNameNumber; i++) projNameRow.deleteCell(0);
+				activeVRScenes(0);
 
-//20191111-start-thonsha-add
-				let str = data;
-                if (typeof(data) == "string"){ ////// error
-                    console.log("VRFunc.js: _showVRProjList: _getVRSceneByUserID: callback, str=", data);
-                    document.getElementById("pUserInfo").innerHTML = str;
-                    document.getElementById("pUserInfo").style.color = "red";
-                }else{
-                    document.getElementById("pUserInfo").innerHTML = "";
-                    document.getElementById("pUserInfo").style.color = "white";
-                    ////// setup the table
-                    for (let i = 0; i<data.length; i++){
-                        ////// insert project name
-                        let projNameCell = projNameRow.insertCell( i );
-                        projNameCell.innerHTML =  window.publishVRProjs.result[i].proj_name;
-                        ////// insert project snapShot
-                        let snapShotCell = snapShotRow.insertCell( i );
-                        let _img = document.createElement('img');
-                        _img.src = window.publishVRProjs.result[i].snapshot_url;
-                        _img.width = 150;
-                        _img.height = 150;
+				////// get the variables
+// 				let projs = document.getElementById("projs");
+// 				let snapShotRow = projs.rows.proj_snapshot;
+// 				let projNameRow = projs.rows.proj_name;
+// 				let snapShotNumber = snapShotRow.children.length;
+// 				let projNameNumber = projNameRow.children.length;
+// 				////// clear the table
+// 				for (let i=0; i<snapShotNumber; i++) snapShotRow.deleteCell(0);
+// 				for (let i=0; i<projNameNumber; i++) projNameRow.deleteCell(0);
+
+// //20191111-start-thonsha-add
+// 				let str = data;
+//                 if (typeof(data) == "string"){ ////// error
+//                     console.log("VRFunc.js: _showVRProjList: _getVRSceneByUserID: callback, str=", data);
+//                     document.getElementById("pUserInfo").innerHTML = str;
+//                     document.getElementById("pUserInfo").style.color = "red";
+//                 }else{
+//                     document.getElementById("pUserInfo").innerHTML = "";
+//                     document.getElementById("pUserInfo").style.color = "white";
+//                     ////// setup the table
+//                     for (let i = 0; i<data.length; i++){
+//                         ////// insert project name
+//                         let projNameCell = projNameRow.insertCell( i );
+//                         projNameCell.innerHTML =  window.publishVRProjs.result[i].proj_name;
+//                         ////// insert project snapShot
+//                         let snapShotCell = snapShotRow.insertCell( i );
+//                         let _img = document.createElement('img');
+//                         _img.src = window.publishVRProjs.result[i].snapshot_url;
+//                         _img.width = 150;
+//                         _img.height = 150;
                         
-                        let chooseVRProject = function(e){
-                            // console.log("VRFunc.js: chooseVRProject, e=", e); // e will be the img tag
-                            document.getElementById('home').style.display = "none"; ////// make the home page disappear
-                            document.getElementById("panel").className = "collapsed"; ////// smaller the panel
-                            activeVRScenes( i );
-                        };
-                        _img.onclick = function(){
-                            chooseVRProject(this);
-                        }
+//                         let chooseVRProject = function(e){
+//                             // console.log("VRFunc.js: chooseVRProject, e=", e); // e will be the img tag
+//                             document.getElementById('home').style.display = "none"; ////// make the home page disappear
+//                             document.getElementById("panel").className = "collapsed"; ////// smaller the panel
+//                             activeVRScenes( i );
+//                         };
+//                         _img.onclick = function(){
+//                             chooseVRProject(this);
+//                         }
         
-                        snapShotCell.appendChild(_img);
-                    }
+//                         snapShotCell.appendChild(_img);
+//                     }
                     
-                }
-//20191111-end-thonsha-add
+//                 }
+// //20191111-end-thonsha-add
 	
-				// console.log("projNameRow=", projNameRow, "snapShotRow=", snapShotRow);
+// 				// console.log("projNameRow=", projNameRow, "snapShotRow=", snapShotRow);
 	
 	
 			});
@@ -2065,6 +2067,8 @@
 				document.body.appendChild(vrScene);
 			}else{
 				vrScene.setAttribute( 'embedded', "" ); ////// add this will make the scene embedded into a div
+				vrScene.setAttribute( 'vr-mode-ui', "enabled: false" ); ////// add this will make the scene embedded into a div
+
 				////// set a div above a-scene, must set one of width/height be "xxx px" 
 				vrDiv = document.createElement('div');
 				vrDiv.style.position = "relative" ;    //  "500px" or "80%"
@@ -2076,14 +2080,14 @@
 				// vrDiv.style.height = Math.round(document.documentElement.clientHeight*0.9 ) + "px" ;//  "500px" or "80%"
 				
 				vrDiv.style.width = document.documentElement.clientWidth + "px" ;    //  "500px" or "100%"
-				vrDiv.style.height = Math.round(document.documentElement.clientHeight - 56) + "px" ;//  "500px" or "80%"
+				vrDiv.style.height = Math.round(document.documentElement.clientHeight - 0) + "px" ;//  "500px" or "80%"
 	
 				// vrDiv.style.left = window.innerWidth*0.1+"px" ; //
-				vrDiv.style.top = "56px" ; //
+				vrDiv.style.top = "0px" ; //
 				window.onresize = function(){
 					// console.log("window resize: WH=", window.innerWidth, window.innerHeight, vrDiv.clientWidth, vrDiv.clientHeight );
 					vrDiv.style.width = document.documentElement.clientWidth + "px" ;    //  "500px" or "100%"
-					vrDiv.style.height = Math.round(document.documentElement.clientHeight - 56) + "px" ;//  "500px" or "80%"
+					vrDiv.style.height = Math.round(document.documentElement.clientHeight - 0) + "px" ;//  "500px" or "80%"
 				};
 				document.body.appendChild(vrDiv);
 				vrDiv.appendChild(vrScene);
