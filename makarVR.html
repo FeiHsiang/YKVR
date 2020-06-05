@@ -178,8 +178,8 @@
 
 	<!-- 20191111-start-thonsha-mod -->
 	<!-- <script src="node_modules/aframe/dist/aframe-v0.9.2.js"></script> -->
-	<!-- <script src="js/aframe-v0.9.2.js"></script> -->
-	<script src="js/aframe-v1.0.4.js"></script>
+	<!-- <script src="js/aframe-v1.0.4.js"></script> -->
+	<script src="lib/aframe-v1.0.4.min.js"></script>
 	<!-- 20191111-end-thonsha-mod -->
 	<script src="node_modules/three/examples/js/utils/SceneUtils.js"></script>
 
@@ -255,13 +255,13 @@
 
 	</script>
 	<!-- develop -->
-	<script src = "js/networkAgentVR.js"></script>
+	<!-- <script src = "js/networkAgentVR.js"></script>
 	<script src = "js/whiteList.min.js"></script>
 	<script src = "js/aframe-gif-shader.js"></script>
 	<script src = "js/aframe-extras.js"></script>
-	<script src = "js/VRFunc.js"></script>
+	<script src = "js/VRFunc.js"></script> -->
 	<!-- release -->
-	<!-- <script src = "lib/appVR.min.js"> </script> -->
+	<script src = "lib/appVR.min.js"> </script>
 
 	<!-- <div id = "home" class="bgbox_pc" >  -->
 
@@ -314,7 +314,6 @@
 	<script>
 		var panel = document.getElementById("panel");
 		
-		
 		var expandButton = document.getElementById("expandButton");
 		expandButton.addEventListener('click', function(event){
 			event.preventDefault();
@@ -329,9 +328,19 @@
 				console.log("makarVR.html: set startPlayDiv onclick");
 
 				if (getDMP == true){
+					
 					startPlayDiv.style.display = "none";
-					// home.style.display = "none";
 					showVRProjList();
+
+					// startPlayDiv.style.display = "block";
+					// startPlayDiv.addEventListener("click", function(){
+					// 	console.log("makarVR_directUrl.html: call startPlayDiv");
+					// 	requestDeviceMotionPermission();
+					// 	startPlayDiv.style.display = "none";
+					// 	// home.style.display = "none";
+					// 	showVRProjList();
+					// });
+
 				}else{
 					startPlayDiv.style.display = "block";
 					startPlayDiv.addEventListener("click", function(){

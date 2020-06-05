@@ -43,4 +43,6 @@ use node modula terser to make the javascript file minify and compress
 
     terser js/networkAgentVR.js js/whiteList.min.js js/aframe-gif-shader.js js/aframe-extras.js js/VRFunc.js -o lib/appVR.min.js -c -m
 
+    terser js/aframe-v1.0.4.js -o lib/aframe-v1.0.4.min.js -c -m
+
 ---

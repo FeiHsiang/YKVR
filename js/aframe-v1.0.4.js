@@ -78729,7 +78729,10 @@ module.exports.AScene = registerElement('a-scene', {
           savedBackground = this.object3D.background;
           this.object3D.background = null;
         }
-        renderer.render(this.object3D, this.camera);
+//[start-20200604-fei 0096- remove]//
+        ////// we remove the render part because we need render the 2D scene (webcamera video plane) before 3D scene 
+        // renderer.render(this.object3D, this.camera);
+//[end---20200604-fei 0096- remove]//
         if (savedBackground) {
           this.object3D.background = savedBackground;
         }
