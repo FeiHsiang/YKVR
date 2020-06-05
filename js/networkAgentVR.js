@@ -645,105 +645,117 @@
 			// });
 			};
 
-
-			getPayInfoByUserID( url, user_id , function( userPayInfo ){
-				let expire_date, expire_date_ymd, expire_date_ymd_arr, ISOexpire_date;
-//[start-20191113-thonsha-add]//
-				let userIDWhiteListUrl = 'https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/web_white_list/webVR_UserID_WhiteList.txt';
-				readTextFile( userIDWhiteListUrl , function( txtfile ){
-
-					let jsonObj = JSON.parse(txtfile);
-					let userIDList = jsonObj["customizedUserID"]["list"];
-					let nameList = [];
-					for (let i = 0; i < userIDList.length; i++){
-						nameList.push(userIDList[i]["name"]);
+			searchUserIDByUserID( url, user_id,  function(userIDs){
+				for (let userID in userIDs.result ){
+					if ( user_id.toLowerCase() === userIDs.result[userID].user_id.toLowerCase()  ){
+						console.log("networkAgentVR.js: _searchUserIDByUserID: match, replace from [" , user_id , "] to [", userIDs.result[userID].user_id, "]"  );
+						user_id = userIDs.result[userID].user_id;
 					}
-					let isInNameList = (nameList.indexOf(user_id) > -1);
-//[end---20191113-thonsha-add]//
-					if (userPayInfo.data){
-						// console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type=", userPayInfo.data.user_type );
-						switch (userPayInfo.data.user_type){
-							case "free":
-								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(free)=", userPayInfo.data );
-//[start-20191113-thonsha-mod]//
-								if (isInNameList){
-//[end---20191113-thonsha-mod]//
-									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+				}
+				
+				getPayInfoByUserID( url, user_id , function( userPayInfo ){
+					let expire_date, expire_date_ymd, expire_date_ymd_arr, ISOexpire_date;
+	//[start-20191113-thonsha-add]//
+					let userIDWhiteListUrl = 'https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/web_white_list/webVR_UserID_WhiteList.txt';
+					readTextFile( userIDWhiteListUrl , function( txtfile ){
+	
+						let jsonObj = JSON.parse(txtfile);
+						let userIDList = jsonObj["customizedUserID"]["list"];
+						let nameList = [];
+						for (let i = 0; i < userIDList.length; i++){
+							nameList.push(userIDList[i]["name"]);
+						}
+						let isInNameList = (nameList.indexOf(user_id) > -1);
+	//[end---20191113-thonsha-add]//
+						if (userPayInfo.data){
+							// console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type=", userPayInfo.data.user_type );
+							switch (userPayInfo.data.user_type){
+								case "free":
+									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(free)=", userPayInfo.data );
+	//[start-20191113-thonsha-mod]//
+									if (isInNameList){
+	//[end---20191113-thonsha-mod]//
+										getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+										break;
+									}
+									if(callback) callback("this ID is free user, now allow for using webAR ");
+	
 									break;
-								}
-								if(callback) callback("this ID is free user, now allow for using webAR ");
-
-								break;
-							case "proA":
-								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(proA)=", userPayInfo.data );
-//[start-20191113-thonsha-mod]//
-								if (isInNameList){
-//[end---20191113-thonsha-mod]//
-									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-									break;
-								}
-
-								//////// check the expire date, it is work, doesnt need now.
-								expire_date = userPayInfo.data.user_type_expire_date;
-								if (expire_date){
-									expire_date_ymd = expire_date.split(" ")[0];
-									if (expire_date_ymd){
-										expire_date_ymd_arr = expire_date_ymd.split("-");
-										if (expire_date_ymd_arr){
-											if (expire_date_ymd_arr.length == 3 ){
-												////// it is very wired, in most browser( PC firefox/chrome ), the month start from 0, both get and set
-												////// use var date = new Date( 2019, 9, 2 ), date.getMonth() = 9 
-												////// but date.toISOString() = "2019-10-01T16:00:00.000Z"
-												////// 
-												////// use var date = new Date( [2019, 9, 2] ), date.getMonth() = 8 
-												////// but date.toISOString() = "2019-09-01T16:00:00.000Z"
-
-												////// Depend on the earliest paying user, the proA user from 2019-09-25 to 2020-07-25 are free user,
-												////// most set new type for verification user.
-												// expire_date_ymd_arr = [2020,9,28];
-												ISOexpire_date = new Date( expire_date_ymd_arr );
-												// var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
-												var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
-												console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: expire_date_ymd_arr=", expire_date_ymd_arr, ISOexpire_date );
-												console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: diffDays=", diffDays );
-												if ( diffDays > 1 ){
-													getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-													break;
-												}else{
-													if(callback) callback("this ID is unpaid user, now allow for using webAR ");
-													break;
+								case "proA":
+									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(proA)=", userPayInfo.data );
+	//[start-20191113-thonsha-mod]//
+									if (isInNameList){
+	//[end---20191113-thonsha-mod]//
+										getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+										break;
+									}
+	
+									//////// check the expire date, it is work, doesnt need now.
+									expire_date = userPayInfo.data.user_type_expire_date;
+									if (expire_date){
+										expire_date_ymd = expire_date.split(" ")[0];
+										if (expire_date_ymd){
+											expire_date_ymd_arr = expire_date_ymd.split("-");
+											if (expire_date_ymd_arr){
+												if (expire_date_ymd_arr.length == 3 ){
+													////// it is very wired, in most browser( PC firefox/chrome ), the month start from 0, both get and set
+													////// use var date = new Date( 2019, 9, 2 ), date.getMonth() = 9 
+													////// but date.toISOString() = "2019-10-01T16:00:00.000Z"
+													////// 
+													////// use var date = new Date( [2019, 9, 2] ), date.getMonth() = 8 
+													////// but date.toISOString() = "2019-09-01T16:00:00.000Z"
+	
+													////// Depend on the earliest paying user, the proA user from 2019-09-25 to 2020-07-25 are free user,
+													////// most set new type for verification user.
+													// expire_date_ymd_arr = [2020,9,28];
+													ISOexpire_date = new Date( expire_date_ymd_arr );
+													// var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
+													var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
+													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: expire_date_ymd_arr=", expire_date_ymd_arr, ISOexpire_date );
+													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: diffDays=", diffDays );
+													if ( diffDays > 1 ){
+														getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+														break;
+													}else{
+														if(callback) callback("this ID is unpaid user, now allow for using webAR ");
+														break;
+													}
 												}
 											}
 										}
 									}
-								}
-								if(callback) callback("this ID is unpaid user, now allow for using webAR. ");
-
-								break;
-
-							case "proB":
-							case "proC":
-							case "custom":
-								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(custom/proB/proC)=", userPayInfo.data );
-								getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-
-								break;
-
-							default:
-								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(default)=", userPayInfo.data );
-								if(callback) callback("this ID is not MAKAR user ");
-								break;
+									if(callback) callback("this ID is unpaid user, now allow for using webAR. ");
+	
+									break;
+	
+								case "proB":
+								case "proC":
+								case "custom":
+									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(custom/proB/proC)=", userPayInfo.data );
+									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+	
+									break;
+	
+								default:
+									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(default)=", userPayInfo.data );
+									if(callback) callback("this ID is not MAKAR user ");
+									break;
+							}
+						}else{
+							console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: error, userPayInfo=", userPayInfo );	
+							if(callback) callback("this ID have some problem ");
 						}
-					}else{
-						console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: error, userPayInfo=", userPayInfo );	
-						if(callback) callback("this ID have some problem ");
-					}
+	
+	
+					} );
+	
+					
+				});
 
 
-				} );
-
-				
 			});
+
+			
 
 
 		}
@@ -925,6 +937,37 @@
 			xhr.send( FD );
 		}
 	}
+
+	window.searchUserIDByUserID = function( url, user_id, callback ){
+		if (!url ) return -1;
+		if (!user_id ) return -1;
+
+		let specificUrl = url + "get_many_usr_info_keyword"; //set the url you want
+		let xhr = new XMLHttpRequest(); // dont use var!!! will override the previous one
+		let data = {
+			keyword: user_id,
+			search_keys: ["user_id"]
+		};
+		let request = {
+			"ver":"3.0.0",
+			"cid": 5,
+			"data":data
+		};
+		let jsonReq = JSON.stringify(request);
+		xhr.open( 'POST', specificUrl , true );
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.responseType = 'json' // set reponse as "arraybuffer" or "text" or "json"
+		xhr.onload = function(e) {
+			console.log("networkAgent.js: _searchUserIDByUserID: xhr.response", xhr.response.data );
+			// console.log("networkAgent.js: getPayInfoByUserID: user_type", xhr.response.data.user_type );
+
+			if (callback){
+				callback( xhr.response.data );
+			}
+		}
+		xhr.send( jsonReq );
+	}
+
 
 	////// POST test
 	window.testPOST = function(url, callback){

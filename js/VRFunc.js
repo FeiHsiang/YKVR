@@ -404,7 +404,7 @@
 							}
 
 							if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type == 'spherical_video'){
-								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png" );
+								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray.jpeg" );
 							}
 							else{
 								self.loadGLTFModel(scene_objs[i], position, rotation, scale, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url );
@@ -2125,9 +2125,17 @@
 	
 			// console.log("VRFunc.js: showVRProjList: ", url, makarID);
 			getVRSceneByUserID(url, makarID, function(data){
-				// console.log("VRFunc.js: showVRProjList: getVRSceneByUserID: callback, data=", data);
+				console.log("VRFunc.js: showVRProjList: getVRSceneByUserID: callback, publishVRProjs=", publishVRProjs);
+				let chooseVRProject = 0;
+				if ( typeof(projName) == "string" ){
+					for (let i in publishVRProjs.result ){
+						if (publishVRProjs.result[i].proj_name.toLowerCase() == projName.toLowerCase()  ){
+							chooseVRProject = i;
+						}
+					}
+				}
 				
-				activeVRScenes(0);
+				activeVRScenes(chooseVRProject);
 
 	
 			});
