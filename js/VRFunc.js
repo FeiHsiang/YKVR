@@ -563,9 +563,7 @@
 							plane.setAttribute('class', "unclickable" ); //// fei add
 						}
 
-						setTimeout(function(){
-							plane.setAttribute("cursor-listener", true ); //// fei add
-						}, 500 );
+						
 
 						//20191101-end-thonsha-mod
 
@@ -586,6 +584,11 @@
 
 							// console.log(evt);
 							if (evt.target == evt.currentTarget){
+
+								setTimeout(function(){
+									plane.setAttribute("cursor-listener", true ); //// fei add
+								}, 500 );
+
 								console.log("VRFunc.js: loadTexture: loaded target same" );
 								// console.log("loadTexture:", texture.image.width, texture.image.height, evt );
 								// plane.object3D.children[0].scale.multiply(new THREE.Vector3(texture.image.width*0.01, texture.image.height*0.01 , 1));
@@ -720,15 +723,17 @@
 				}
 				// textEntity.setAttribute( "id", obj.obj_id );//// fei add 
 				// textEntity.setAttribute("makarVRIndex", i ); //// fei add
-				setTimeout(function(){
-					textEntity.setAttribute("cursor-listener", true ); //// fei add
-				}, 500 );
+				
 
 				// self.setTransform(textEntity, position, rotation, scale);
 				// self.makarObjects.push( textEntity );
 
 				textEntity.addEventListener("loaded", function(evt){
 					if (evt.target == evt.currentTarget){
+
+						setTimeout(function(){
+							textEntity.setAttribute("cursor-listener", true ); //// fei add
+						}, 500 );
 
 						let r = new THREE.Vector3();
 						r.set(0,Math.PI, 0); 
@@ -829,10 +834,7 @@
 					modelEntity.setAttribute('class', "unclickable" ); //// fei add
 				}
 				modelEntity.setAttribute( "id", obj.obj_id );//// fei add 
-				// modelEntity.setAttribute("makarVRIndex", i ); //// fei add
-				setTimeout(function(){
-					modelEntity.setAttribute("cursor-listener", true ); //// fei add
-				}, 500 );
+				
 				modelEntity.setAttribute('crossorigin', 'anonymous');
 
 				self.setTransform(modelEntity, position, rotation, scale);
@@ -842,6 +844,11 @@
 				modelEntity.addEventListener("model-loaded", function(evt){ // model-loaded  / object3dset
 					// console.log("VRFunc.js: VRController: _loadGLTFModel, object3dset: evt=", evt );
 					if ( evt.target ==  evt.currentTarget ){
+
+						setTimeout(function(){
+							modelEntity.setAttribute("cursor-listener", true ); //// fei add
+						}, 500 );
+
 						if ( modelEntity.object3D ){
 							modelEntity.object3D["makarObject"] = true;
 							if ( obj.behav ){
@@ -1266,9 +1273,7 @@
 					else{
 						videoPlane.setAttribute('class', "unclickable" ); //// fei add
 					}
-					setTimeout(function(){
-						videoPlane.setAttribute("cursor-listener", true ); //// fei add
-					}, 500 );
+					
 
 					videoPlane.setAttribute( "id", obj.obj_id );//// fei add 
 					// videoPlane.setAttribute("makarVRIndex", i ); //// fei add
@@ -1285,6 +1290,11 @@
 					// videoPlane.addEventListener("object3dset", function(evt){
 						// console.log(evt);
 						if (evt.target == evt.currentTarget){
+
+							setTimeout(function(){
+								videoPlane.setAttribute("cursor-listener", true ); //// fei add
+							}, 500 );
+
 							videoPlane.object3D.children[0].scale.multiply(new THREE.Vector3(videoWidth, videoHeight, 1));
 							let r = new THREE.Vector3();
 							r.set(0,Math.PI, 0); 
