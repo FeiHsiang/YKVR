@@ -64051,6 +64051,7 @@ PosePredictor.prototype.getPrediction = function (currentQ, gyro, timestampS) {
 };
 function FusionPoseSensor(kFilter, predictionTime, yawOnly, isDebug) {
   this.yawOnly = yawOnly;
+  this.count = 0;
   this.accelerometer = new Vector3();
   this.gyroscope = new Vector3();
   this.filter = new ComplementaryFilter(kFilter, isDebug);
@@ -64175,11 +64176,16 @@ FusionPoseSensor.prototype.updateDeviceMotion_ = function (deviceMotion) {
     return;
   }
   this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-  if (isR7()) {
-    this.gyroscope.set(-rotRate.beta, rotRate.alpha, rotRate.gamma);
-  } else {
-    this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+//[start-20200605-fei 0096-add]//
+  if (rotRate){
+    if (isR7()) {
+      this.gyroscope.set(-rotRate.beta, rotRate.alpha, rotRate.gamma);
+    } else {
+      this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+    }
   }
+//[end---20200605-fei 0096-add]//
+
   if (!this.isDeviceMotionInRadians) {
     this.gyroscope.multiplyScalar(Math.PI / 180);
   }
@@ -64294,6 +64300,7 @@ var PoseSensor = function () {
     value: function useDeviceMotion() {
       this.api = 'devicemotion';
       this.fusionSensor = new FusionPoseSensor(this.config.K_FILTER, this.config.PREDICTION_TIME_S, this.config.YAW_ONLY, this.config.DEBUG);
+      console.log("aframe-v1.0.4.js: FusionPoseSensor: ***********  ", this.fusionSensor);
       if (this.sensor) {
         this.sensor.removeEventListener('reading', this._onSensorRead);
         this.sensor.removeEventListener('error', this._onSensorError);
