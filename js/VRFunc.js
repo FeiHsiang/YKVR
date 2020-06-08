@@ -2309,7 +2309,7 @@
 				let ambientLight = document.createElement("a-light");
 				ambientLight.setAttribute("id", "ambientLight");
 				ambientLight.setAttribute("type", "ambient" );
-				ambientLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
+				ambientLight.setAttribute("color", "#808080" ); // white / gray / #fff 
 				// ambientLight.setAttribute("ground-color", "#fff" ); // #fff , Fei dont know how it work
 				ambientLight.setAttribute("intensity", 1 );
 
