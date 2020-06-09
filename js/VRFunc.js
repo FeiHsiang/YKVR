@@ -10,60 +10,60 @@
 			}
 		});
 	
-		AFRAME.registerComponent('cursor-listener', {
-			init: function () {
-				//20191023-start-thonsha-mod
+		// AFRAME.registerComponent('cursor-listener', {
+		// 	init: function () {
+		// 		//20191023-start-thonsha-mod
 
-				// this.el.addEventListener( 'touchend', endEvent, false );
-				// this.el.addEventListener( 'mouseup', endEvent, false );
-				this.el.addEventListener( 'click', clickEvent, false );
-				this.el.addEventListener( 'fusing', fusingEvent, false );
+		// 		// this.el.addEventListener( 'touchend', endEvent, false );
+		// 		// this.el.addEventListener( 'mouseup', endEvent, false );
+		// 		this.el.addEventListener( 'click', clickEvent, false );
+		// 		this.el.addEventListener( 'fusing', fusingEvent, false );
 
-				function fusingEvent(event){
-					event.preventDefault();
-					if (event.target == event.currentTarget){
-						// console.log('I was fusing, this.object3D = ', this.object3D , event );
-						if (this.object3D.behav){
-							delay = this.object3D.behav[0].display*1000+5;
-							// console.log("======= delay :"+delay+" =====");
-							let cursor = document.getElementById("cursor_main");
-							cursor.setAttribute('cursor', "fuseTimeout:"+ delay);
-							cursor.setAttribute('animation__mouseenter', "dur: "+delay );
-						}
-					}
+		// 		function fusingEvent(event){
+		// 			event.preventDefault();
+		// 			if (event.target == event.currentTarget){
+		// 				// console.log('I was fusing, this.object3D = ', this.object3D , event );
+		// 				if (this.object3D.behav){
+		// 					delay = this.object3D.behav[0].display*1000+5;
+		// 					// console.log("======= delay :"+delay+" =====");
+		// 					let cursor = document.getElementById("cursor_main");
+		// 					cursor.setAttribute('cursor', "fuseTimeout:"+ delay);
+		// 					cursor.setAttribute('animation__mouseenter', "dur: "+delay );
+		// 				}
+		// 			}
 					
 
-				}	
+		// 		}	
 
-				function clickEvent( event ) {
-					console.log('I was clicked, this.object3D = ', this.object3D , event );
-					event.preventDefault();
+		// 		function clickEvent( event ) {
+		// 			console.log('I was clicked, this.object3D = ', this.object3D , event );
+		// 			event.preventDefault();
 					
-					if (event.target == event.currentTarget){
-						// console.log('I was clicked, this.object3D = ', this.object3D , event );
+		// 			if (event.target == event.currentTarget){
+		// 				// console.log('I was clicked, this.object3D = ', this.object3D , event );
 						
-						if ( this.object3D.behav ){
-							let reset = false;
-							for(let i=0;i<this.object3D.behav.length;i++){
-								if (this.object3D.behav[i].simple_behav == "CloseAndResetChildren"){
-									reset = true;
-								}
-							}
+		// 				if ( this.object3D.behav ){
+		// 					let reset = false;
+		// 					for(let i=0;i<this.object3D.behav.length;i++){
+		// 						if (this.object3D.behav[i].simple_behav == "CloseAndResetChildren"){
+		// 							reset = true;
+		// 						}
+		// 					}
 
-							for(let i=0;i<this.object3D.behav.length;i++){
-								if (this.object3D.behav[i].simple_behav != "CloseAndResetChildren"){
-									vrController.triggerEvent( this.object3D.behav[i], reset );
-								}
-							}
+		// 					for(let i=0;i<this.object3D.behav.length;i++){
+		// 						if (this.object3D.behav[i].simple_behav != "CloseAndResetChildren"){
+		// 							vrController.triggerEvent( this.object3D.behav[i], reset );
+		// 						}
+		// 					}
 							
-						}
-					}
-				}
+		// 				}
+		// 			}
+		// 		}
 				
-				//20191023-end-thonsha-mod
+		// 		//20191023-end-thonsha-mod
 
-			}
-		});
+		// 	}
+		// });
 	
 		var VRController = function(){
 			//// scene 2D part
@@ -79,6 +79,10 @@
 			this.makarVRscenes = {};
 
 			this.makarObjects = [];
+
+			this.objectControlState = null; //// 0: nothing, 1:mousedown/touchstart, 2: mousemove/touchmove, 3: mouseup/touchend.
+			this.controlObject = null; //// for control object
+			this.emptyObject = new THREE.Object3D(); //// create the empty object for memory control
 
 //20200528-thonsha-add-start
 			// this.cubeCamera = null;
@@ -321,6 +325,29 @@
 								}
 							}else{
 								console.log("%cVRFunc.js: _loadSceneObjects: image res_id not exist!", "color:red" , i );	
+								
+								switch(obj.res_id){
+									case "MakAR_Call":
+										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Call.png";
+										break;
+									case "MakAR_Room": 
+										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Room.png";
+										break;
+									case "MakAR_Mail": 
+										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Mail.png";
+										break;
+									case "Line_icon":
+										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Line_icon.png";
+										break;
+									case "FB_icon":
+										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/FB_icon.png";
+										break;
+									default:
+										console.log("image: default, obj=", window.sceneResult[i].data.scene_objs_v2[j]);
+								}
+
+								self.loadTexture(obj, position, rotation, scale );
+							
 							}
 
 							break;
@@ -659,12 +686,15 @@
 				
 				let anchor = document.createElement('a-entity');
 					
-				// anchor.setAttribute("geometry","primitive: sphere; radius: 0.05" );
-				// anchor.setAttribute("material","roughness: 0.48; color:	#FF0000");
 				self.setTransform(anchor, position, rotation, scale);
 				anchor.setAttribute( "id", obj.obj_id );//// fei add 
 				self.makarObjects.push( anchor );
-				
+				if (obj.behav){
+					anchor.setAttribute('class', "clickable" ); //// fei add
+				}
+				else{
+					anchor.setAttribute('class', "unclickable" ); //// fei add
+				}
 				
 				// let textEntity = document.createElement('a-entity');
 				// // textEntity.setAttribute("geometry","primitive: plane; width: auto; height: auto; width: auto");
@@ -688,7 +718,8 @@
 							textLength += 1;
 						}
 						else if(textList[i][j] == textList[i][j].toLowerCase() && textList[i][j] != textList[i][j].toUpperCase()){ // lower-case
-							textLength += 0.85;
+							// textLength += 0.85;
+							textLength += 1;
 						}
 						else if(!isNaN(textList[i][j] * 1)){ //numeric
 							textLength += 1;
@@ -708,6 +739,7 @@
 				textEntity.setAttribute("align","left");
 				textEntity.setAttribute("geometry","primitive:plane; width:auto; height:auto");
 				textEntity.setAttribute("material","opacity: 0");
+				textEntity.setAttribute("side","double");
 				textEntity.setAttribute("font","font/bbttf-msdf.json");
 				textEntity.setAttribute("negate","false");
 
@@ -757,8 +789,10 @@
 				if(obj.behav_reference){
 					for(let i=0; i<obj.behav_reference.length;i++){
 						if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
-							textEntity.setAttribute("visible", false);
-							textEntity.setAttribute('class', "unclickable" );
+							// textEntity.setAttribute("visible", false);
+							// textEntity.setAttribute('class', "unclickable" );
+							anchor.setAttribute("visible", false);
+							anchor.setAttribute('class', "unclickable" );
 							break;
 						}
 					}
@@ -772,6 +806,8 @@
 						let parent = document.getElementById(obj.obj_parent_id);
 						if (parent){ 
 							if(parent.object3D.children.length > 0){
+								console.log(" ************* VRFunc.js: _loadText: obj with parent, parent=", parent, ", obj=", obj, ", anchor=", anchor );
+
 								parent.appendChild(anchor);
 								window.clearInterval(timeoutID);
 							} 
@@ -842,7 +878,7 @@
 
 				//20191125-start-thonsha-add
 				modelEntity.addEventListener("model-loaded", function(evt){ // model-loaded  / object3dset
-					// console.log("VRFunc.js: VRController: _loadGLTFModel, object3dset: evt=", evt );
+					console.log("VRFunc.js: VRController: _loadGLTFModel, object3dset: evt=", evt , obj );
 					if ( evt.target ==  evt.currentTarget ){
 
 						setTimeout(function(){
@@ -1405,7 +1441,7 @@
 				a.applyEuler(b);
 				Light.setAttribute( "position", a );//// origin
 
-				self.makarObjects.push( Light );
+				// self.makarObjects.push( Light );
 				self.vrScene.appendChild(Light);// this = vrScene
 			}
 			
@@ -1442,6 +1478,267 @@
 					}
 				}
 			}
+
+
+			////// 設計將 VR 專案中 cursor 的功能取消，改以點擊觸發。 
+			////// 因為 VR 場景中目前不讓使用者以點擊或是滑鼠來操控物件，所以不序要額外判斷 look-control 開啟與否
+			////// --------------------- debug --------------------------------
+
+			this.getMakarObject = function( obj ){
+				if (obj.makarObject != true){
+					if ( obj.parent ){
+						// console.log("obj.parent exist, goto");
+						return ( self.getMakarObject( obj.parent ) );
+					}else{
+						// console.log("obj.parent not exist, return 0");
+						return 0;
+					}
+				}else{
+					// console.log("obj.makarObject == true, return", obj);
+					return obj ;
+				}
+			}
+
+
+			////// add the listener for show the panel or not
+			self.vrScene.canvas.addEventListener("touchstart", startEvent, false);
+			self.vrScene.canvas.addEventListener("mousedown", startEvent, false);
+
+			self.vrScene.canvas.addEventListener( 'touchmove', moveEvent, false );
+			self.vrScene.canvas.addEventListener( 'mousemove', moveEvent, false );
+
+			self.vrScene.canvas.addEventListener("touchend", endEvent, false);
+			self.vrScene.canvas.addEventListener("mouseup", endEvent, false);
+
+//[start-20200313-fei0091-add]//
+			////  set the temporary empty object, will replace it by the touchstart(cell phone)/mouseDown(PC)
+			// var objectControls = new THREE.ObjectControls( self.vrScene.canvas , vrController.emptyObject );  
+			// objectControls.enableVerticalRotation();
+			// objectControls.setRotationSpeed( 0.1 ); // for PC 
+			// objectControls.setPanSpeed( 0.01 ); // for PC 
+
+			// objectControls.setRotationSpeedTouchDevices( 0.05 ); // for cell phone
+			// objectControls.setDistance( -1000, 1000); // set min - max distance for zoom
+			// objectControls.setZoomSpeed( 2 ); // set zoom speed
+			
+//[end---20200313-fei0091-add]//
+			//////
+			////// raycaster for touch and mouse 
+			//////
+			var preMouse = new THREE.Vector2();
+			var mouse = new THREE.Vector2();
+			var raycaster = new THREE.Raycaster();
+			
+			function startEvent(event){
+				// console.log("VRFunc.js: startEvent: event=", event );
+
+				event.preventDefault();
+				self.touchMouseState = 1;
+				let rect = self.GLRenderer.domElement.getBoundingClientRect();
+				switch ( event.type ) {
+					case "mousedown": ////// 20190709 Fei: add this event type for PC mouse
+						preMouse.x = event.clientX ;
+						preMouse.y = event.clientY ;
+
+						mouse.x = ( (event.clientX - rect.left) / self.GLRenderer.domElement.clientWidth ) * 2 - 1; // GLRenderer.domElement.clientWidth window.innerWidth
+						mouse.y = - ( (event.clientY - rect.top) / self.GLRenderer.domElement.clientHeight ) * 2 + 1; // GLRenderer.domElement.clientHeight  window.innerHeight
+						break;
+					case "touchstart": ////// 20190709 Fei: add this event type for cellphone
+						// console.log("endEvent: touchend: event.touches  = ", event.changedTouches[0].clientX, event.changedTouches[0].clientY );
+						preMouse.x = event.changedTouches[0].clientX;
+						preMouse.y = event.changedTouches[0].clientY;
+						
+						mouse.x = ( (event.changedTouches[0].clientX - rect.left) / self.GLRenderer.domElement.clientWidth ) * 2 - 1; // GLRenderer.domElement.clientWidth window.innerWidth
+						mouse.y = - ( (event.changedTouches[0].clientY - rect.top) / self.GLRenderer.domElement.clientHeight ) * 2 + 1; // GLRenderer.domElement.clientHeight  window.innerHeight
+						break;
+
+					default:
+						console.log("VRFunc.js: startEvent: event.type=", event.type, " not mousedown/touchstart, return ");
+						return ;
+
+				}
+
+				let makarTHREEObjects = [];
+				for ( let i = 0; i < self.makarObjects.length; i++ ){
+					let makarObject = self.makarObjects[i];
+					// if ( makarObject.object3D ){
+					if ( makarObject.object3D && makarObject.className == "clickable" ){	
+							makarTHREEObjects.push(makarObject.object3D );
+					}
+				}
+
+				raycaster.setFromCamera( mouse, self.vrScene.camera );
+				let intersects = raycaster.intersectObjects( makarTHREEObjects , true ); 
+				if (intersects.length != 0 ){
+					console.log("VRFunc.js: startEvent: intersects =", intersects );
+					let touchObject = self.getMakarObject( intersects[0].object );
+					console.log("VRFunc.js: startEvent: touchObject =", touchObject );
+
+					vrController.controlObject = touchObject;
+					// objectControls.setObjectToMove( vrController.controlObject  );
+				
+					//// disable the look-control 
+					//// check PC or mobile
+					// if ( window.navigator.userAgent.toLowerCase().indexOf("mobile") >= 0  ){
+					// 	aCamera.setAttribute('look-controls', { enabled: true , touchEnabled: false  } ); 
+					// }else{
+					// 	aCamera.setAttribute('look-controls', { enabled: false , touchEnabled: false  } ); 
+					// }
+					// aCamera.components["look-controls"].saveCameraPose();
+				
+
+				}else{ //// there is no object touched/pointed, make the objectControl disable , then make the look-control enable
+					//// set control object to empty.
+					// objectControls.setObjectToMove( vrController.emptyObject );
+					//// enable the look-control 
+					// aCamera.setAttribute('look-controls', { enabled: true , touchEnabled: true  } ); 
+
+				}
+
+			}
+			
+			function endEvent( event ) {
+				// console.log("VRFunc.js: _setupFunction: endEvent: event=", event );
+				if (self.touchMouseState == 2){
+					return;
+				}
+				event.preventDefault(); ////// if not set this, on mobile will trigger twice 
+				let rect = self.GLRenderer.domElement.getBoundingClientRect();
+				switch ( event.type ) {
+					case "mouseup":
+						mouse.x = ( (event.clientX - rect.left) / self.GLRenderer.domElement.clientWidth ) * 2 - 1; // GLRenderer.domElement.clientWidth window.innerWidth
+						mouse.y = - ( (event.clientY - rect.top) / self.GLRenderer.domElement.clientHeight ) * 2 + 1; // GLRenderer.domElement.clientHeight  window.innerHeight
+						break;
+					case "touchend":////// 20190709 Fei: add this event type for cellphone
+						mouse.x = ( (event.changedTouches[0].clientX - rect.left) / self.GLRenderer.domElement.clientWidth ) * 2 - 1; // GLRenderer.domElement.clientWidth window.innerWidth
+						mouse.y = - ( (event.changedTouches[0].clientY - rect.top) / self.GLRenderer.domElement.clientHeight ) * 2 + 1; // GLRenderer.domElement.clientHeight  window.innerHeight
+						break;
+					default:
+						console.log("default endEvent: event.type=", event.type, " not mouseup/touchend, return ");
+						return ;
+				}
+				// console.log("VRFunc.js: _setupFunction: endEvent, mouse=", mouse  );
+				
+//[start-20200315-fei0092-add]//
+				////// for the 2D scene part
+
+				// let makarTHREEObjects2D = [];
+				// for ( let i = 0; i < self.makarObjects2D.length; i++ ){
+				// 	let makarObject2D = self.makarObjects2D[i];
+				// 	if (makarObject2D.makarObject == true ){
+				// 		makarTHREEObjects2D.push(makarObject2D );
+				// 	}
+				// }
+
+				// raycaster.setFromCamera( mouse, self.camera2D );
+				// let intersects2D = raycaster.intersectObjects(  makarTHREEObjects2D, true ); 
+				// // console.log("VRFunc.js: raycaster 2D: endEvent, intersects2D=", intersects2D , makarTHREEObjects2D );
+				// if (intersects2D.length != 0 ){
+				// 	let touchObject2D = self.getMakarObject( intersects2D[0].object );
+				// 	// console.log("VRFunc.js: raycaster 2D: endEvent, touchObject2D=", touchObject2D  );
+				// 	if (touchObject2D.behav){
+				// 		let reset = false;
+				// 		for(let i = 0; i < touchObject2D.behav.length; i++){
+				// 			if (touchObject2D.behav[i].simple_behav == "CloseAndResetChildren"){
+				// 				reset = true;
+				// 			}
+				// 		}
+				// 		for(let i = 0; i < touchObject2D.behav.length; i++){
+				// 			if (touchObject2D.behav[i].simple_behav == "ShowImage"){
+ 				// 				var tempBehav = Object.assign({}, touchObject2D.behav[i]);
+				// 				tempBehav.simple_behav = "ShowImage2D"; //// seperate from ShowImage
+
+				// 				self.triggerEvent( tempBehav, reset, touchObject2D );
+				// 			}else{
+				// 				self.triggerEvent( touchObject2D.behav[i], reset, touchObject2D );
+
+				// 			}
+				// 		}
+				// 	}
+				// }
+//[end---20200315-fei0092-add]//
+
+				////// for the 3D scene part
+				let makarTHREEObjects = [];
+				for ( let i = 0; i < self.makarObjects.length; i++ ){
+					let makarObject = self.makarObjects[i];
+					if ( makarObject.object3D && makarObject.className == "clickable" ){
+						makarTHREEObjects.push(makarObject.object3D );
+					}
+				}
+
+				raycaster.setFromCamera( mouse, self.vrScene.camera );
+				let intersects = raycaster.intersectObjects(  makarTHREEObjects, true ); 
+				console.log("VRFunc.js: _setupFunction: endEvent, intersects=", intersects , makarTHREEObjects , self.makarObjects );
+				if (intersects.length != 0 ){
+					console.log("VRFunc.js: _setupFunction: 1 endEvent, intersects=", intersects );
+					let touchObject = self.getMakarObject( intersects[0].object );
+					console.log("VRFunc.js: _setupFunction: endEvent, touchObject.behav=", touchObject.behav );
+
+					if (touchObject.behav){
+						// self.triggerEvent( touchObject.behav[0] ); // 20190827: add the parameter obj( makarObject)
+						// return;
+
+						let reset = false;
+						for(let i = 0; i < touchObject.behav.length; i++){
+							if (touchObject.behav[i].simple_behav == "CloseAndResetChildren"){
+								reset = true;
+							}
+						}
+						for(let i = 0; i < touchObject.behav.length; i++){
+							if (touchObject.behav[i].simple_behav != "CloseAndResetChildren"){
+								self.triggerEvent( touchObject.behav[i], reset, touchObject );
+							}
+						}
+
+					}
+				}
+			}
+
+			function moveEvent(event){
+				switch ( event.type ) {
+					case "mousemove":
+						if ( self.touchMouseState == 1 ){
+							if ( Math.abs(preMouse.x - event.clientX ) > 2 || Math.abs( preMouse.y - event.clientY  ) > 2 ){
+								self.touchMouseState = 2;
+								// console.log("VRFunc.js: moveEvent: 1  event=", event );
+
+							}
+						}
+						break;
+					case "touchmove":////// 20190709 Fei: add this event type for cellphone
+						if ( Math.abs(preMouse.x - event.changedTouches[0].clientX) > 2 || Math.abs( preMouse.y - event.changedTouches[0].clientY )>2 ){
+							self.touchMouseState = 2;
+							// console.log("VRFunc.js: moveEvent: 2  event=", event );
+
+						}
+
+						////// If two pointers are down, make the control object as the previous object
+						if (event.touches.length === 2) {
+							// console.log("VRFunc.js: moveEvent: 3  event=", event );
+
+							// objectControls.setObjectToMove( vrController.controlObject );
+							// aCamera.setAttribute('look-controls', { enabled: true , touchEnabled: false  } ); 
+						}
+
+						break;
+					default:
+						console.log(" startEvent: event.type=", event.type, " not mousemove/touchmove, return ");
+						return ;
+				}
+			}
+
+
+
+
+
+
+
+			/////// --------------------- debug  -----------------------------
+
+
+
+
 		}
 
 		VRController.prototype.triggerEvent = function( event, reset, GLRenderer, arScene, makarObj ){
@@ -1449,7 +1746,8 @@
 				return;
 			}
 			var self = this;
-
+			let target;
+			
 			switch ( event.simple_behav ){
 				case "PhoneCall":
 					console.log("VRFunc.js: triggerEvent: PhoneCall: event=", event );	
@@ -1579,6 +1877,72 @@
 					}
 					break;
 				
+					case "ShowText":
+						console.log("VRFunc.js: triggerEvent: ShowText: event=", event );	
+						obj_id = event.obj_id;
+						target = document.getElementById(obj_id);
+						console.log("VRFunc.js: triggerEvent: ShowText: target=", target.getAttribute("visible") ,target );	
+						if (target.getAttribute("visible")){
+							target.setAttribute("visible",false);
+							target.setAttribute('class', "unclickable" );
+	
+							target.object3D.traverse(function(child){
+								if (child.type=="Group"){
+									child.el.setAttribute('class', "unclickable" );
+									if(child.el.localName=="a-video"){
+										let id = child.el.getAttribute("src");
+										if(id!=undefined){
+											id = id.split("#").pop();
+											let v = document.getElementById(id);
+											if (v instanceof HTMLElement){
+												v.pause();
+											}
+										}
+									}
+									if(child.el.getAttribute("sound")){
+										child.el.components.sound.stopSound();
+									}
+								}
+							});
+							if (reset){
+								target.object3D.traverse(function(child){
+									if (child.type=="Group"){
+										child.el.setAttribute("visible",false);
+										child.el.setAttribute('class', "unclickable" );
+									}
+								});
+							}
+						}
+						else{
+							target.setAttribute("visible",true);
+							if(target.object3D.behav){
+								target.setAttribute('class', "clickable" );
+							}
+							target.object3D.traverse(function(child){
+								if (child.type=="Group"){
+									if (child.el.getAttribute("visible")){
+										if(child.el.object3D.behav){
+											child.el.setAttribute('class', "clickable" );
+										}
+										if(child.el.localName=="a-video"){
+											let id = child.el.getAttribute("src");
+											if(id!=undefined){
+												id = id.split("#").pop();
+												let v = document.getElementById(id);
+												if (v instanceof HTMLElement){
+													v.play();
+												}
+											}
+										}
+										if(child.el.getAttribute("sound")){
+											child.el.components.sound.playSound();
+										}
+									}
+								}
+							});
+						}
+						break;
+
 				case "ShowModel":
 					console.log("VRFunc.js: triggerEvent: ShowModel: event=", event );	
 					obj_id = event.obj_id;
@@ -2243,7 +2607,7 @@
 					document.getElementById("panel").className = "collapsed"; ////// smaller the panel
 				}
 				
-				vrController.setupFunction();
+
 				////// set member into vrController
 				let rendererSize = new THREE.Vector2();
 				vrScene.renderer.getSize( rendererSize );
@@ -2262,6 +2626,8 @@
 				
 				vrController.vrScene = vrScene;
 	
+				vrController.setupFunction();
+
 				////// set cursor with animation
 				let cursorEntity = document.createElement('a-entity');
 				cursorEntity.setAttribute('id', "cursor_main" );
@@ -2292,10 +2658,11 @@
 				aCamera.setAttribute( "far", 10000 ); ////// it is work, default is 10000
 				
 				// console.log("VRFunc.js: aCamera.object3D.children=", aCamera.object3D.children.length );
-				aCamera.appendChild(cursorEntity);
-				aCamera.appendChild(cursorEntityDefault);
-				// console.log("VRFunc.js: aCamera=", aCamera );
-	
+
+				// aCamera.appendChild(cursorEntity);
+				// aCamera.appendChild(cursorEntityDefault);
+				
+				
 				////// set the a-entity to wrap the a-camera, the position and roation set here is the default value, will replace when load scene.
 				let cameraEntity = document.createElement('a-entity');
 				cameraEntity.setAttribute('id', "camera_cursor" ); ////// it is work, can get value!
@@ -2309,7 +2676,7 @@
 				let ambientLight = document.createElement("a-light");
 				ambientLight.setAttribute("id", "ambientLight");
 				ambientLight.setAttribute("type", "ambient" );
-				ambientLight.setAttribute("color", "#808080" ); // white / gray / #fff 
+				ambientLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
 				// ambientLight.setAttribute("ground-color", "#fff" ); // #fff , Fei dont know how it work
 				ambientLight.setAttribute("intensity", 1 );
 
