@@ -1013,10 +1013,21 @@
 											objj.traverse(node => {
 												if (node.material) {
 													if (node.material.name == obj.material[i].name) {
-														node.material.metalness = 0;
-														node.material.opacity = 1;
-														node.material.transparent = false;
-														node.material.emissiveIntensity = 0;
+														
+
+														if (node.material.skinning === true ){
+															node.material = new THREE.MeshBasicMaterial({name: obj.material[i].name, skinning: true, map: node.material.map});;
+														}else{
+															node.material = new THREE.MeshBasicMaterial({name: obj.material[i].name, skinning: false, map: node.material.map});;
+														}
+
+														// node.material.metalness = 0;
+														// node.material.opacity = 1;
+														// node.material.transparent = false;
+														// node.material.emissiveIntensity = 0;
+														// node.material.needsUpdate = true;
+
+														console.log(" VRFunc.js: loadGLTFModel: material= Unlit/texture:",  node.material , node.material.lightMapIntensity , node.material.aoMapIntensity  );
 
 													}
 												}
@@ -1429,7 +1440,8 @@
 					Light.setAttribute("castShadow", false);
 				}
 				else{
-					Light.setAttribute("castShadow", true);
+					// Light.setAttribute("castShadow", true);
+					Light.setAttribute("castShadow", false);
 				}
 				
 				let a = new THREE.Vector3( 0, 0, -1 );
@@ -2677,7 +2689,7 @@
 				let ambientLight = document.createElement("a-light");
 				ambientLight.setAttribute("id", "ambientLight");
 				ambientLight.setAttribute("type", "ambient" );
-				ambientLight.setAttribute("color", "#FFFFFF" ); // white / gray / #fff 
+				ambientLight.setAttribute("color", "#808080" ); // white / gray / #fff 
 				// ambientLight.setAttribute("ground-color", "#fff" ); // #fff , Fei dont know how it work
 				ambientLight.setAttribute("intensity", 1 );
 
