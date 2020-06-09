@@ -239,7 +239,7 @@
 		//// PC firefox 會認為 requestPermission 不存在，但是無法使用 
 		var getDMP = false;
 		window.requestDeviceMotionPermission = function (){
-            console.log("makarVR.html: requestDeviceMotionPermission  ", DeviceMotionEvent , typeof(DeviceMotionEvent)  );
+            // console.log("makarVR.html: requestDeviceMotionPermission  ", DeviceMotionEvent , typeof(DeviceMotionEvent)  );
             if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function') {
                 DeviceMotionEvent.requestPermission().then(response => {
                     console.log("makarVR.html: requestPermission response =", response );
@@ -313,7 +313,8 @@
 		<br>
 		<a href = "tel:666666" id ="phoneCall"></a>
 		<a href = "mailto:infomakar@miflydesign.com" id ="sendEmail"></a>
-		<a href = "https://www.miflydesign.com" id ="openWebBrowser" target="_blank" ></a>
+		<!-- <a href = "https://www.miflydesign.com" id ="openWebBrowser" target="_blank" ></a> -->
+		<a href = "https://www.miflydesign.com" id ="openWebBrowser" target="_self" ></a>
 		<br>
 		<!-- <p>&larr; <a href="../index.html">Back to examples</a> &rarr; </p> -->
 		<br>
