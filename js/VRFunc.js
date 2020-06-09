@@ -566,7 +566,8 @@
 						}
 						else{
 							if (imgType == "jpg" || imgType == "jpeg" || imgType == "png"){
-								plane.setAttribute( "material", "side:double; opacity: 1.0; transparent: true; " ); //// it is work
+								// plane.setAttribute( "material", "side:double; opacity: 1.0; transparent: true; " ); //// 圖片會受場上光源影響
+								plane.setAttribute( "material", "shader: flat; side:double; opacity: 1.0; transparent: true; " ); //// 圖片不受場上光源影響
 							}
 							else if (imgType == "gif"){
 								plane.setAttribute("geometry", "primitive: plane");
