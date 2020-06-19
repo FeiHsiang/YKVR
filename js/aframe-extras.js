@@ -14085,6 +14085,10 @@ module.exports = AFRAME.registerComponent('animation-mixer', {
     if (this.mixer && !isNaN(dt)){
       this.mixer.update(dt / 1000);
 
+      if (!this.mixer._actions[0]){
+        return;
+      }
+
       // console.log("aframe-extras.js: animation-mixer: tick: model.animationSlices=", this.model.animationSlices );
       if (this.model.animationSlices  ){
         if (this.model.animationSlices[0].uid){

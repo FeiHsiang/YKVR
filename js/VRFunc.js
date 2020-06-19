@@ -135,24 +135,37 @@
 						}
 						self.makarObjects.length = 0; // clean the array.
 					}
+					//// 假如場景名稱含有 "@nv@" 則開背景相機，同時設定 isShowSky, 讓loading GLTF 時候可以判斷該不該 load 環景圖
+					if ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_name.includes("@nv@")  ){
+						for (let i in self.scene2D.children ){
+							if (self.scene2D.children[i].videoBackground && self.scene2D.children[i].visible == false ){
+								self.scene2D.children[i].visible = true;
+							}
+						}
+						self.isShowSky = false;
+					}else{
+						self.isShowSky = true;
+					}
 
 					self.loadAssets(); //// for video elements
 					self.loadSceneObjects(projIndex, sceneIndex);
 					setTimeout( function(){
 
 						self.currentSceneIndex = sceneIndex;
-						//// 假如場景名稱含有 "@nv@" 則開背景相機
-						if ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_name.includes("@nv@")  ){
-							for (let i in self.scene2D.children ){
-								if (self.scene2D.children[i].videoBackground && self.scene2D.children[i].visible == false ){
-									self.scene2D.children[i].visible = true;
-								}
-							}
-							self.isShowSky = false;
-						}else{
+						if ( self.isShowSky ){
 							self.loadSky(projIndex, sceneIndex);
-							self.isShowSky = true;
 						}
+						// if ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_name.includes("@nv@")  ){
+						// 	for (let i in self.scene2D.children ){
+						// 		if (self.scene2D.children[i].videoBackground && self.scene2D.children[i].visible == false ){
+						// 			self.scene2D.children[i].visible = true;
+						// 		}
+						// 	}
+						// 	self.isShowSky = false;
+						// }else{
+						// 	self.loadSky(projIndex, sceneIndex);
+						// 	self.isShowSky = true;
+						// }
 						
 						// self.loadSky(projIndex, sceneIndex);
 
@@ -430,11 +443,16 @@
 								self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png"
 							}
 
+							let defaultGray360 = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg";
 							if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type == 'spherical_video'){
-								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray.jpeg" );
+								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg" );
 							}
 							else{
-								self.loadGLTFModel(scene_objs[i], position, rotation, scale, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url );
+								if (self.isShowSky){
+									self.loadGLTFModel(scene_objs[i], position, rotation, scale, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url );
+								}else{
+									self.loadGLTFModel(scene_objs[i], position, rotation, scale, defaultGray360 );
+								}
 							}
 							
 
@@ -631,6 +649,9 @@
 								if ( obj.behav ){
 									plane.object3D["behav"] = obj.behav ;
 								}
+								if(obj.behav_reference){
+									plane.object3D["behav_reference"] = obj.behav_reference ;
+								}
 							}else{
 								console.log("VRFunc.js: loadTexture: loaded target different" );
 							}
@@ -743,6 +764,7 @@
 				textEntity.setAttribute("side","double");
 				textEntity.setAttribute("font","font/bbttf-msdf.json");
 				textEntity.setAttribute("negate","false");
+				textEntity.setAttribute('crossorigin', 'anonymous');
 
 				let rgb = obj.color.split(",");
 				let color = new THREE.Color(parseFloat(rgb[0]),parseFloat(rgb[1]),parseFloat(rgb[2])); 
@@ -778,6 +800,9 @@
 						if ( obj.behav ){
 							textEntity.object3D["behav"] = obj.behav ;
 						}
+						if(obj.behav_reference){
+							textEntity.object3D["behav_reference"] = obj.behav_reference ;
+						}
 					}
 				});
 
@@ -807,7 +832,6 @@
 						let parent = document.getElementById(obj.obj_parent_id);
 						if (parent){ 
 							if(parent.object3D.children.length > 0){
-								console.log(" ************* VRFunc.js: _loadText: obj with parent, parent=", parent, ", obj=", obj, ", anchor=", anchor );
 
 								parent.appendChild(anchor);
 								window.clearInterval(timeoutID);
@@ -890,6 +914,9 @@
 							modelEntity.object3D["makarObject"] = true;
 							if ( obj.behav ){
 								modelEntity.object3D["behav"] = obj.behav ;
+							}
+							if(obj.behav_reference){
+								modelEntity.object3D["behav_reference"] = obj.behav_reference ;
 							}
 					
 							
@@ -1179,47 +1206,80 @@
 					let soundEntity = document.createElement('a-entity');
 					soundEntity.setAttribute("sound", "src: "+"#"+obj.obj_id+"_"+obj.res_id+"; autoplay: true; loop: true; volume: 1; positional: false");
 					soundEntity.setAttribute( "id", obj.obj_id );
-					// soundEntity.setAttribute("")
+					soundEntity.setAttribute("sound", "autoplay: false"); 
+
 
 					self.makarObjects.push( soundEntity );
 					//20191227-start-thonsha-mod
+					let audioBehavRef = false;
 					if(obj.behav_reference){
 						for(let i=0; i<obj.behav_reference.length;i++){
 							if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+								audioBehavRef = true;
+								soundEntity.setAttribute("sound", "loop: false");
 								soundEntity.setAttribute("visible", false);
 								soundEntity.setAttribute('class', "unclickable" );
-								soundEntity.setAttribute("loop", false);
 								break;
 							}
 						}
 						
+					}else{
+						soundEntity.setAttribute("visible", true);
 					}
 					//20191227-end-thonsha-mod
 
 					if(obj.obj_parent_id){
-						soundEntity.setAttribute("sound", "autoplay: false");
-						// soundEntity.setAttribute("visible", false);
-						// soundEntity.setAttribute('class', "unclickable" );
+
 						let timeoutID = setInterval( function () {
 							let parent = document.getElementById(obj.obj_parent_id);
 							if (parent){ 
 								if(parent.object3D.children.length > 0){
 									parent.appendChild(soundEntity);
 									window.clearInterval(timeoutID);
+
+									parent.addEventListener("child-attached", function(el){
+										
+										console.log("VRFunc.js: VRController: _loadAudio,: parent child-attached, el=", el );
+										let parentVisible = true;
+										soundEntity.object3D.traverseAncestors( function(parent) {
+											if (parent.type != "Scene"){
+												console.log("VRFunc.js: VRController: _loadAudio,: traverseAncestors: not Scene parent=", parent );
+												if (parent.visible == false){
+													parentVisible = false;
+												}
+											} else {
+												if (parentVisible == true && soundEntity.object3D.visible == true && audioBehavRef == false ){
+													console.log("VRFunc.js: VRController: _loadAudio,: traverseAncestors: all parent visible true=", soundEntity.object3D );
+													soundEntity.setAttribute("sound", "autoplay: true");
+												}else{
+													console.log("2 VRFunc.js: VRController: _loadAudio,: traverseAncestors: not all parent visible true=", soundEntity.object3D.children[0] );
+													soundEntity.setAttribute("sound", "autoplay: false"); 
+												}
+											}
+										});
+
+
+									})
+
 								} 
 							}
 						}, 1);
 					}
 					else{	
+						soundEntity.setAttribute("sound", "autoplay: true");
 						self.vrScene.appendChild(soundEntity);
 					}
 
 					soundEntity.addEventListener("loaded", function(evt){
 
 						if (evt.target == evt.currentTarget){
+							console.log("3 VRFunc.js: VRController: _loadAudio,: loaded, soundEntity.object3D.children[0]=", soundEntity.object3D.children[0] );
 							soundEntity.object3D["makarObject"] = true; 
 							if ( obj.behav ){
 								soundEntity.object3D["behav"] = obj.behav ;
+							}
+							if(obj.behav_reference){
+								soundEntity.object3D["behav_reference"] = obj.behav_reference ;
 							}
 						}
 					});
@@ -1236,7 +1296,7 @@
 				mp4Video = document.createElement('video');
 				mp4Video.src = obj.res_url; // url, "Data/makarVRDemo.mp4"
 				mp4Video.playsInline = true;
-				mp4Video.autoplay = true;
+				mp4Video.autoplay = false;
 				//thonsha add
 				mp4Video.loop = true;
 				//thonsha add
@@ -1354,15 +1414,20 @@
 							if ( obj.behav ){
 								videoPlane.object3D["behav"] = obj.behav ;
 							}
+							if(obj.behav_reference){
+								videoPlane.object3D["behav_reference"] = obj.behav_reference ;
+							}
 						}
 					});
 					
 					self.makarObjects.push( videoPlane );
 
 					//20191227-start-thonsha-mod
+					let videoBehavRef = false;
 					if(obj.behav_reference){
 						for(let i=0; i<obj.behav_reference.length;i++){
 							if (obj.behav_reference[i].behav_name != 'PlayAnimation'){
+								videoBehavRef = true;
 								videoPlane.setAttribute("visible", false);
 								videoPlane.setAttribute('class', "unclickable" );
 								break;
@@ -1392,14 +1457,15 @@
                                                     parentVisible = false;
                                                 }
                                             } else {
-                                                if (parentVisible == true && videoPlane.object3D.visible == true ){
+                                                if (parentVisible == true && videoPlane.object3D.visible == true && videoBehavRef ==false ){
                                                     console.log("VRFunc.js: VRController: _loadVideo,: traverseAncestors: all parent visible true=", videoPlane.object3D );
                                                     mp4Video.autoplay = true;
                                                     mp4Video.play();
                                                 }else{
                                                     console.log("VRFunc.js: VRController: _loadVideo,: traverseAncestors: not all parent visible true=", videoPlane.object3D );
                                                     //// rootObject.visible = false;
-                                                    mp4Video.autoplay = false;
+													mp4Video.autoplay = false;
+													mp4Video.pause();
                                                 }
                                             }
                                         });
@@ -1412,7 +1478,8 @@
 						}, 1);
 					}
 					else{
-						// mp4Video.autoplay = true;
+						mp4Video.autoplay = true;
+						mp4Video.play();//// this is not necessary 
 						self.vrScene.appendChild(videoPlane);
 					}
 					//20191029-end-thonhsa-add
@@ -1421,14 +1488,14 @@
 					// }, 1 );
 					// self.vrScene.appendChild(videoPlane);
 
-					// console.log("VRFunc.js: VRController: loadVideo, videoPlane=", videoPlane );
+					// console.log("VRFunc.js: VRController: _loadVideo, videoPlane=", videoPlane );
 				}
 				
 				
 			}
 
 			this.loadLight = function( obj, position, rotation, scale ){
-				// console.log("VRFunc.js: loadLight: obj=", obj);
+				console.log("VRFunc.js: _loadLight: obj=", obj);
 				let Light = document.createElement("a-light");
 				Light.setAttribute("id", obj.obj_id);
 				Light.setAttribute("type", obj.light.light_type );
@@ -1440,7 +1507,6 @@
 					Light.setAttribute("castShadow", false);
 				}
 				else{
-					// Light.setAttribute("castShadow", true);
 					Light.setAttribute("castShadow", false);
 				}
 				
@@ -1454,7 +1520,6 @@
 				a.applyEuler(b);
 				Light.setAttribute( "position", a );//// origin
 
-				// self.makarObjects.push( Light );
 				self.vrScene.appendChild(Light);// this = vrScene
 			}
 			
@@ -1491,6 +1556,136 @@
 					}
 				}
 			}
+
+//[start-20200617-fei0097-add]//
+			this.showObjectEvent = function(target, reset ){
+
+				if (target.getAttribute("visible")){
+					target.setAttribute("visible",false);
+					target.setAttribute('class', "unclickable" );
+					let id = target.getAttribute("src");
+					if(id!=undefined){
+						id = id.split("#").pop();
+						let v = document.getElementById(id);
+						if (v instanceof HTMLElement){
+							v.pause();
+						}
+					}
+					target.object3D.traverse(function(child){
+						if (child.type=="Group"){
+							child.el.setAttribute('class', "unclickable" );
+							if(child.el.localName=="a-video"){
+								let id = child.el.getAttribute("src");
+								if(id!=undefined){
+									id = id.split("#").pop();
+									let v = document.getElementById(id);
+									if (v instanceof HTMLElement){
+										v.pause();
+									}
+								}
+							}
+							if(child.makarObject && child.el.getAttribute("sound")){
+								// child.el.components.sound.stopSound();
+								if (child.behav_reference){
+									child.el.setAttribute("visible", false);
+								}
+								for(let i in child.children ){
+									if ( child.children[i].children[0].type == "Audio" ){					
+										if (child.children[i].children[0].isPlaying == true ){
+											child.el.components.sound.stopSound();
+										}
+									}
+								}
+							}
+						}
+					});
+					if (reset){
+						target.object3D.traverse(function(child){
+							if (child.type=="Group"){
+								child.el.setAttribute("visible",false);
+								child.el.setAttribute('class', "unclickable" );
+							}
+						});
+					}
+				}
+				else{
+					target.setAttribute("visible",true);
+					let id = target.getAttribute("src");
+					if(id!=undefined){
+						id = id.split("#").pop();
+						let v = document.getElementById(id);
+						if (v instanceof HTMLElement){
+							// v.load();
+							v.play();
+						}
+					}
+					if(target.object3D.behav){
+						target.setAttribute('class', "clickable" );
+					}
+					target.object3D.traverse(function(child){
+						if (child.type=="Group"){
+							if (child.el.getAttribute("visible")){
+								if(child.el.object3D.behav){
+									child.el.setAttribute('class', "clickable" );
+								}
+								if(child.el.localName=="a-video"){
+									let id = child.el.getAttribute("src");
+									if(id!=undefined){
+										id = id.split("#").pop();
+										let v = document.getElementById(id);
+										if (v instanceof HTMLElement){
+											v.play();
+										}
+									}
+								}
+								if(child.makarObject && child.el.getAttribute("sound")){
+									child.el.components.sound.playSound();
+								}
+							}
+						}
+					});
+				}
+
+			}
+
+			this.hideGroupObjectEvent = function(target){
+				if (target.getAttribute("visible")){
+					target.setAttribute("visible",false);
+					target.setAttribute('class', "unclickable" );
+					target.object3D.traverse(function(child){
+						if (child.type=="Group"){
+							child.el.setAttribute('class', "unclickable" );
+							if(child.el.localName=="a-video"){
+								let id = child.el.getAttribute("src");
+								if(id!=undefined){
+									id = id.split("#").pop();
+									let v = document.getElementById(id);
+									if (v instanceof HTMLElement){
+										v.pause();
+									}
+								}
+							}
+							if(child.makarObject && child.el.getAttribute("sound")){
+								//// 假如此聲音物件有掛 behav_reference[ PlayMusic ], 則將visible 改為 false ，只有觸發 PlayMusic 才能再次開啟
+								if (child.behav_reference){
+									child.el.setAttribute("visible", false);
+								}
+								//// 假如聲音物件本來在播放，則停止。因應在手機上假如在沒播放的狀況下呼叫 stop，會報錯誤
+								for(let i in child.children ){
+									if ( child.children[i].children[0].type == "Audio" ){					
+										if (child.children[i].children[0].isPlaying == true ){
+											child.el.components.sound.stopSound();
+										}
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+
+
+//[end---20200617-fei0097-add]//
 
 
 			////// 設計將 VR 專案中 cursor 的功能取消，改以點擊觸發。 
@@ -1588,6 +1783,7 @@
 					console.log("VRFunc.js: startEvent: touchObject =", touchObject );
 
 					vrController.controlObject = touchObject;
+				
 					// objectControls.setObjectToMove( vrController.controlObject  );
 				
 					//// disable the look-control 
@@ -1631,45 +1827,7 @@
 						return ;
 				}
 				// console.log("VRFunc.js: _setupFunction: endEvent, mouse=", mouse  );
-				
-//[start-20200315-fei0092-add]//
-				////// for the 2D scene part
 
-				// let makarTHREEObjects2D = [];
-				// for ( let i = 0; i < self.makarObjects2D.length; i++ ){
-				// 	let makarObject2D = self.makarObjects2D[i];
-				// 	if (makarObject2D.makarObject == true ){
-				// 		makarTHREEObjects2D.push(makarObject2D );
-				// 	}
-				// }
-
-				// raycaster.setFromCamera( mouse, self.camera2D );
-				// let intersects2D = raycaster.intersectObjects(  makarTHREEObjects2D, true ); 
-				// // console.log("VRFunc.js: raycaster 2D: endEvent, intersects2D=", intersects2D , makarTHREEObjects2D );
-				// if (intersects2D.length != 0 ){
-				// 	let touchObject2D = self.getMakarObject( intersects2D[0].object );
-				// 	// console.log("VRFunc.js: raycaster 2D: endEvent, touchObject2D=", touchObject2D  );
-				// 	if (touchObject2D.behav){
-				// 		let reset = false;
-				// 		for(let i = 0; i < touchObject2D.behav.length; i++){
-				// 			if (touchObject2D.behav[i].simple_behav == "CloseAndResetChildren"){
-				// 				reset = true;
-				// 			}
-				// 		}
-				// 		for(let i = 0; i < touchObject2D.behav.length; i++){
-				// 			if (touchObject2D.behav[i].simple_behav == "ShowImage"){
- 				// 				var tempBehav = Object.assign({}, touchObject2D.behav[i]);
-				// 				tempBehav.simple_behav = "ShowImage2D"; //// seperate from ShowImage
-
-				// 				self.triggerEvent( tempBehav, reset, touchObject2D );
-				// 			}else{
-				// 				self.triggerEvent( touchObject2D.behav[i], reset, touchObject2D );
-
-				// 			}
-				// 		}
-				// 	}
-				// }
-//[end---20200315-fei0092-add]//
 
 				////// for the 3D scene part
 				let makarTHREEObjects = [];
@@ -1691,6 +1849,33 @@
 					if (touchObject.behav){
 						// self.triggerEvent( touchObject.behav[0] ); // 20190827: add the parameter obj( makarObject)
 						// return;
+
+
+						//// deal the group	
+						//// 找出此次觸發事件中含有 group 的部份
+						for (let i = 0; i < touchObject.behav.length; i++ ){
+							if (touchObject.behav[i].group){
+								//// 找出所有場上物件中，掛有觸發事件的物件
+								for ( let j = 0; j < self.makarObjects.length; j++ ){
+									let makarObject = self.makarObjects[j];
+									if (makarObject.object3D){
+										if (makarObject.object3D.makarObject && makarObject.object3D.behav ){
+
+											for (let k = 0; k < makarObject.object3D.behav.length; k++ ){
+												//// 找出除了自己以外掛有相同 group 的物件
+												if (makarObject.object3D.behav[k].group == touchObject.behav[i].group &&  makarObject.object3D != touchObject ){
+													// console.log(" ************* " , i , j , k , makarObject.object3D.behav[k] , touchObject.behav[i].group );
+													let groupObj = document.getElementById(makarObject.object3D.behav[k].obj_id);
+													self.hideGroupObjectEvent(groupObj);
+												}
+											}
+
+										}
+									}
+								}
+							}
+						}
+
 
 						let reset = false;
 						for(let i = 0; i < touchObject.behav.length; i++){
@@ -1732,6 +1917,7 @@
 
 							// objectControls.setObjectToMove( vrController.controlObject );
 							// aCamera.setAttribute('look-controls', { enabled: true , touchEnabled: false  } ); 
+
 						}
 
 						break;
@@ -1816,240 +2002,266 @@
 					obj_id = event.obj_id;
 					target = document.getElementById(obj_id);
 					// console.log(target)
-					if (target.getAttribute("visible")){
-						target.setAttribute("visible",false);
-						target.setAttribute('class', "unclickable" );
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								child.el.setAttribute('class', "unclickable" );
-								if(child.el.localName=="a-video"){
-									let id = child.el.getAttribute("src");
-									if(id!=undefined){
-										id = id.split("#").pop();
-										let v = document.getElementById(id);
-										if (v instanceof HTMLElement){
-											v.pause();
-										}
-									}
-								}
+					self.showObjectEvent(target, reset);
+
+					// if (target.getAttribute("visible")){
+					// 	target.setAttribute("visible",false);
+					// 	target.setAttribute('class', "unclickable" );
+
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			child.el.setAttribute('class', "unclickable" );
+					// 			if(child.el.localName=="a-video"){
+					// 				let id = child.el.getAttribute("src");
+					// 				if(id!=undefined){
+					// 					id = id.split("#").pop();
+					// 					let v = document.getElementById(id);
+					// 					if (v instanceof HTMLElement){
+					// 						v.pause();
+					// 					}
+					// 				}
+					// 			}
 								
 								
-								if(child.el.getAttribute("sound")){
-									child.el.components.sound.stopSound();
+					// 			if(child.el.getAttribute("sound")){
+					// 				child.el.components.sound.stopSound();
 										
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 
-						if (reset){
-							target.object3D.traverse(function(child){
-								if (child.type=="Group"){
-									child.el.setAttribute("visible",false);
-									child.el.setAttribute('class', "unclickable" );
-								}
+					// 	if (reset){
+					// 		target.object3D.traverse(function(child){
+					// 			if (child.type=="Group"){
+					// 				child.el.setAttribute("visible",false);
+					// 				child.el.setAttribute('class', "unclickable" );
+					// 			}
 								
-							});
-						}
-					}
-					else{
-						target.setAttribute("visible",true);
-						if(target.object3D.behav){
-							target.setAttribute('class', "clickable" );
-						}
+					// 		});
+					// 	}
+					// }
+					// else{
+					// 	target.setAttribute("visible",true);
+					// 	if(target.object3D.behav){
+					// 		target.setAttribute('class', "clickable" );
+					// 	}
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								if (child.el.getAttribute("visible")){
-									if(child.el.object3D.behav){
-										child.el.setAttribute('class', "clickable" );
-									}
-									if(child.el.localName=="a-video"){
-										let id = child.el.getAttribute("src");
-										if(id!=undefined){
-											id = id.split("#").pop();
-											let v = document.getElementById(id);
-											if (v instanceof HTMLElement){
-												v.play();
-											}
-										}
-									}
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			if (child.el.getAttribute("visible")){
+					// 				if(child.el.object3D.behav){
+					// 					child.el.setAttribute('class', "clickable" );
+					// 				}
+					// 				if(child.el.localName=="a-video"){
+					// 					let id = child.el.getAttribute("src");
+					// 					if(id!=undefined){
+					// 						id = id.split("#").pop();
+					// 						let v = document.getElementById(id);
+					// 						if (v instanceof HTMLElement){
+					// 							v.play();
+					// 						}
+					// 					}
+					// 				}
 
-									if(child.el.getAttribute("sound")){
-										child.el.components.sound.playSound();
+					// 				if(child.el.getAttribute("sound")){
+					// 					child.el.components.sound.playSound();
 											
-									}
+					// 				}
 									
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 						
 						
-					}
+					// }
 					break;
 				
 					case "ShowText":
 						console.log("VRFunc.js: triggerEvent: ShowText: event=", event );	
 						obj_id = event.obj_id;
 						target = document.getElementById(obj_id);
-						console.log("VRFunc.js: triggerEvent: ShowText: target=", target.getAttribute("visible") ,target );	
-						if (target.getAttribute("visible")){
-							target.setAttribute("visible",false);
-							target.setAttribute('class', "unclickable" );
+
+						//// 同時要處理 reset  子物件 影片播放 聲音播放
+						self.showObjectEvent(target, reset);	
+
+						// console.log("VRFunc.js: triggerEvent: ShowText: target=", target.getAttribute("visible") ,target );	
+						// if (target.getAttribute("visible")){
+						// 	target.setAttribute("visible",false);
+						// 	target.setAttribute('class', "unclickable" );
 	
-							target.object3D.traverse(function(child){
-								if (child.type=="Group"){
-									child.el.setAttribute('class', "unclickable" );
-									if(child.el.localName=="a-video"){
-										let id = child.el.getAttribute("src");
-										if(id!=undefined){
-											id = id.split("#").pop();
-											let v = document.getElementById(id);
-											if (v instanceof HTMLElement){
-												v.pause();
-											}
-										}
-									}
-									if(child.el.getAttribute("sound")){
-										child.el.components.sound.stopSound();
-									}
-								}
-							});
-							if (reset){
-								target.object3D.traverse(function(child){
-									if (child.type=="Group"){
-										child.el.setAttribute("visible",false);
-										child.el.setAttribute('class', "unclickable" );
-									}
-								});
-							}
-						}
-						else{
-							target.setAttribute("visible",true);
-							if(target.object3D.behav){
-								target.setAttribute('class', "clickable" );
-							}
-							target.object3D.traverse(function(child){
-								if (child.type=="Group"){
-									if (child.el.getAttribute("visible")){
-										if(child.el.object3D.behav){
-											child.el.setAttribute('class', "clickable" );
-										}
-										if(child.el.localName=="a-video"){
-											let id = child.el.getAttribute("src");
-											if(id!=undefined){
-												id = id.split("#").pop();
-												let v = document.getElementById(id);
-												if (v instanceof HTMLElement){
-													v.play();
-												}
-											}
-										}
-										if(child.el.getAttribute("sound")){
-											child.el.components.sound.playSound();
-										}
-									}
-								}
-							});
-						}
+						// 	target.object3D.traverse(function(child){
+						// 		if (child.type=="Group"){
+						// 			child.el.setAttribute('class', "unclickable" );
+						// 			if(child.el.localName=="a-video"){
+						// 				let id = child.el.getAttribute("src");
+						// 				if(id!=undefined){
+						// 					id = id.split("#").pop();
+						// 					let v = document.getElementById(id);
+						// 					if (v instanceof HTMLElement){
+						// 						v.pause();
+						// 					}
+						// 				}
+						// 			}
+						// 			if(child.el.getAttribute("sound")){
+						// 				child.el.components.sound.stopSound();
+						// 			}
+						// 		}
+						// 	});
+						// 	if (reset){
+						// 		target.object3D.traverse(function(child){
+						// 			if (child.type=="Group"){
+						// 				child.el.setAttribute("visible",false);
+						// 				child.el.setAttribute('class', "unclickable" );
+						// 			}
+						// 		});
+						// 	}
+						// }
+						// else{
+						// 	target.setAttribute("visible",true);
+						// 	if(target.object3D.behav){
+						// 		target.setAttribute('class', "clickable" );
+						// 	}
+						// 	target.object3D.traverse(function(child){
+						// 		if (child.type=="Group"){
+						// 			if (child.el.getAttribute("visible")){
+						// 				if(child.el.object3D.behav){
+						// 					child.el.setAttribute('class', "clickable" );
+						// 				}
+						// 				if(child.el.localName=="a-video"){
+						// 					let id = child.el.getAttribute("src");
+						// 					if(id!=undefined){
+						// 						id = id.split("#").pop();
+						// 						let v = document.getElementById(id);
+						// 						if (v instanceof HTMLElement){
+						// 							v.play();
+						// 						}
+						// 					}
+						// 				}
+						// 				if(child.el.getAttribute("sound")){
+						// 					child.el.components.sound.playSound();
+						// 				}
+						// 			}
+						// 		}
+						// 	});
+						// }
 						break;
 
 				case "ShowModel":
 					console.log("VRFunc.js: triggerEvent: ShowModel: event=", event );	
 					obj_id = event.obj_id;
 					target = document.getElementById(obj_id);
-					if (target.getAttribute("visible")){
-						target.setAttribute("visible",false);
-						target.setAttribute('class', "unclickable" );
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								child.el.setAttribute('class', "unclickable" );
-								if(child.el.localName=="a-video"){
-									let id = child.el.getAttribute("src");
-									if(id!=undefined){
-										id = id.split("#").pop();
-										let v = document.getElementById(id);
-										if (v instanceof HTMLElement){
-											v.pause();
-										}
-									}
-								}
+					//// 同時要處理 reset  子物件 影片播放 聲音播放
+					self.showObjectEvent(target, reset);	
 
-								if(child.el.getAttribute("sound")){
-									child.el.components.sound.stopSound();
+					// if (target.getAttribute("visible")){
+					// 	target.setAttribute("visible",false);
+					// 	target.setAttribute('class', "unclickable" );
+
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			child.el.setAttribute('class', "unclickable" );
+					// 			if(child.el.localName=="a-video"){
+					// 				let id = child.el.getAttribute("src");
+					// 				if(id!=undefined){
+					// 					id = id.split("#").pop();
+					// 					let v = document.getElementById(id);
+					// 					if (v instanceof HTMLElement){
+					// 						v.pause();
+					// 					}
+					// 				}
+					// 			}
+
+					// 			if(child.el.getAttribute("sound")){
+					// 				child.el.components.sound.stopSound();
 										
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 
-						if (reset){
-							target.object3D.traverse(function(child){
-								if (child.type=="Group"){
-									child.el.setAttribute("visible",false);
-									child.el.setAttribute('class', "unclickable" );
-								}
+					// 	if (reset){
+					// 		target.object3D.traverse(function(child){
+					// 			if (child.type=="Group"){
+					// 				child.el.setAttribute("visible",false);
+					// 				child.el.setAttribute('class', "unclickable" );
+					// 			}
 								
-							});
-						}
-					}
-					else{
-						target.setAttribute("visible",true);
-						if(target.object3D.behav){
-							target.setAttribute('class', "clickable" );
-						}
+					// 		});
+					// 	}
+					// }
+					// else{
+					// 	target.setAttribute("visible",true);
+					// 	if(target.object3D.behav){
+					// 		target.setAttribute('class', "clickable" );
+					// 	}
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								if (child.el.getAttribute("visible")){
-									if(child.el.object3D.behav){
-										child.el.setAttribute('class', "clickable" );
-									}
-									if(child.el.localName=="a-video"){
-										let id = child.el.getAttribute("src");
-										if(id!=undefined){
-											id = id.split("#").pop();
-											let v = document.getElementById(id);
-											if (v instanceof HTMLElement){
-												v.play();
-											}
-										}
-									}
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			if (child.el.getAttribute("visible")){
+					// 				if(child.el.object3D.behav){
+					// 					child.el.setAttribute('class', "clickable" );
+					// 				}
+					// 				if(child.el.localName=="a-video"){
+					// 					let id = child.el.getAttribute("src");
+					// 					if(id!=undefined){
+					// 						id = id.split("#").pop();
+					// 						let v = document.getElementById(id);
+					// 						if (v instanceof HTMLElement){
+					// 							v.play();
+					// 						}
+					// 					}
+					// 				}
 
-									if(child.el.getAttribute("sound")){
-										child.el.components.sound.playSound();
+					// 				if(child.el.getAttribute("sound")){
+					// 					child.el.components.sound.playSound();
 											
-									}
+					// 				}
 									
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 						
 						
-					}
+					// }
 					break;
 
 				case "PlayMusic":
 					console.log("VRFunc.js: triggerEvent: PlayMusic: event=", event );
 					obj_id = event.obj_id;
 					target = document.getElementById(obj_id);
-					
-					if(target.getAttribute("visible")){
-						target.setAttribute("visible",false);
-						target.setAttribute('class', "unclickable" );
-						target.components.sound.stopSound();
-					}
-					else{
-						target.setAttribute("visible",true);
-						if(target.object3D.behav){
-							target.setAttribute('class', "clickable" );
+
+					for(let i in target.object3D.children  ){
+						if ( target.object3D.children[i].children[0].type == "Audio" ){					
+							console.log("VRFunc.js: triggerEvent: PlayMusic: target.object3D.children =", i , target.object3D.children[i].children[0] );	
+							
+							if (target.object3D.children[i].children[0].isPlaying == true ){
+								target.components.sound.stopSound();
+								target.setAttribute("visible", false );
+							}else{
+								target.components.sound.playSound();
+								target.setAttribute("visible", true  );
+							}
+							
 						}
-						target.components.sound.playSound();
 					}
+
+					// if(target.getAttribute("visible")){
+					// 	target.setAttribute("visible",false);
+					// 	target.setAttribute('class', "unclickable" );
+					// 	target.components.sound.stopSound();
+					// }
+					// else{
+					// 	target.setAttribute("visible",true);
+					// 	if(target.object3D.behav){
+					// 		target.setAttribute('class', "clickable" );
+					// 	}
+					// 	target.components.sound.playSound();
+					// }
 
 					break;
 					
@@ -2058,96 +2270,100 @@
 					obj_id = event.obj_id;
 					target = document.getElementById(obj_id);
 					// console.log(target)
-					if (target.getAttribute("visible")){
-						target.setAttribute("visible",false);
-						target.setAttribute('class', "unclickable" );
-						let id = target.getAttribute("src");
-						if(id!=undefined){
-							id = id.split("#").pop();
-							let v = document.getElementById(id);
-							if (v instanceof HTMLElement){
-								v.pause();
-							}
-						}
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								child.el.setAttribute('class', "unclickable" );
-								if(child.el.localName=="a-video"){
-									let id = child.el.getAttribute("src");
-									if(id!=undefined){
-										id = id.split("#").pop();
-										let v = document.getElementById(id);
-										if (v instanceof HTMLElement){
-											v.pause();
-										}
-									}
-								}
+					//// 同時要處理 reset  子物件 影片播放 聲音播放
+					self.showObjectEvent(target, reset);	
 
-								if(child.el.getAttribute("sound")){
-									child.el.components.sound.stopSound();
+					// if (target.getAttribute("visible")){
+					// 	target.setAttribute("visible",false);
+					// 	target.setAttribute('class', "unclickable" );
+					// 	let id = target.getAttribute("src");
+					// 	if(id!=undefined){
+					// 		id = id.split("#").pop();
+					// 		let v = document.getElementById(id);
+					// 		if (v instanceof HTMLElement){
+					// 			v.pause();
+					// 		}
+					// 	}
+
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			child.el.setAttribute('class', "unclickable" );
+					// 			if(child.el.localName=="a-video"){
+					// 				let id = child.el.getAttribute("src");
+					// 				if(id!=undefined){
+					// 					id = id.split("#").pop();
+					// 					let v = document.getElementById(id);
+					// 					if (v instanceof HTMLElement){
+					// 						v.pause();
+					// 					}
+					// 				}
+					// 			}
+
+					// 			if(child.el.getAttribute("sound")){
+					// 				child.el.components.sound.stopSound();
 										
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 
-						if (reset){
-							target.object3D.traverse(function(child){
-								if (child.type=="Group"){
-									child.el.setAttribute("visible",false);
-									child.el.setAttribute('class', "unclickable" );
-								}
+					// 	if (reset){
+					// 		target.object3D.traverse(function(child){
+					// 			if (child.type=="Group"){
+					// 				child.el.setAttribute("visible",false);
+					// 				child.el.setAttribute('class', "unclickable" );
+					// 			}
 								
-							});
-						}
+					// 		});
+					// 	}
 						
 						
-					}
-					else{
-						target.setAttribute("visible",true);
-						let id = target.getAttribute("src");
-						if(id!=undefined){
-							id = id.split("#").pop();
-							let v = document.getElementById(id);
-							if (v instanceof HTMLElement){
-								// v.load();
-								v.play();
-							}
-						}
-						if(target.object3D.behav){
-							target.setAttribute('class', "clickable" );
-						}
+					// }
+					// else{
+					// 	target.setAttribute("visible",true);
+					// 	let id = target.getAttribute("src");
+					// 	if(id!=undefined){
+					// 		id = id.split("#").pop();
+					// 		let v = document.getElementById(id);
+					// 		if (v instanceof HTMLElement){
+					// 			// v.load();
+					// 			v.play();
+					// 		}
+					// 	}
+					// 	if(target.object3D.behav){
+					// 		target.setAttribute('class', "clickable" );
+					// 	}
 
-						target.object3D.traverse(function(child){
-							if (child.type=="Group"){
-								if (child.el.getAttribute("visible")){
-									if(child.el.object3D.behav){
-										child.el.setAttribute('class', "clickable" );
-									}
-									if(child.el.localName=="a-video"){
-										let id = child.el.getAttribute("src");
-										if(id!=undefined){
-											id = id.split("#").pop();
-											let v = document.getElementById(id);
-											if (v instanceof HTMLElement){
-												v.play();
-											}
-										}
-									}
+					// 	target.object3D.traverse(function(child){
+					// 		if (child.type=="Group"){
+					// 			if (child.el.getAttribute("visible")){
+					// 				if(child.el.object3D.behav){
+					// 					child.el.setAttribute('class', "clickable" );
+					// 				}
+					// 				if(child.el.localName=="a-video"){
+					// 					let id = child.el.getAttribute("src");
+					// 					if(id!=undefined){
+					// 						id = id.split("#").pop();
+					// 						let v = document.getElementById(id);
+					// 						if (v instanceof HTMLElement){
+					// 							v.play();
+					// 						}
+					// 					}
+					// 				}
 
-									if(child.el.getAttribute("sound")){
-										child.el.components.sound.playSound();
+					// 				if(child.el.getAttribute("sound")){
+					// 					child.el.components.sound.playSound();
 											
-									}
+					// 				}
 									
-								}
-							}
+					// 			}
+					// 		}
 							
-						});
+					// 	});
 						
 						
-					}
+					// }
 					break;
 				
 				case "PlayAnimation":
