@@ -278,231 +278,209 @@
 
 				}
 
-
-
-				for (let i = 0; i < scene_objs.length ; i++  ){
-					// console.log("VRFunc.js: _loadSceneObjects: obj=", self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs[i] );
-					// obj_parent = null;
-					// if (scene_objs[i].obj_parent_id){
-					// 	for (j = 0; j < scene_objs.length; j++){
-					// 		if(scene_objs[i].obj_parent_id == scene_objs[j].obj_id){
-					// 			obj_parent = scene_objs[j];
-					// 		}
-					// 	}
-					// }
-				//20191029-end-thonsha-mod
-					let position = new THREE.Vector3().fromArray(scene_objs[i].transform[0].split(",").map(function(x){return Number(x)}) );
-					let rotation = new THREE.Vector3().fromArray(scene_objs[i].transform[1].split(",").map(function(x){return Number(x)}) );
-					let scale    = new THREE.Vector3().fromArray(scene_objs[i].transform[2].split(",").map(function(x){return Number(x)}) );
-					
-					switch( scene_objs[i].main_type ){
-						case "camera":
-							let camera_cursor = document.getElementById( "camera_cursor" );
-							// camera_cursor.setAttribute("randomN", Math.random() ); ////// it is work
-
-							// camera_cursor.setAttribute("rotation", { x: 0 , y: 180, z: 0 } ); ////// it is work
-							// rotation = new THREE.Vector3( 0 , 180 , 0 ); ////// set for test
-							rotation.multiply( new THREE.Vector3(-1,-1,0) ).add( new THREE.Vector3(0, 180, 0) ); //// because the makar editor coordinate
-							
-							camera_cursor.setAttribute("rotation", rotation ); ////// it is work
-							camera_cursor.setAttribute("position", position ); ////// it is work
-
-							//// reset the aCamera 
- 							if (aCamera.components["look-controls"].yawObject && aCamera.components["look-controls"].pitchObject){
-								aCamera.components["look-controls"].yawObject.rotation.set(0,0,0)
-								aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0)
-							}
-
-							// camera_cursor.object3D.rotation.set( 0, 180 * Math.PI/180 , 0 , "YXZ" ); ///// actually, looks control will control this object3D, but I cant modify it directly..  
-							console.log("VRFunc.js: _loadSceneObjects: camera: ", i, scene_objs[i], position, rotation );							
-
-							// this.setTransform( camera_cursor,
-							// 	position, rotation, scale
-							// );
-							
-							break;
-						case "image":
-
-							let obj = scene_objs[i];
-							// console.log("VRFunc.js: _loadSceneObjects: image: ", i, scene_objs[i] );
-							if (userProjResDict[ obj.res_id ] ){
-								// console.log("VRFunc.js: _loadSceneObjects: image res_url", i, obj.res_url, userProjResDict[obj.res_id].res_url  );
-								if ( obj.res_url == userProjResDict[obj.res_id].res_url ){
-									// console.log("%cVRFunc.js: _loadSceneObjects: image res_url is same as userProjResDict", "color:blue"   );
-									// console.log("%cVRFunc.js: _loadSceneObjects: image res_url is same as userProjResDict", "color:blue" , obj  );
-
-									self.loadTexture(obj, position, rotation, scale );
-
-								}else{
-									console.log("%cVRFunc.js: _loadSceneObjects: image res_url is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
-								}
-							}else{
-								console.log("%cVRFunc.js: _loadSceneObjects: image res_id not exist!", "color:red" , i );	
-								
-								switch(obj.res_id){
-									case "MakAR_Call":
-										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Call.png";
-										break;
-									case "MakAR_Room": 
-										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Room.png";
-										break;
-									case "MakAR_Mail": 
-										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Mail.png";
-										break;
-									case "Line_icon":
-										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Line_icon.png";
-										break;
-									case "FB_icon":
-										obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/FB_icon.png";
-										break;
-									default:
-										console.log("image: default, obj=", window.sceneResult[i].data.scene_objs_v2[j]);
-								}
-
-								self.loadTexture(obj, position, rotation, scale );
-							
-							}
-
-							break;
-							
-						//20191204-start-thonsha-add
-						case "text":
-							self.loadText( scene_objs[i] , position, rotation, scale);
-							break;
-
-						//20191204-end-thonsha-add
-						
-						//20191105-start-thonsha-add
-						case "audio":
-
-							if ((scene_objs[i].sub_type == "mp3" || scene_objs[i].sub_type == "wav" || scene_objs[i].sub_type == "ogg" ) && scene_objs[i].res_url){
-								self.loadAudio(scene_objs[i]);
-							}
-
-							break;
-
-						//20191105-end-thonsha-add
-
-						case "video":
-
-							// console.log("VRFunc.js: _loadSceneObjects: video, scene_objs=", scene_objs[i] );
-							if ( scene_objs[i].sub_type == "mp4" && scene_objs[i].res_url  ){
-								self.loadVideo( scene_objs[i] , position, rotation, scale );
-							}
-
-							break;
-
-						case "model":
-
-							////// check by user resource 
-							console.log("VRFunc.js: _loadSceneObjects: model", i, scene_objs[i]  );
-							if ( userProjResDict[ scene_objs[i].res_id ]  ){
-								// console.log("VRFunc.js: _loadSceneObjects: model from user resource");
-								scene_objs[i].res_url = userProjResDict[scene_objs[i].res_id].res_url ;
-							} else if ( userOnlineResDict[ scene_objs[i].res_id ] ) { 
-								// console.log("VRFunc.js: _loadSceneObjects: model from online resource" , userOnlineResDict[scene_objs[i].res_id].res_url );
-								scene_objs[i].res_url = userOnlineResDict[scene_objs[i].res_id].res_url ;
-							} else {
-								// console.log(" __________VRFunc.js: _loadSceneObjects: model not exist");
-
-								switch(scene_objs[i].res_id){
-									case "Cube":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Cube.glb";
-										break;
-									case "Capsule":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Capsule.glb";
-										break;
-									case "Sphere":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Sphere.glb";
-										break;
-									case "ch_Bojue":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Bojue.glb";
-										break;
-									case "ch_Fei":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Fei.glb";
-										break;
-									case "ch_Lina":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Lina.glb";
-										break;
-									case "ch_Poyuan":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Poyuan.glb";
-										break;
-									case "ch_Roger":
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Roger.glb";
-										break;
-									default:
-										
-										if (scene_objs[i].res_gltf_resource){												
-											break;
-										}
-										scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/MissingFileBox.glb";
-										break;
-								}
-							}
-							if(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url == "DefaultResource/Spherical_Image/SphericalImage.png"){
-								self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png"
-							}
-
-							let defaultGray360 = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg";
-							if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type == 'spherical_video'){
-								self.loadGLTFModel(scene_objs[i], position, rotation, scale, "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg" );
-							}
-							else{
-								if (self.isShowSky){
-									self.loadGLTFModel(scene_objs[i], position, rotation, scale, self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url );
-								}else{
-									self.loadGLTFModel(scene_objs[i], position, rotation, scale, defaultGray360 );
-								}
-							}
-							
-
-
-							// if (userProjResDict[ scene_objs[i].res_id ] ){
-							// 	// console.log("VRFunc.js: _loadSceneObjects: model res_url", i, obj.res_url, userProjResDict[obj.res_id].res_url  );
-							// 	//20191025-start-thonsha-mod
-							// 	if (scene_objs[i].res_url == userProjResDict[scene_objs[i].res_id].res_url){
-							// 		setTimeout( function(){
-							// 			self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-							// 		}, 1 );
-							// 		// self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-							// 	}
-							// 	else if (scene_objs[i].res_url_fbx == userProjResDict[scene_objs[i].res_id].res_url_fbx ){
-							// 		// console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is same as userProjResDict", "color:blue"   );
-
-							// 		setTimeout( function(){
-							// 			self.loadFBXModel(scene_objs[i], position, rotation, scale );
-							// 		}, 1 );
-
-							// 	}else{
-							// 		console.log("%cVRFunc.js: _loadSceneObjects: model res_url_fbx is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
-							// 	}
-							// 	//20191025-end-thonsha-mod
-							// }
-							// else if(scene_objs[i].sub_type == 'gltf'){
-							// 	setTimeout( function(){
-							// 		self.loadGLTFModel(scene_objs[i], position, rotation, scale );
-							// 	}, 5);
-							// }
-							
-							// else{
-							// 	console.log("%cVRFunc.js: _loadSceneObjects: model res_id not exist!", "color:red" , i );	
-							// }
-							
-							break;
-						
-						// 20200521-thonsha-add-start
-
-						case "light":
-
-							self.loadLight(scene_objs[i], position, rotation, scale);
-							break;
-
-						default:
-							console.log("VRFunc.js: _loadSceneObjects: default", i, scene_objs[i] );
-							
-					}
-
+				//// 改為 loading 一次 環景圖 在每次載入 3D Model 的時候在帶入。 
+				let scene_skybox_url;
+				if(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url == "DefaultResource/Spherical_Image/SphericalImage.png"){
+					self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/2D/sceneDefaultImages/SphericalImage.png"
 				}
+				if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type == 'spherical_video'){
+					scene_skybox_url = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg";
+				} else{
+					scene_skybox_url = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;
+				}
+				if (self.isShowSky){
+					scene_skybox_url = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;
+				}else{
+					scene_skybox_url = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg";
+				}
+				let targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
+				let renderer = self.vrScene.renderer;
+				let envTexture = new THREE.TextureLoader().load(
+					scene_skybox_url,
+					function() 
+					{
+						let cubeTex = targetCube.fromEquirectangularTexture(renderer, envTexture);
+						for (let i = 0; i < scene_objs.length ; i++  ){
+							// console.log("VRFunc.js: _loadSceneObjects: obj=", self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs[i] );
+							// obj_parent = null;
+							// if (scene_objs[i].obj_parent_id){
+							// 	for (j = 0; j < scene_objs.length; j++){
+							// 		if(scene_objs[i].obj_parent_id == scene_objs[j].obj_id){
+							// 			obj_parent = scene_objs[j];
+							// 		}
+							// 	}
+							// }
+						//20191029-end-thonsha-mod
+							let position = new THREE.Vector3().fromArray(scene_objs[i].transform[0].split(",").map(function(x){return Number(x)}) );
+							let rotation = new THREE.Vector3().fromArray(scene_objs[i].transform[1].split(",").map(function(x){return Number(x)}) );
+							let scale    = new THREE.Vector3().fromArray(scene_objs[i].transform[2].split(",").map(function(x){return Number(x)}) );
+							
+							switch( scene_objs[i].main_type ){
+								case "camera":
+									let camera_cursor = document.getElementById( "camera_cursor" );
+									// camera_cursor.setAttribute("randomN", Math.random() ); ////// it is work
+		
+									// camera_cursor.setAttribute("rotation", { x: 0 , y: 180, z: 0 } ); ////// it is work
+									// rotation = new THREE.Vector3( 0 , 180 , 0 ); ////// set for test
+									rotation.multiply( new THREE.Vector3(-1,-1,0) ).add( new THREE.Vector3(0, 180, 0) ); //// because the makar editor coordinate
+									
+									camera_cursor.setAttribute("rotation", rotation ); ////// it is work
+									camera_cursor.setAttribute("position", position ); ////// it is work
+		
+									//// reset the aCamera 
+									 if (aCamera.components["look-controls"].yawObject && aCamera.components["look-controls"].pitchObject){
+										aCamera.components["look-controls"].yawObject.rotation.set(0,0,0)
+										aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0)
+									}
+		
+									// camera_cursor.object3D.rotation.set( 0, 180 * Math.PI/180 , 0 , "YXZ" ); ///// actually, looks control will control this object3D, but I cant modify it directly..  
+									console.log("VRFunc.js: _loadSceneObjects: camera: ", i, scene_objs[i], position, rotation );							
+		
+									// this.setTransform( camera_cursor,
+									// 	position, rotation, scale
+									// );
+									
+									break;
+								case "image":
+		
+									let obj = scene_objs[i];
+									// console.log("VRFunc.js: _loadSceneObjects: image: ", i, scene_objs[i] );
+									if (userProjResDict[ obj.res_id ] ){
+										// console.log("VRFunc.js: _loadSceneObjects: image res_url", i, obj.res_url, userProjResDict[obj.res_id].res_url  );
+										if ( obj.res_url == userProjResDict[obj.res_id].res_url ){
+											// console.log("%cVRFunc.js: _loadSceneObjects: image res_url is same as userProjResDict", "color:blue"   );
+											// console.log("%cVRFunc.js: _loadSceneObjects: image res_url is same as userProjResDict", "color:blue" , obj  );
+		
+											self.loadTexture(obj, position, rotation, scale );
+		
+										}else{
+											console.log("%cVRFunc.js: _loadSceneObjects: image res_url is different from userProjResDict!", "color:red" , i , obj, userProjResDict[obj.res_id] );	
+										}
+									}else{
+										console.log("%cVRFunc.js: _loadSceneObjects: image res_id not exist!", "color:red" , i );	
+										
+										switch(obj.res_id){
+											case "MakAR_Call":
+												obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Call.png";
+												break;
+											case "MakAR_Room": 
+												obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Room.png";
+												break;
+											case "MakAR_Mail": 
+												obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/MakAR_Mail.png";
+												break;
+											case "Line_icon":
+												obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Line_icon.png";
+												break;
+											case "FB_icon":
+												obj.res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/FB_icon.png";
+												break;
+											default:
+												console.log("image: default, obj=", window.sceneResult[i].data.scene_objs_v2[j]);
+										}
+		
+										self.loadTexture(obj, position, rotation, scale );
+									
+									}
+		
+									break;
+									
+								//20191204-start-thonsha-add
+								case "text":
+									self.loadText( scene_objs[i] , position, rotation, scale);
+									break;
+		
+								//20191204-end-thonsha-add
+								
+								//20191105-start-thonsha-add
+								case "audio":
+		
+									if ((scene_objs[i].sub_type == "mp3" || scene_objs[i].sub_type == "wav" || scene_objs[i].sub_type == "ogg" ) && scene_objs[i].res_url){
+										self.loadAudio(scene_objs[i]);
+									}
+		
+									break;
+		
+								//20191105-end-thonsha-add
+		
+								case "video":
+		
+									// console.log("VRFunc.js: _loadSceneObjects: video, scene_objs=", scene_objs[i] );
+									if ( scene_objs[i].sub_type == "mp4" && scene_objs[i].res_url  ){
+										self.loadVideo( scene_objs[i] , position, rotation, scale );
+									}
+		
+									break;
+		
+								case "model":
+		
+									////// check by user resource 
+									console.log("VRFunc.js: _loadSceneObjects: model", i, scene_objs[i]  );
+									if ( userProjResDict[ scene_objs[i].res_id ]  ){
+										// console.log("VRFunc.js: _loadSceneObjects: model from user resource");
+										scene_objs[i].res_url = userProjResDict[scene_objs[i].res_id].res_url ;
+									} else if ( userOnlineResDict[ scene_objs[i].res_id ] ) { 
+										// console.log("VRFunc.js: _loadSceneObjects: model from online resource" , userOnlineResDict[scene_objs[i].res_id].res_url );
+										scene_objs[i].res_url = userOnlineResDict[scene_objs[i].res_id].res_url ;
+									} else {
+										// console.log(" __________VRFunc.js: _loadSceneObjects: model not exist");
+		
+										switch(scene_objs[i].res_id){
+											case "Cube":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Cube.glb";
+												break;
+											case "Capsule":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Capsule.glb";
+												break;
+											case "Sphere":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/Sphere.glb";
+												break;
+											case "ch_Bojue":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Bojue.glb";
+												break;
+											case "ch_Fei":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Fei.glb";
+												break;
+											case "ch_Lina":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Lina.glb";
+												break;
+											case "ch_Poyuan":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Poyuan.glb";
+												break;
+											case "ch_Roger":
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/ch_Roger.glb";
+												break;
+											default:
+												
+												if (scene_objs[i].res_gltf_resource){												
+													break;
+												}
+												scene_objs[i].res_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/3D/MissingFileBox.glb";
+												break;
+										}
+									}
+
+									self.loadGLTFModel(scene_objs[i], position, rotation, scale , cubeTex );
+
+									break;
+								
+								// 20200521-thonsha-add-start
+		
+								case "light":
+		
+									self.loadLight(scene_objs[i], position, rotation, scale);
+									break;
+		
+								default:
+									console.log("VRFunc.js: _loadSceneObjects: default", i, scene_objs[i] );
+									
+							}
+		
+						}
+					}
+				);
+
+				
 				// console.log("VRFunc.js: loadSceneObjects: done, self.makarObjects ", self.makarObjects.length );
 			}
 	
@@ -579,6 +557,15 @@
 							else if (imgType == "gif"){
 								plane.setAttribute("geometry", "primitive: plane");
 								plane.setAttribute("material", "shader:gif;  src: url("+ obj.res_url+"); opacity: 1");
+
+								if (transparentBehav.mode == 'RGB'){
+									plane.setAttribute("geometry", "primitive: plane");
+									plane.setAttribute("material", "shader:gif_RGB;  src: url("+ obj.res_url+"); opacity: 1; transparent: true; depthWrite:false; color: #"+color.getHexString()+"; _slope: "+parseFloat(slope)+"; _threshold: "+parseFloat(threshold)+";");
+								}
+								else if (transparentBehav.mode == 'HSV'){
+									plane.setAttribute("geometry", "primitive: plane");
+									plane.setAttribute("material", "shader:gif_HSV;  src: url("+ obj.res_url+"); opacity: 1; transparent: true; depthWrite:false; _keyingColorH:"+keyH+"; _keyingColorS:"+keyS+"; _keyingColorV:"+keyV+"; _deltaH:"+parseFloat(transparentBehav.hue)+"; _deltaS:"+parseFloat(transparentBehav.saturation)+"; _deltaV:"+parseFloat(transparentBehav.brightness)+";");
+								}
 							}
 							//20191127-end-thonsha-mod
 						}
@@ -849,7 +836,7 @@
 
 			//20191025-start-thonsha-add
 			
-			this.loadGLTFModel = function(obj, position, rotation, scale, skyTexture){
+			this.loadGLTFModel = function(obj, position, rotation, scale, cubeTex){
 
 				let assets = document.getElementById("makarAssets");
 
@@ -945,75 +932,69 @@
 											break;
 										case "Standard":
 											//20200512-thonsha-mod-start
-											var targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
 											var renderer = modelEntity.sceneEl.renderer
-											var texture = new THREE.TextureLoader().load(
-												skyTexture,
-												function() {
-													var cubeTex = targetCube.fromEquirectangularTexture(renderer, texture);
-													objj.traverse(node => {
-														if (node.material) {
-															if (node.material.name == obj.material[i].name) {
-																node.material.color = color;
-																node.material.metalness = obj.material[i].metallic;
-																node.material.roughness = 1 - obj.material[i].smoothness;
-																node.material.envMap = cubeTex.texture;
-																node.material.envMapIntensity = 1;
-																node.material.needsUpdate = true;
-																node.material.reflectivity = 0;
-																node.material.side = THREE.DoubleSide;
-																node.material.transparent = true;
-																
-																// console.log('VRFunc.js: loadGLTFModel: material(standard) node.material=', i, node.material);
-																
-																if(obj.material[i].mode == 0){
-																	node.material.opacity = 1;
-																	renderer.setClearAlpha(1);
+											objj.traverse(node => {
+												if (node.material) {
+													if (node.material.name == obj.material[i].name) {
+														node.material.color = color;
+														node.material.metalness = obj.material[i].metallic;
+														node.material.roughness = 1 - obj.material[i].smoothness;
+														node.material.envMap = cubeTex.texture;
+														node.material.envMapIntensity = 1;
+														node.material.needsUpdate = true;
+														node.material.reflectivity = 0;
+														node.material.side = THREE.DoubleSide;
+														node.material.transparent = true;
+														
+														// console.log('VRFunc.js: loadGLTFModel: material(standard) node.material=', i, node.material);
+														
+														if(obj.material[i].mode == 0){
+															node.material.opacity = 1;
+															renderer.setClearAlpha(1);
 
-																	node.material.blending = THREE.CustomBlending;
-																	node.material.blendEquation = THREE.AddEquation;
-																	node.material.blendSrc = THREE.OneFactor;
-																	node.material.blendDst = THREE.ZeroFactor;
-																	node.material.blendSrcAlpha = THREE.ZeroFactor;
-																	node.material.blendDstAlpha = THREE.OneFactor;
+															node.material.blending = THREE.CustomBlending;
+															node.material.blendEquation = THREE.AddEquation;
+															node.material.blendSrc = THREE.OneFactor;
+															node.material.blendDst = THREE.ZeroFactor;
+															node.material.blendSrcAlpha = THREE.ZeroFactor;
+															node.material.blendDstAlpha = THREE.OneFactor;
 
-																}
-																else if(obj.material[i].mode == 1){
-																	node.material.opacity = 1;
-																	node.material.alphaTest = obj.material[i].cut_off;
-																	renderer.setClearAlpha(1);
-
-																	node.material.blending = THREE.CustomBlending;
-																	node.material.blendEquation = THREE.AddEquation;
-																	node.material.blendSrc = THREE.OneFactor;
-																	node.material.blendDst = THREE.ZeroFactor;
-																	node.material.blendSrcAlpha = THREE.ZeroFactor;
-																	node.material.blendDstAlpha = THREE.OneFactor;
-																}
-																else if(obj.material[i].mode == 2){
-																	node.material.opacity = parseFloat(rgba[3]);
-																	node.material.depthWrite = false;
-																
-																}
-																else if(obj.material[i].mode == 3){
-																	node.material.opacity = Math.max(parseFloat(rgba[3]), obj.material[i].metallic);
-																	node.material.depthWrite = false;
-																	node.material.blending = THREE.CustomBlending;
-																	node.material.blendEquation = THREE.AddEquation;
-																	node.material.blendSrc = THREE.OneFactor;
-																	node.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-																	node.material.blendSrcAlpha = THREE.OneFactor;
-																	node.material.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
-																}
-
-
-															}
 														}
-													});
-													renderer.toneMapping = THREE.ACESFilmicToneMapping;
-													renderer.outputEncoding = THREE.sRGBEncoding;
+														else if(obj.material[i].mode == 1){
+															node.material.opacity = 1;
+															node.material.alphaTest = obj.material[i].cut_off;
+															renderer.setClearAlpha(1);
+
+															node.material.blending = THREE.CustomBlending;
+															node.material.blendEquation = THREE.AddEquation;
+															node.material.blendSrc = THREE.OneFactor;
+															node.material.blendDst = THREE.ZeroFactor;
+															node.material.blendSrcAlpha = THREE.ZeroFactor;
+															node.material.blendDstAlpha = THREE.OneFactor;
+														}
+														else if(obj.material[i].mode == 2){
+															node.material.opacity = parseFloat(rgba[3]);
+															node.material.depthWrite = false;
+														
+														}
+														else if(obj.material[i].mode == 3){
+															node.material.opacity = Math.max(parseFloat(rgba[3]), obj.material[i].metallic);
+															node.material.depthWrite = false;
+															node.material.blending = THREE.CustomBlending;
+															node.material.blendEquation = THREE.AddEquation;
+															node.material.blendSrc = THREE.OneFactor;
+															node.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+															node.material.blendSrcAlpha = THREE.OneFactor;
+															node.material.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
+														}
+
+
+													}
 												}
-											);
+											});
+											renderer.toneMapping = THREE.ACESFilmicToneMapping;
+											renderer.outputEncoding = THREE.sRGBEncoding;
+									
 											//20200512-thonsha-mod-end
 											break;
 										case "Unlit/Transparent": // 光源

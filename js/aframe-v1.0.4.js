@@ -80923,6 +80923,7 @@ module.exports.Shader = registerShader('chromaKey', {
     'uniform float _slope;',
     'void main(){',
     ' vec3 tColor = texture2D( src, vUV ).rgb;',
+    ' float a = texture2D( src, vUV ).a;',
     ' float d1, d2, d3, d4, d;',
     ' d1 = abs(length(abs(color.rgb - tColor.rgb)));',
 
@@ -80936,10 +80937,10 @@ module.exports.Shader = registerShader('chromaKey', {
     ' float alpha = smoothstep(edge0, _threshold, d);',
 
     ' if (alpha < opacity){',
-    '   gl_FragColor = vec4(tColor, alpha);',
+    '   gl_FragColor = vec4(tColor, alpha*a);',
     ' }',
     ' else{',
-    '   gl_FragColor = vec4(tColor, opacity);',
+    '   gl_FragColor = vec4(tColor, opacity*a);',
     ' }',
       
 
@@ -80996,6 +80997,7 @@ module.exports.Shader = registerShader('HSVMatting', {
 
     'void main(){',
     ' vec3 tColor = texture2D( src, vUV ).rgb;',
+    ' float a = texture2D( src, vUV ).a;',
     ' vec3 HSV = rgb2hsv(tColor);',
     ' float h = abs(HSV.x - _keyingColorH);',
     ' float s = abs(HSV.y - _keyingColorS);',
@@ -81006,7 +81008,7 @@ module.exports.Shader = registerShader('HSVMatting', {
     ' }',
     
 
-      'gl_FragColor = vec4(tColor, alpha);',
+      'gl_FragColor = vec4(tColor, alpha*a);',
     '}'
   ].join('\n')
 
