@@ -10,66 +10,10 @@
 			}
 		});
 	
-		// AFRAME.registerComponent('cursor-listener', {
-		// 	init: function () {
-		// 		//20191023-start-thonsha-mod
-
-		// 		// this.el.addEventListener( 'touchend', endEvent, false );
-		// 		// this.el.addEventListener( 'mouseup', endEvent, false );
-		// 		this.el.addEventListener( 'click', clickEvent, false );
-		// 		this.el.addEventListener( 'fusing', fusingEvent, false );
-
-		// 		function fusingEvent(event){
-		// 			event.preventDefault();
-		// 			if (event.target == event.currentTarget){
-		// 				// console.log('I was fusing, this.object3D = ', this.object3D , event );
-		// 				if (this.object3D.behav){
-		// 					delay = this.object3D.behav[0].display*1000+5;
-		// 					// console.log("======= delay :"+delay+" =====");
-		// 					let cursor = document.getElementById("cursor_main");
-		// 					cursor.setAttribute('cursor', "fuseTimeout:"+ delay);
-		// 					cursor.setAttribute('animation__mouseenter', "dur: "+delay );
-		// 				}
-		// 			}
-					
-
-		// 		}	
-
-		// 		function clickEvent( event ) {
-		// 			console.log('I was clicked, this.object3D = ', this.object3D , event );
-		// 			event.preventDefault();
-					
-		// 			if (event.target == event.currentTarget){
-		// 				// console.log('I was clicked, this.object3D = ', this.object3D , event );
-						
-		// 				if ( this.object3D.behav ){
-		// 					let reset = false;
-		// 					for(let i=0;i<this.object3D.behav.length;i++){
-		// 						if (this.object3D.behav[i].simple_behav == "CloseAndResetChildren"){
-		// 							reset = true;
-		// 						}
-		// 					}
-
-		// 					for(let i=0;i<this.object3D.behav.length;i++){
-		// 						if (this.object3D.behav[i].simple_behav != "CloseAndResetChildren"){
-		// 							vrController.triggerEvent( this.object3D.behav[i], reset );
-		// 						}
-		// 					}
-							
-		// 				}
-		// 			}
-		// 		}
-				
-		// 		//20191023-end-thonsha-mod
-
-		// 	}
-		// });
-	
+		
 		var VRController = function(){
 			//// scene 2D part
 			this.GLRenderer = null;
-			this.scene2D = null;
-			this.camera2D = null;
 			this.light = null;
 	
 			//// MAKAR part
@@ -80,22 +24,11 @@
 
 			this.makarObjects = [];
 
-			this.objectControlState = null; //// 0: nothing, 1:mousedown/touchstart, 2: mousemove/touchmove, 3: mouseup/touchend.
-			this.controlObject = null; //// for control object
-			this.emptyObject = new THREE.Object3D(); //// create the empty object for memory control
-
-//20200528-thonsha-add-start
-			// this.cubeCamera = null;
-			// this.cubeRenderTarget = new THREE.WebGLRenderTargetCube( 256, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-//20200528-thonsha-add-end
-
 			//// for update
 			this.FUNCTION_ENABLED = false;
 			this.clock = new THREE.Clock();
 			this.delta = this.time = 0;
 
-			//// for sky - video
-			this.isShowSky = false;
 			this.currentSceneIndex = null;
 
 		}
@@ -135,40 +68,12 @@
 						}
 						self.makarObjects.length = 0; // clean the array.
 					}
-					//// 假如場景名稱含有 "@nv@" 則開背景相機，同時設定 isShowSky, 讓loading GLTF 時候可以判斷該不該 load 環景圖
-					if ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_name.includes("@nv@")  ){
-						for (let i in self.scene2D.children ){
-							if (self.scene2D.children[i].videoBackground && self.scene2D.children[i].visible == false ){
-								self.scene2D.children[i].visible = true;
-							}
-						}
-						self.isShowSky = false;
-					}else{
-						self.isShowSky = true;
-					}
-
+					
 					self.loadAssets(); //// for video elements
 					self.loadSceneObjects(projIndex, sceneIndex);
 					setTimeout( function(){
-
 						self.currentSceneIndex = sceneIndex;
-						if ( self.isShowSky ){
-							self.loadSky(projIndex, sceneIndex);
-						}
-						// if ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_name.includes("@nv@")  ){
-						// 	for (let i in self.scene2D.children ){
-						// 		if (self.scene2D.children[i].videoBackground && self.scene2D.children[i].visible == false ){
-						// 			self.scene2D.children[i].visible = true;
-						// 		}
-						// 	}
-						// 	self.isShowSky = false;
-						// }else{
-						// 	self.loadSky(projIndex, sceneIndex);
-						// 	self.isShowSky = true;
-						// }
-						
-						// self.loadSky(projIndex, sceneIndex);
-
+						self.loadSky(projIndex, sceneIndex);
 					}, 500 );
 					
 				}
@@ -288,11 +193,7 @@
 				} else{
 					scene_skybox_url = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;
 				}
-				if (self.isShowSky){
-					scene_skybox_url = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;
-				}else{
-					scene_skybox_url = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/spherical_image/defaultGray2.jpg";
-				}
+
 				let targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
 				let renderer = self.vrScene.renderer;
 				let envTexture = new THREE.TextureLoader().load(
@@ -1669,7 +1570,7 @@
 
 
 			////// 設計將 VR 專案中 cursor 的功能取消，改以點擊觸發。 
-			////// 因為 VR 場景中目前不讓使用者以點擊或是滑鼠來操控物件，所以不序要額外判斷 look-control 開啟與否
+			////// 因為 VR 場景中目前不讓使用者以點擊或是滑鼠來操控物件，所以不需要額外判斷 look-control 開啟與否
 			////// --------------------- debug --------------------------------
 
 			this.getMakarObject = function( obj ){
@@ -1687,33 +1588,13 @@
 				}
 			}
 
-
-			////// add the listener for show the panel or not
-			self.vrScene.canvas.addEventListener("touchstart", startEvent, false);
-			self.vrScene.canvas.addEventListener("mousedown", startEvent, false);
-
-			self.vrScene.canvas.addEventListener( 'touchmove', moveEvent, false );
-			self.vrScene.canvas.addEventListener( 'mousemove', moveEvent, false );
-
 			self.vrScene.canvas.addEventListener("touchend", endEvent, false);
 			self.vrScene.canvas.addEventListener("mouseup", endEvent, false);
 
-//[start-20200313-fei0091-add]//
-			////  set the temporary empty object, will replace it by the touchstart(cell phone)/mouseDown(PC)
-			// var objectControls = new THREE.ObjectControls( self.vrScene.canvas , vrController.emptyObject );  
-			// objectControls.enableVerticalRotation();
-			// objectControls.setRotationSpeed( 0.1 ); // for PC 
-			// objectControls.setPanSpeed( 0.01 ); // for PC 
-
-			// objectControls.setRotationSpeedTouchDevices( 0.05 ); // for cell phone
-			// objectControls.setDistance( -1000, 1000); // set min - max distance for zoom
-			// objectControls.setZoomSpeed( 2 ); // set zoom speed
-			
-//[end---20200313-fei0091-add]//
 			//////
 			////// raycaster for touch and mouse 
 			//////
-			var preMouse = new THREE.Vector2();
+			let preMouse = new THREE.Vector2();
 			var mouse = new THREE.Vector2();
 			var raycaster = new THREE.Raycaster();
 			
@@ -1785,7 +1666,7 @@
 				}
 
 			}
-			
+
 			function endEvent( event ) {
 				// console.log("VRFunc.js: _setupFunction: endEvent: event=", event );
 				if (self.touchMouseState == 2){
@@ -1907,16 +1788,7 @@
 				}
 			}
 
-
-
-
-
-
-
 			/////// --------------------- debug  -----------------------------
-
-
-
 
 		}
 
@@ -1960,17 +1832,8 @@
 								
 								self.currentSceneIndex = j;
 								
-								// window.activeVRScenes(i,j);
-								//// 假如要跳轉的場影不含有 "@nv@" 則關閉背景相機畫面
-								if ( !self.VRSceneResult[i].scenes[j].scene_name.includes("@nv@")  ){
-									for (let k in self.scene2D.children ){
-										if (self.scene2D.children[k].videoBackground && self.scene2D.children[k].visible == true ){
-											self.scene2D.children[k].visible = false;
-										}
-									}
-								}
-								self.loadScene(i,j);
-
+								// self.loadScene(i,j);
+								window.activeVRScenes(i,j);
 							}
 						}
 					}	
@@ -2381,281 +2244,6 @@
 
 		}
 
-		
-
-		//////
-		////// just update the VRController, not the renderer, so it is not consistent with renderer
-		//////
-		VRController.prototype.update = function(){
-			if (!this.FUNCTION_ENABLED){
-				return;
-			}
-			var self = this;
-			
-			this.delta = this.clock.getDelta() * 1;
-			this.time = this.clock.elapsedTime * 1;
-			
-			// console.log("VRFunc.js: VRController update: this.time = ", this.time, this.delta, this.vrScene.delta );
-			// console.log("VRFunc.js: VRController update: self.vrScene = ", self.vrScene );
-
-			for ( let i = 0; i < self.makarObjects.length; i++ ){
-				let makarObject = self.makarObjects[i];
-				if ( makarObject.object3D ){
-					if ( makarObject.object3D.makarObject ){
-						if ( makarObject.object3D.children ){
-							if ( makarObject.object3D.children[0] ){ // it must have only one child. 
-
-								// console.log("VRFunc.js: VRController update: makarObject, model = ", makarObject.object3D.children[0] );
-								self.checkAnimation( makarObject.object3D.children[0], this.delta );
-
-							}
-						}
-					}
-				}
-			}
-
-			setTimeout(  function(){
-				self.update();
-			},  this.vrScene.delta );
-
-
-			
-			// let tstart = new Date().getTime();
-			////// do something
-
-			// let tend = new Date().getTime(); // small to millisecond
-			// let td = 30;
-			// if ( (tend-tstart) < 30 ) td = 30 - (tend - tstart)+1;
-			// else td = 1;
-
-			
-			// setTimeout( this.update() );
-		}
-
-//[start-20200604-fei0096-add]//
-
-		VRController.prototype.startWebCam = function( continueScan, callback ){
-			let onError = function(err) { console.error("VRController.startWebCam error:", err); };
-
-			var self = this;
-			let video = document.createElement('video');
-			let configuration = { facing: "environment", };
-			let texture = new THREE.VideoTexture(video);
-			window.aTexture = texture;
-			texture.minFilter = THREE.LinearFilter;
-			texture.flipY = false;
-			texture.format = THREE.RGBFormat; // THREE.RGBAFormat
-			
-			let rendererSize = new THREE.Vector2();
-			self.vrScene.renderer.getSize( rendererSize );
-
-			if ( navigator.mediaDevices  ) {
-
-				let videoSuccess = function(stream){
-					console.log("VRFunc.js: _startWebCam: videoSuccess: stream=", stream );
-					video.srcObject = stream;
-					readyToPlay = true;
-					video.playsInline = true;
-					video.onloadedmetadata = function() {
-						function tick_video(){
-							if (video.videoWidth > 200 || video.videoHeight > 200){
-								console.log("VRFunc.js: tick_video play rendererSize[x,y]=", rendererSize.x , rendererSize.y , "video[w, h]=", video.videoWidth, video.videoHeight );
-								video.play();
-
-								//////// set the div size depend on video
-								let videoWidth, videoHeight;
-								let vrDiv = document.getElementById("vrDiv");
-								let w, h;
-								if ( rendererSize.x/rendererSize.y > video.videoWidth/video.videoHeight ){
-									videoWidth  = Math.round(rendererSize.y -0) * video.videoWidth/video.videoHeight ;
-									videoHeight = Math.round(rendererSize.y -0);
-
-									w = window.innerWidth  ;
-									h = (window.innerWidth/video.videoWidth)* video.videoHeight;
-									
-								}else{
-									// videoWidth  = Math.round( document.documentElement.clientWidth );
-									// videoHeight = Math.round( document.documentElement.clientWidth * video.videoHeight/video.videoWidth );
-									videoWidth  = Math.round( rendererSize.x );
-									videoHeight = Math.round( rendererSize.x * video.videoHeight/video.videoWidth );
-									
-									w = (window.innerHeight/video.videoHeight) * video.videoWidth ;
-									h = window.innerHeight;
-								}
-								// vrDiv.style.width  = videoWidth + "px" ;    //  
-								// vrDiv.style.height = videoHeight + "px" ;//
-								// vrDiv.style.top = (document.documentElement.clientHeight - videoHeight)/2 + "px";
-								// vrDiv.style.left = (document.documentElement.clientWidth - videoWidth)/2 + "px";
-
-								//// full fill, left nothing blank
-								vrDiv.style.width  = w + "px" ;
-								vrDiv.style.height = h + "px" ;
-								//// align the div and body
-								vrDiv.style.left = ( innerWidth - w )/2 + "px" ;
-								vrDiv.style.top  = ( innerHeight - h )/2 + "px" ;
-
-								self.vrScene.resize(); ////// it must call after renderer resize
-
-								////// setup the 2D camera
-								let camera2D = new THREE.OrthographicCamera( -videoWidth/2, videoWidth/2, -videoHeight/2, videoHeight/2, -10, 20000);
-								self.camera2D = camera2D;
-
-								////// setup videoPlane
-								let videoPlane = new THREE.Mesh(
-									// new THREE.PlaneBufferGeometry(640, 480),
-									// new THREE.PlaneBufferGeometry( document.documentElement.clientWidth , document.documentElement.clientHeight ),
-									new THREE.PlaneBufferGeometry( videoWidth , videoHeight ),
-									new THREE.MeshBasicMaterial( { map:texture, side: THREE.DoubleSide } ) ,
-								);
-								// videoPlane.material.depthTest = false;
-								// videoPlane.material.depthWrite = false;
-								videoPlane.position.set(0, 0, -1 );
-
-								videoPlane.visible = false; //// 起始預設不顯示
-								videoPlane.videoBackground = true; //// 為了查找
-								texture.needsUpdate = true;
-
-								self.scene2D.add( videoPlane );
-								
-								if ( callback ) { callback(); }
-
-							}else{
-								// console.log("tick_video else video[w, h]=", video.videoWidth, video.videoHeight );
-								setTimeout(tick_video, 100);
-							}
-						}
-						if ( self.camera2D ){
-							console.log("VRFunc.js: _startWebCam: camera2D exist, donothing ");
-						}else{
-							console.log("VRFunc.js: _startWebCam: camera2D not exist, start video ");
-							tick_video();
-						}
-						
-					}
-				}
-
-				function startCamrea(stream){
-					
-					// console.log("VRFunc.js: start _enumerateDevices, stream =" , stream  );
-					stream.getTracks().forEach(function(track) {
-						// console.log("VRFunc.js: start _enumerateDevices, track =" , track  );
-						track.stop();
-					});
-
-					navigator.mediaDevices.enumerateDevices().then(function( devices ) {
-
-						let useFacingMode = true;
-						let cameraID ;
-						let video_constraints;
-
-						devices = devices.filter(function(devices) { return devices.kind === 'videoinput'; });
-						for (let i in devices){
-							if ( devices[i].label ){ 
-								// console.log("VRFunc.js:  devices[i]=", devices[i].label );
-								if ( configuration.facing == "environment" ){
-									if ( devices[i].label.toLowerCase().search( "back" ) != -1 || devices[i].label.toLowerCase().search( "後" ) != -1  ){ // front back
-										cameraID = devices[i].deviceId;
-										useFacingMode = false;
-										// console.log("VRFunc.js: set useFacingMode false(environment), devices[i].label=", devices[i].label );
-									}
-									
-								} else if (configuration.facing == "user"){
-									if ( devices[i].label.toLowerCase().search( "front" ) != -1 || devices[i].label.toLowerCase().search( "前" ) != -1  ){ // front back
-										cameraID = devices[i].deviceId;
-										useFacingMode = false;
-										// console.log("VRFunc.js: set useFacingMode false(user), devices[i].label=", devices[i].label );
-									}
-
-								}
-
-
-							}else{
-								// console.log("VRFunc.js: !devices label, devices[i]=", typeof(devices[i].label) , devices[i].label );
-							}
-							
-							// console.log("VRFunc.js: devices= 1 ", devices[i].deviceId , " 2 " , devices[i].label , " 3 " , devices[i].kind , " 4 " , devices[i].toJSON() );
-						}
-
-						if (window.navigator.userAgent.toLowerCase().indexOf("mobile") >= 0 ){
-							////// iphone part , can only use safari, and the permission of camera will request everytime. Use facingMode 
-							if (window.navigator.userAgent.toLowerCase().indexOf("iphone") >=0 && window.navigator.userAgent.toLowerCase().indexOf("safari")>=0 ){
-								console.log("VRFunc.js: _startCamera, The system is mobile: iphone ", window.navigator.userAgent.toLowerCase() );
-
-								video_constraints = {
-									video: {
-										width: { min: 320, ideal: 640, max: 1280 },
-										height: { min: 240, ideal: 480, max: 800 }, 
-										frameRate: { min:15, ideal: 30, max: 60 },
-										facingMode: configuration.facing ,
-									}
-								};
-
-							}
-							////// iphone part , can use chrome/Firefox, the permission of camera will request once.
-							if (window.navigator.userAgent.toLowerCase().indexOf("android")>=0 ){
-								
-								if (useFacingMode){
-									console.log("VRFunc.js: _startCamera, The system is mobile: android(use facingMode) "  );
-									var facing = configuration.facing;
-									video_constraints = {
-										video: {
-											width: { min: 320, ideal: 640, max: 1280 },
-											height: { min: 240, ideal: 480, max: 800 }, 
-											frameRate: { min:15, ideal: 30, max: 60 },
-											facingMode: facing
-										}
-										
-									};
-								}else{
-									console.log("VRFunc.js: _startCamera, The system is mobile: android(use cameraID) " , cameraID  );
-									video_constraints = {
-										video: {
-											width: { min: 320, ideal: 640, max: 1280 },
-											height: { min: 240, ideal: 480, max: 800 }, 
-											frameRate: { min:15, ideal: 30, max: 60 },
-											deviceId: { exact:cameraID }
-										}
-									};
-								
-								}
-							}
-						}else{
-							console.log("VRFunc.js: _startCamera, The system is PC: ", window.navigator.userAgent.toLowerCase() );
-							video_constraints = {
-								video: {
-									width: { min: 320, ideal: 640, max: 1280 },
-									height: { min: 240, ideal: 480, max: 800 }, 
-									frameRate: { min:15, ideal: 30, max: 60 },
-									facingMode: "environment"
-								}
-							};
-						}
-
-						//////// start simply ////////
-						// console.log("VRFunc.js: _startCamera, _getUserMedia: video_constraints " , video_constraints  );
-						navigator.mediaDevices.getUserMedia( video_constraints ).then(videoSuccess, onError); // successCallback
-
-					});
-
-				}
-				
-				navigator.mediaDevices.getUserMedia( {video:{}} ).then( startCamrea , onError);
-
-
-			} else {
-				if (navigator.getUserMedia) {
-					navigator.getUserMedia(hdConstraints, success, onError);
-				} else {
-					onError('navigator.getUserMedia is not supported on your browser');
-				}
-			}
-
-			
-		}
-
-		
-//[end---20200604-fei0096-add]//
-
 //[start-20191111-fei0079-add]//
         var checkHost_tick = function() {
             if ( typeof(checkHost) != "undefined" ){
@@ -2820,9 +2408,7 @@
 				////// set member into vrController
 				let rendererSize = new THREE.Vector2();
 				vrScene.renderer.getSize( rendererSize );
-				//////// add the 2D scene and 
-				let scene2D = new THREE.Scene();
-				vrController.scene2D = scene2D;
+				
 
 //20191112-start-thonsha-add
 				vrscene.renderer.sortObjects = true;
@@ -2916,37 +2502,16 @@
 				////// load the sky: image/video set the sky 360 image.
 				// vrController.loadSky(projIndex);
 
-				vrController.startWebCam( false, function(){
-					////// load each scenes 
-					vrController.loadScene(projIndex, sceneIndex);
-					checkHost_tick();
-					Module.checkMifly();
-					
-					setTimeout(function(){
-						// vrController.scene2D.children[0].visible = true;
-						renderTick();
-					}, 1 );
-			
-				});
-
-				// vrController.loadScene(projIndex, sceneIndex);					
-				// checkHost_tick();
-				// Module.checkMifly();
-				// renderTick();
+				vrController.loadScene(projIndex, sceneIndex);					
+				checkHost_tick();
+				Module.checkMifly();
+				renderTick();
 	
 				// console.log("VRFunc.js: initvrscene, done", vrScene, vrScene.object3D );
 			}
 	
 //20200528-thonsha-mod-start		
 			var renderTick = function() {
-
-				if (vrController.camera2D){
-					if ( true ){
-						vrController.GLRenderer.render( vrController.scene2D, vrController.camera2D);
-					}
-				}else{
-					vrController.GLRenderer.clearColor();
-				}
 
 				// vrController.GLRenderer.clearStencil();
 				// vrController.GLRenderer.clearColor();
