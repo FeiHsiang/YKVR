@@ -499,22 +499,21 @@
 						
 						//20191111-start-thonsha-mod
 						let url_spit_length = obj.res_url.split(".").length
-						let imgType = obj.res_url.split(".")[url_spit_length-1]
+						let imgType = obj.res_url.split(".")[url_spit_length-1].toLowerCase();
 
+						let plane;
 						if (imgType == "jpg" || imgType == "jpeg" || imgType == "png"){
-							var plane = document.createElement("a-plane");
+							plane = document.createElement("a-plane");
+							plane.setAttribute( "src", obj.res_url ); //// origin
 						}
 						else if (imgType == "gif"){
-							var plane = document.createElement("a-entity")
+							plane = document.createElement("a-entity")
 						}
 						//20191101-end-thonsha-mod
 
 						plane.setAttribute( "id", obj.obj_id );//// fei add 
 						// plane.setAttribute("makarVRIndex", i ); //// fei add
 						//20191111-start-thonsha-mod
-						if (imgType == "jpg" || imgType == "jpeg" || imgType == "png"){
-							plane.setAttribute( "src", obj.res_url ); //// origin
-						}
 						// plane.setAttribute( "material", "side:double; opacity: 1.0; transparent: true; " ); //// it is work
 						//20191111-end-thonsha-mod
 
@@ -1821,7 +1820,7 @@
 
 				raycaster.setFromCamera( mouse, self.vrScene.camera );
 				let intersects = raycaster.intersectObjects(  makarTHREEObjects, true ); 
-				console.log("VRFunc.js: _setupFunction: endEvent, intersects=", intersects , makarTHREEObjects , self.makarObjects );
+				// console.log("VRFunc.js: _setupFunction: endEvent, intersects=", intersects , makarTHREEObjects , self.makarObjects );
 				if (intersects.length != 0 ){
 					console.log("VRFunc.js: _setupFunction: 1 endEvent, intersects=", intersects );
 					let touchObject = self.getMakarObject( intersects[0].object );
