@@ -708,9 +708,16 @@
 													////// Depend on the earliest paying user, the proA user from 2019-09-25 to 2020-07-25 are free user,
 													////// most set new type for verification user.
 													// expire_date_ymd_arr = [2020,9,28];
-													ISOexpire_date = new Date( expire_date_ymd_arr );
+													// ISOexpire_date = new Date( expire_date_ymd_arr );
+													// // var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
+													// var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
+													
+													ISOexpire_date = new Date( expire_date_ymd_arr[0], expire_date_ymd_arr[1], expire_date_ymd_arr[2] );
+													var setTime = new Date(2020,9,26);
 													// var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
-													var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
+													var diffDays = ( ISOexpire_date - setTime )/1000/60/60/24; ////// it unit is millisecond 
+													
+													
 													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: expire_date_ymd_arr=", expire_date_ymd_arr, ISOexpire_date );
 													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: diffDays=", diffDays );
 													if ( diffDays > 1 ){
