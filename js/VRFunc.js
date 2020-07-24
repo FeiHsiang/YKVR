@@ -30,7 +30,9 @@
 			this.delta = this.time = 0;
 
 			this.currentSceneIndex = null;
-
+			//// 沒有特別的用意，主要是為了讓每次 create <video> 的 id 不相同
+			this.loadSceneCount = 0;
+			this.triggerEnable = false;
 		}
 	
 		VRController.prototype.setupFunction = function(){
@@ -54,6 +56,7 @@
 			this.loadScene = function(projIndex, sceneIndex) {
 				console.log("VRFunc.js: VRController: _loadScene: [projectIndex, sceneIndex]=", projIndex, sceneIndex, self.VRSceneResult[projIndex].scenes[sceneIndex]);
 
+
 				if (self.VRSceneResult[projIndex].scenes[sceneIndex] == undefined ){
 					console.log("VRFunc.js: VRController: _loadScene: error, [valid sceneIndex]=", self.VRSceneResult[projIndex].scenes.length, sceneIndex);
 				}else{
@@ -69,26 +72,49 @@
 						self.makarObjects.length = 0; // clean the array.
 					}
 					
+					self.loadSceneCount++;
 					self.loadAssets(); //// for video elements
 					self.loadSceneObjects(projIndex, sceneIndex);
 					setTimeout( function(){
 						self.currentSceneIndex = sceneIndex;
 						self.loadSky(projIndex, sceneIndex);
-					}, 500 );
-					
+					}, 1 );
+					////// 延後 三秒鐘 讓觸發事件工作
+					setTimeout(function(){
+						console.log("VRFunc.js: _loadScene: set triggerEnable true ");
+						self.triggerEnable = true;
+					}, 3000);
+
 				}
 			}
 
 
 	////// load the sky, 360 image/video
 			this.loadSky = function( projIndex, sceneIndex ){
-				// console.log("VRFunc.js: loadSky: main type=", VRSceneResult[projIndex].scenes[0].scene_skybox_main_type, VRSceneResult[projIndex].scenes[0].scene_skybox_url);
+				// console.log("VRFunc.js: _loadSky: main type=", VRSceneResult[projIndex].scenes[0].scene_skybox_main_type, VRSceneResult[projIndex].scenes[0].scene_skybox_url);
 				// scene_skybox_main_type: "spherical_video"
 				
 				switch ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type ){
 					case "spherical_image":
 					case "image":
-						var aSky = document.createElement('a-sky');
+						var aSky;
+						if (document.getElementById("sky")){
+							aSky = document.getElementById("sky");
+							if (aSky.localName == "a-sky"){
+								//// 之前的 sky 是圖片，什麼都不用作
+							}else if (aSky.localName == "a-videosphere"){
+								//// 之前的 sky 是影片
+								aSky.remove();
+								aSky = document.createElement('a-sky');
+								aSky.setAttribute('id', "sky" );
+								self.vrScene.appendChild(aSky);
+							}
+						}else{
+							aSky = document.createElement('a-sky');
+							aSky.setAttribute('id', "sky" );
+							self.vrScene.appendChild(aSky);
+						}
+
 						if(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url == "DefaultResource/Spherical_Image/SphericalImage.png"){
 							self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png"
 						}
@@ -96,9 +122,9 @@
 						aSky.setAttribute("material", {"src": self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url }); 
 
 						aSky.setAttribute("radius", 2000 ); // if not set this, will be infinite
-						aSky.setAttribute('id', "sky" );
-						self.vrScene.appendChild(aSky);
-						self.makarObjects.push( aSky );
+						// aSky.setAttribute('id', "sky" );
+						// self.vrScene.appendChild(aSky);
+						// self.makarObjects.push( aSky );
 
 						break;
 	
@@ -108,7 +134,23 @@
 						
 						////// mp4 video 
 						var aSky = document.createElement('a-videosphere');
-						// aSky.setAttribute("src", self.VRSceneResult[projIndex].scenes[0].scene_skybox_url ); //  this is work, but hard to control the tag
+						if (document.getElementById("sky")){
+							aSky = document.getElementById("sky");
+							if (aSky.localName == "a-sky"){
+								//// 之前的 sky 是圖片，刪掉再創新的
+								aSky.remove();
+								aSky = document.createElement('a-videosphere');
+								aSky.setAttribute('id', "sky" );
+								self.vrScene.appendChild(aSky);
+							}else if (aSky.localName == "a-videosphere"){
+								//// 之前的 sky 是影片，不用額外動作
+								
+							}
+						}else{
+							aSky = document.createElement('a-videosphere');
+							aSky.setAttribute('id', "sky" );
+							self.vrScene.appendChild(aSky);
+						}
 
 						let skyVideo = document.createElement("video");
 						skyVideo.src = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;  
@@ -116,7 +158,7 @@
 						skyVideo.autoplay = true;
 						skyVideo.setAttribute('crossorigin', 'anonymous');
 						// skyVideo.setAttribute('id', 'skyVideo');
-						skyVideo.setAttribute('id', self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id );
+						skyVideo.setAttribute('id', self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id + "_" + self.loadSceneCount );
 
 						// skyVideo.play(); // play pause
 						skyVideo.setAttribute("autoplay", "true" ); 
@@ -124,14 +166,13 @@
 	
 						assets.appendChild(skyVideo); ////// add video into a-assets
 						// aSky.setAttribute("src", "#skyVideo" );  
-						aSky.setAttribute("src", "#"+self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id ); // 
+						aSky.setAttribute("src", "#"+self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id + "_" + self.loadSceneCount ); // 
 
 	
 						aSky.setAttribute("radius", 2000 ); // if not set this, will be infinite
-						aSky.setAttribute('id', "sky" );
-						
-						self.vrScene.appendChild(aSky);
-						self.makarObjects.push( aSky );
+						// aSky.setAttribute('id', "sky" );
+						// self.vrScene.appendChild(aSky);
+						// self.makarObjects.push( aSky );
 						console.log("VRFunc.js: _loadSky: aSky=", aSky );
 						break;
 
@@ -165,7 +206,11 @@
 						return -1;
 					}
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-
+					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
+						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+					}else{
+						scene_objs = [];
+					}
 				}else if ( editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] <= 6  ){
 					////// the version below 3.0.6, before about 2020 03 
 					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
@@ -173,14 +218,27 @@
 						return -1;
 					}
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
+						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+					}else{
+						scene_objs = [];
+					}
 				} else if ((editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] >= 7) || (editor_version[0] >= 3 && editor_version[1] >= 0 ) ){
 					////// the version below 3.0.5, before about 2020 03 
 					console.log("VRFunc.js: _loadSceneObjects: the editor version after 3.0.7", self.VRSceneResult[projIndex].scenes[sceneIndex] );
-					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
+					if (self.VRSceneResult[projIndex].scenes[sceneIndex].objs){
+						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
+					}else{
+						scene_objs = [];
+					}
 				}else{
 					//// the unknown version do version above 3.0.6 
 					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-
+					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
+						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+					}else{
+						scene_objs = [];
+					}
 				}
 
 				//// 改為 loading 一次 環景圖 在每次載入 3D Model 的時候在帶入。 
@@ -1182,7 +1240,7 @@
 				mp4Video.loop = true;
 				//thonsha add
 				mp4Video.setAttribute('crossorigin', 'anonymous');
-				mp4Video.setAttribute("id", obj.obj_id+"_"+obj.res_id );
+				mp4Video.setAttribute("id", obj.obj_id+"_"+obj.res_id+"_"+self.loadSceneCount );
 				// mp4Video.setAttribute("hidden", "true");
 				// mp4Video.setAttribute("loop", "true");
 				assets.appendChild(mp4Video); ////// add video into a-assets
@@ -1267,7 +1325,7 @@
 					videoPlane.setAttribute( "id", obj.obj_id );//// fei add 
 					// videoPlane.setAttribute("makarVRIndex", i ); //// fei add
 
-					videoPlane.setAttribute("src", "#"+obj.obj_id+"_"+obj.res_id ); //  
+					videoPlane.setAttribute("src", "#"+obj.obj_id+"_"+obj.res_id+"_"+self.loadSceneCount ); //  
 					// videoPlane.setAttribute("src", obj.res_url);
 
 					// position = new THREE.Vector3( 1.5 , 0.0 , 4.0 ); ////// set for test
@@ -1300,7 +1358,7 @@
 							}
 						}
 					});
-					
+
 					self.makarObjects.push( videoPlane );
 
 					//20191227-start-thonsha-mod
@@ -1371,8 +1429,8 @@
 
 					// console.log("VRFunc.js: VRController: _loadVideo, videoPlane=", videoPlane );
 				}
-				
-				
+
+
 			}
 
 			this.loadLight = function( obj, position, rotation, scale ){
@@ -1669,6 +1727,9 @@
 
 			function endEvent( event ) {
 				// console.log("VRFunc.js: _setupFunction: endEvent: event=", event );
+				if (!self.triggerEnable){
+					return;
+				}
 				if (self.touchMouseState == 2){
 					return;
 				}
@@ -1831,9 +1892,10 @@
 							if(VRSceneResult[i].scenes[j].scene_id == sceneID){
 								
 								self.currentSceneIndex = j;
-								
-								// self.loadScene(i,j);
-								window.activeVRScenes(i,j);
+
+								self.triggerEnable = false;
+								self.loadScene(i,j);
+								// window.activeVRScenes(i,j);
 							}
 						}
 					}	
@@ -2445,6 +2507,7 @@
 				aCamera.setAttribute('camera', "" ); 
 				////// 20190921 Fei add some code inside  aframe-v0.9.2.js/aframe-v0.9.2.min.js for use touch control vertical view
 				aCamera.setAttribute('look-controls', "" ); 
+				aCamera.setAttribute('wasd-controls', "" ); 
 				// aCamera.setAttribute('xytouch-look-controls', "" ); ///// 20190921 Fei stop use it for now.
 				aCamera.setAttribute('id', "aCamera" );
 				aCamera.setAttribute('position', { x: 0 , y: 0 , z: 0 } ); ////// it is work, but cant get value
@@ -2502,6 +2565,7 @@
 				////// load the sky: image/video set the sky 360 image.
 				// vrController.loadSky(projIndex);
 
+				vrController.triggerEnable = false;
 				vrController.loadScene(projIndex, sceneIndex);					
 				checkHost_tick();
 				Module.checkMifly();
