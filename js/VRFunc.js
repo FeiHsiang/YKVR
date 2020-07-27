@@ -55,7 +55,7 @@
 			////// At first, will called for load the first scene. 
 			this.loadScene = function(projIndex, sceneIndex) {
 				console.log("VRFunc.js: VRController: _loadScene: [projectIndex, sceneIndex]=", projIndex, sceneIndex, self.VRSceneResult[projIndex].scenes[sceneIndex]);
-
+				loadPage.style.display = "block";
 
 				if (self.VRSceneResult[projIndex].scenes[sceneIndex] == undefined ){
 					console.log("VRFunc.js: VRController: _loadScene: error, [valid sceneIndex]=", self.VRSceneResult[projIndex].scenes.length, sceneIndex);
@@ -93,12 +93,12 @@
 			this.loadSky = function( projIndex, sceneIndex ){
 				// console.log("VRFunc.js: _loadSky: main type=", VRSceneResult[projIndex].scenes[0].scene_skybox_main_type, VRSceneResult[projIndex].scenes[0].scene_skybox_url);
 				// scene_skybox_main_type: "spherical_video"
-				
+				let aSky;
 				switch ( self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_main_type ){
 					case "spherical_image":
 					case "image":
-						var aSky;
-						if (document.getElementById("sky")){
+
+					if (document.getElementById("sky")){
 							aSky = document.getElementById("sky");
 							if (aSky.localName == "a-sky"){
 								//// 之前的 sky 是圖片，什麼都不用作
@@ -126,6 +126,14 @@
 						// self.vrScene.appendChild(aSky);
 						// self.makarObjects.push( aSky );
 
+						var handleLoadingPage = function(){
+							console.log("VRFunc.js: _loadSky: spherical_image materialtextureloaded, remove loading page ");
+							loadPage.style.display = "none";
+							//// 將自己移除事件，避免重複觸發事件
+							aSky.removeEventListener("materialtextureloaded" , handleLoadingPage );
+						};
+						aSky.addEventListener("materialtextureloaded" , handleLoadingPage );
+
 						break;
 	
 					case "spherical_video":
@@ -133,7 +141,6 @@
 						let assets = document.getElementById("makarAssets");
 						
 						////// mp4 video 
-						var aSky = document.createElement('a-videosphere');
 						if (document.getElementById("sky")){
 							aSky = document.getElementById("sky");
 							if (aSky.localName == "a-sky"){
@@ -173,6 +180,15 @@
 						// aSky.setAttribute('id', "sky" );
 						// self.vrScene.appendChild(aSky);
 						// self.makarObjects.push( aSky );
+
+						var handleLoadingPage = function(){
+							console.log("VRFunc.js: _loadSky: spherical_video materialtextureloaded, remove loading page ");
+							loadPage.style.display = "none";
+							//// 將自己移除事件，避免重複觸發事件
+							aSky.removeEventListener("materialtextureloaded" , handleLoadingPage );
+						};
+						aSky.addEventListener("materialtextureloaded" , handleLoadingPage );
+
 						console.log("VRFunc.js: _loadSky: aSky=", aSky );
 						break;
 
@@ -290,6 +306,7 @@
 									 if (aCamera.components["look-controls"].yawObject && aCamera.components["look-controls"].pitchObject){
 										aCamera.components["look-controls"].yawObject.rotation.set(0,0,0)
 										aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0)
+										aCamera.object3D.position.set(0,0,0);
 									}
 		
 									// camera_cursor.object3D.rotation.set( 0, 180 * Math.PI/180 , 0 , "YXZ" ); ///// actually, looks control will control this object3D, but I cant modify it directly..  
@@ -2306,6 +2323,66 @@
 
 		}
 
+		VRController.prototype.setSceneTable = function(projIndex){ 
+			let self = this;
+			////// get the variables
+			let scenesTable = document.getElementById("scenesTable");
+			let snapShotRow = scenesTable.rows.scene_snapshot;
+			let sceneNameRow = scenesTable.rows.scene_name;
+			let snapShotNumber = snapShotRow.children.length;
+			let sceneNameNumber = sceneNameRow.children.length;
+			////// clear the table
+			for (let i=0; i<snapShotNumber; i++) snapShotRow.deleteCell(0);
+			for (let i=0; i<sceneNameNumber; i++) sceneNameRow.deleteCell(0);
+			
+			// VRSceneResult[projIndex]
+			for (let i = 0; i<VRSceneResult[projIndex].scenes.length; i++){
+				let scene = VRSceneResult[projIndex].scenes[i];
+				let sceneNameCell = sceneNameRow.insertCell( i );
+				let snapShotCell = snapShotRow.insertCell( i );
+				sceneNameCell.style.paddingLeft = "8px";
+				snapShotCell.style.paddingLeft = "8px";
+
+				//// 設置場景名稱
+				let _div = document.createElement('div');
+				_div.innerText = scene.scene_name;
+				_div.className = "sceneNameOneRow";
+				if (i == 0){
+					_div.style.backgroundColor = "rgba(73, 117, 221, 1.0)";
+				}
+				sceneNameCell.appendChild(_div);
+				
+				////設置場景縮圖
+				let _img = document.createElement('img');
+				if(scene.scene_snapshot_url == "DefaultResource/Spherical_Image_Snapshot/SphericalImage.png"){
+					_img.src = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/Spherical_Image/SphericalImage.png";
+				}else{
+					_img.src = scene.scene_snapshot_url;
+				}
+				_img.width = 128;
+				_img.height = 64;
+				_img.onclick = function(){
+					if (self.triggerEnable){
+						console.log("VRFuc.js: _setSceneTable: scene click, index = ", i , sceneNameRow.cells[i].children[0] ) ;
+						sceneNameRow.cells[i].children[0].style.backgroundColor = "rgba(73, 117, 221, 1.0)";
+						//// 先將觸控關閉，再跳轉場景
+						self.triggerEnable = false;
+						self.loadScene(projIndex, i );
+
+						for (let j = 0; j < sceneNameRow.cells.length; j++ ){
+							if (i == j) continue;
+							sceneNameRow.cells[j].children[0].style.backgroundColor = "rgba(98, 103, 116, 1.0)";
+						}
+					}else{
+						console.log("please wait 3 seconds for load scene");
+					}
+				};
+
+				snapShotCell.appendChild(_img);
+
+			}
+		}
+
 //[start-20191111-fei0079-add]//
         var checkHost_tick = function() {
             if ( typeof(checkHost) != "undefined" ){
@@ -2338,8 +2415,6 @@
 		Module.checkMifly();
 //[end---20191111-fei0079-add]//
 
-
-
 		window.showVRProjList = function(){
 //20200102-start-thonsha-add
 			requestDeviceMotionPermission();
@@ -2352,9 +2427,7 @@
 			}else{
 				console.error("VRFunc.js: the window.makarID not exit, FYS");
 			}
-			////// show the panel by set the class = "" //////
-			// var panel = document.getElementById("panel");
-			// panel.className = "";
+
 	
 			// console.log("VRFunc.js: showVRProjList: ", url, makarID);
 			getVRSceneByUserID(url, makarID, function(data){
@@ -2463,7 +2536,7 @@
 				vrScene.canvas.addEventListener("touchstart", startEvent, false);
 				vrScene.canvas.addEventListener("mousedown", startEvent, false);
 				function startEvent(event){
-					document.getElementById("panel").className = "collapsed"; ////// smaller the panel
+					bottomScenes.className = bottomArrow.className = scenesInfo.className = "collapsed";
 				}
 				
 
@@ -2571,6 +2644,10 @@
 				Module.checkMifly();
 				renderTick();
 	
+				//// 製作下方，場景資訊
+				vrController.setSceneTable(projIndex);
+
+
 				// console.log("VRFunc.js: initvrscene, done", vrScene, vrScene.object3D );
 			}
 	

@@ -1,0 +1,414 @@
+
+html{
+  width: 100%;
+  height: 100%;
+  overflow: hidden; 
+  position: absolute;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background-color: rgba( 50 , 50 , 50 , 1.0 );
+
+  width: 100%;
+  height: 100%;
+  overflow: hidden; 
+  position: relative;
+}
+
+#loadPage{
+  display: none;
+  position: absolute;
+  top:0px;
+  width:100vw;
+  height:100vh;
+  background-color: rgba(128,128,128,0.5);
+  z-index: 1;
+  text-align: center;
+  font-size: 32pt;
+  line-height: 80vh;
+}
+
+hr {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  border: 1px solid #4a4d54;
+}
+
+#bottomScenes {
+  position:absolute;
+  float:left;
+  bottom:110px;
+  right:0px;
+  height:34px;
+  width: 120px;
+  z-index:2;
+  cursor:pointer;
+
+  border-top-left-radius: 5px;
+  background: rgba(49, 51, 63, 0.85); 
+
+  transition: bottom .1s ease-in-out;
+    -webkit-transition: bottom .1s ease-in-out;
+    -moz-transition: bottom .1s ease-in-out;
+}
+
+#bottomScenes.collapsed {
+  bottom:0px;
+  right:0px;
+  height:34px;
+  width: 120px;
+
+}
+
+#bottomScenes h4 {
+  text-align: left;
+  margin: 1px;
+  padding-left: 10px;
+
+  color: rgba(200, 200, 200, 1.0);
+}
+
+
+#bottomScenes i {
+  border: solid rgba(255, 255, 255, 1.0);
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+#bottomScenes i.collapsed {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+#scenesInfo {
+	position:absolute;
+	bottom:0;
+  float:left;
+  right:0px;
+	width:100%;
+	height:110px;
+	cursor:pointer;
+  overflow-x:auto;
+  overflow-y:hidden;
+  text-align:center;
+  z-index:2;
+  background: rgba(49, 51, 63, 0.85); 
+
+	transition: height .1s ease-in-out;
+    -webkit-transition: height .1s ease-in-out;
+    -moz-transition: height .1s ease-in-out;
+}
+
+#scenesInfo.collapsed {
+	height:1px;
+}
+
+#scenesTable{
+  float: left;
+  margin-top: 5px;
+  left: 0px;
+  position: relative;
+  border-spacing: 0px;
+}
+
+#proj_name{
+  font-size: 12px;
+  color: white;
+}
+
+#leftTopButton {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  cursor:pointer;
+  z-index: 2;
+}
+
+#leftTopButton p {
+  color: rgba(200,200,200,1.0);
+  font-size: 24px;
+  margin: 10px;
+}
+
+#leftTopArrow{
+  vertical-align: -10%;
+  width:25px;
+  height:25px;
+}
+
+.sceneNameOneRow{
+  width:128px;
+  text-align: left;
+  overflow: hidden;
+  white-space : nowrap;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  /* background-color: #626774; */
+  background-color:rgba(98,103,116,1.0);
+  color:rgba(200,200,200,1.0);
+  font-size: 12pt;
+  height:28px;
+  line-height:28px;  
+  padding-left: 5px;
+}
+ 
+
+.circular--square {
+  border-radius: 50%;
+}
+
+.circular--square-marker {
+  
+  border-width: 3px;
+  border-style: solid;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+
+  border-radius: 50%;
+  border-color: rgb(33, 184, 187);
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+  z-index:3;
+  text-align: left;
+}
+/* Modal Content/Box */
+.modal-content {
+
+  position: relative;
+  background-color: #202125;
+  margin: 3% auto;
+  border-radius: 16px;
+  width: 85vw;
+  height: 85vh;
+  overflow: auto;
+
+}
+
+.modal-content > div {
+  position: relative;
+  margin-left: 2%;
+  margin-right: 2%;
+  width: 90%;
+}
+
+#projectTypeDiv{
+  position: relative;
+  /* width:90%; */
+  margin-top: 15px;
+  min-height: 30px;
+}
+
+#projectTypeImg{
+  position: absolute;
+  width:30px;
+  height:30px;
+  left:5px ;
+  /* bottom: 6px; */
+}
+
+#projectTypeInfo{
+  position: relative;
+  font-size: 12pt;
+  color: #8b93a6;
+  left:  45px ;
+}
+
+#projectNameDiv{
+  position: relative;
+  width:95%;
+  margin-top: 20px;
+}
+
+#projectNameInfo {
+  margin:0px;
+  font-size: 14pt;
+  color: #ffffff;
+}
+
+#projectUserImage {
+  width: 30px;
+  height: 30px;
+  margin-top: 5px;
+  border-radius: 50%;
+}
+
+#projectUserName {
+  position: relative;
+  top: -12px;
+  margin-left: 5px;
+  font-size: 9pt;
+  color: #8b93a6;
+}
+
+#projectLastUpdateDate {
+  position: absolute;
+  font-size: 9pt;
+  right: 0%;
+  top: 40px;
+  color: #8b93a6;
+}
+
+#scanList{
+  position: relative;
+}
+
+#projectUsageDiv{
+  margin-top: 7px;
+  position: relative;
+
+}
+
+#projectDescriptionDiv
+{
+  margin-top: 5px;
+  position: relative;
+}
+
+#scanListTitle,
+#projectUsageTitle,
+#projectDescriptionTitle
+{
+  margin-top: 3px;
+  font-size: 10pt;
+  margin: 0px;
+  color: #8b93a6;
+}
+
+#projectUsageInfo{
+  color:#ffffff;
+  font-size: 8pt;
+  margin: 0px;
+}
+
+#projectDescription
+{
+  color:#ffffff;
+  overflow-y: auto;
+  font-size: 8pt;
+  margin: 0px;
+  height: 40px;
+}
+
+#projectPicture{
+  height:100px;
+}
+
+#projectPicture > img {
+  margin-top: 3px;
+  margin-right: 15px;
+  width: 90px;
+  height: 90px;
+}
+
+#scanListEndLine{
+  display: none;
+}
+
+#projectGPSDiv{
+  color:#8b93a6;
+  margin-top: 7px;
+  position: relative;
+  display: none;
+  /* margin-bottom: 3px; */
+}
+#projectGPStitle{
+  font-size: 10pt;
+  margin:2px;
+}
+
+#projectGPSInfo{
+  background-color: #4a4d54;
+  border-radius:10px;
+  padding-left:10px;
+  padding-top:3px;
+  padding-bottom:3px;
+  font-size: 8pt;
+  color: rgba(240,240,240,1);
+}
+#projectGPSDivEndLine{
+  display: none;
+}
+
+#projectStartButton {
+  position: absolute;
+  bottom: 10px;
+  width: 96%;
+  height: 54px;
+  border-radius: 16px;
+  color: #ffffff;
+  text-align: center;
+  border: 0;
+  padding: 0px 0 0 0px;
+  background: #31333f;
+  cursor: pointer;
+}
+
+#projectStartButton:active {
+  background-color: #4a4d54;
+}
+
+#startTitle{
+  position: relative;
+  top:16px;
+  margin: 0px;
+  font-size: 12pt;
+  left:calc( 25% + 20px  ) ;
+  width:50%;
+}
+
+#startBGImage{
+  position: absolute;
+  width:40px;
+  height:40px;
+  left:calc(50% - 90px) ;
+  bottom: 6px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  /* float: right; */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+} 
