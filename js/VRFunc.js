@@ -29,6 +29,8 @@
 			this.clock = new THREE.Clock();
 			this.delta = this.time = 0;
 
+			this.projectIdx = 0;
+
 			this.currentSceneIndex = null;
 			//// 沒有特別的用意，主要是為了讓每次 create <video> 的 id 不相同
 			this.loadSceneCount = 0;
@@ -1386,6 +1388,7 @@
 								videoBehavRef = true;
 								videoPlane.setAttribute("visible", false);
 								videoPlane.setAttribute('class', "unclickable" );
+								mp4Video.muted = false;
 								break;
 							}
 						}
@@ -1904,18 +1907,28 @@
 					console.log("VRFunc.js: triggerEvent: SceneChange: event=", event );
 					//20191023-start-thonsha-add
 					sceneID = event.scene_id;
-					for (let i = 0; i <VRSceneResult.length;i++){
-						for (let j = 0;j<VRSceneResult[i].scenes.length;j++){
-							if(VRSceneResult[i].scenes[j].scene_id == sceneID){
+					// for (let i = 0; i <VRSceneResult.length;i++){
+					// 	for (let j = 0;j<VRSceneResult[i].scenes.length;j++){
+					// 		if(VRSceneResult[i].scenes[j].scene_id == sceneID){
 								
-								self.currentSceneIndex = j;
+					// 			self.currentSceneIndex = j;
 
-								self.triggerEnable = false;
-								self.loadScene(i,j);
-								// window.activeVRScenes(i,j);
-							}
+					// 			self.triggerEnable = false;
+					// 			self.loadScene(i,j);
+					// 			// window.activeVRScenes(i,j);
+					// 		}
+					// 	}
+					// }	
+					let idx = self.projectIdx;
+					for (let i = 0;i<VRSceneResult[idx].scenes.length;i++){
+						if(VRSceneResult[idx].scenes[i].scene_id == sceneID){
+							// window.activeVRScenes(i,j);
+							//// 先將觸控關閉，再跳轉場景
+							self.triggerEnable = false;
+							self.loadScene(idx,i);
+
 						}
-					}	
+					}
 					//20191023-end-thonsha-add
 					break;
 
@@ -2524,6 +2537,8 @@
 			vrController.publishVRProjs = publishVRProjs;
 			window.vrController = vrController; // 20190921 for debug
 
+			vrController.projectIdx = projIndex;
+			
 			function initvrscene(){
 				
 				// console.log("VRFunc.js: activeVRScenes: initvrscene vrScene=", vrScene  );
@@ -2639,7 +2654,13 @@
 				// vrController.loadSky(projIndex);
 
 				vrController.triggerEnable = false;
-				vrController.loadScene(projIndex, sceneIndex);					
+				vrController.loadScene(projIndex, sceneIndex);			
+				vrController.userStartTime = new Date().getTime();
+				
+				setTimeout(function(){
+					leavedSendLog();
+				}, 3000 );
+
 				checkHost_tick();
 				Module.checkMifly();
 				renderTick();
@@ -2672,6 +2693,75 @@
 	}
 
 
+	function makeid(length) {
+		var result           = '';
+		var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for ( var i = 0; i < length; i++ ) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result;
+	}
+
+	var leavedSendLog = window.leavedSendLog = function(e) {
+		if (!window.publishVRProjs) return;
+		if (!publishVRProjs.result) return;
+		if (!publishVRProjs.result[0].user_id) return;
+
+		let device_id;
+		if (localStorage.getItem("device_id")){
+			if (localStorage.getItem("device_id") >= 24 ){
+				device_id = localStorage.getItem("device_id");
+			}else{
+				device_id = new Date().getTime() + "_" + makeid(10) ;
+				localStorage.setItem( "device_id",  device_id );
+			}
+		}else{
+			device_id = new Date().getTime() + "_" + makeid(10) ;
+			localStorage.setItem( "device_id",  device_id );
+		}
+
+		let leavedTime = new Date().getTime();
+
+		let projData = {
+			"brand": Browser.name + Browser.version ,
+			"os": Browser.platform ,
+			"device_id": device_id ,
+			"client": "viewer" , //// 等amos修改玩之後再改為 web 
+			"user_id": publishVRProjs.result[0].user_id ,
+			"proj_id": "" ,
+			"proj_type":"vr" ,
+			"duration_time": 0 ,
+			"explore_time": 0 ,
+			"play_time": 0 ,
+			"location_long":0.0 ,
+			"location_lan":0.0 ,
+		};
+		projData.proj_id = publishVRProjs.result[ vrController.projectIdx ].proj_id;
+		projData.duration_time = (leavedTime - vrController.userStartTime)/1000; // 單位是秒
+		projData.play_time = (leavedTime - vrController.userStartTime)/1000; // 單位是秒
+		projData.duration_time = 10 + Math.random(); // 單位是秒
+		projData.play_time = 10 + Math.random(); // 單位是秒
+		
+		console.log("VRFunc.js: project[" + vrController.projectIdx + "] playing time = " , projData.duration_time , projData.play_time , projData.explore_time );
+
+		let xhr = new XMLHttpRequest();
+		let request = {
+			ver: "3.1.3",
+			cid: 5,
+			data: projData
+		};
+		let jsonReq = JSON.stringify(request);
+		xhr.open('POST', window.serverUrl+"add_project_log" , true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.responseType = 'json';
+		xhr.addEventListener("load", function() {
+			console.log("VRFunc.js: save done, ", xhr.response );
+		});
+		xhr.send(jsonReq);
+
+		return undefined;
+	}
 
 
 	var scope;
