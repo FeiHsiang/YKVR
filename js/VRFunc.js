@@ -533,7 +533,7 @@
 							}
 							else if (imgType == "gif"){
 								plane.setAttribute("geometry", "primitive: plane");
-								plane.setAttribute("material", "shader:gif;  src: url("+ obj.res_url+"); opacity: 1");
+								plane.setAttribute("material", "transparent: true; shader:gif;  src: url("+ obj.res_url+"); opacity: 1");
 
 								if (transparentBehav.mode == 'RGB'){
 									plane.setAttribute("geometry", "primitive: plane");
@@ -553,7 +553,7 @@
 							}
 							else if (imgType == "gif"){
 								plane.setAttribute("geometry", "primitive: plane");
-								plane.setAttribute("material", "shader:gif;  src: url("+ obj.res_url+"); opacity: 1");
+								plane.setAttribute("material", "transparent: true; shader:gif;  src: url("+ obj.res_url+"); opacity: 1");
 							}
 							
 						}
