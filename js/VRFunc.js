@@ -272,6 +272,10 @@
 
 				let targetCube = new THREE.WebGLRenderTargetCube(1024, 1024);
 				let renderer = self.vrScene.renderer;
+//20200730-thonsha-add-start
+				renderer.outputEncoding = THREE.GammaEncoding;
+				renderer.gammaFactor = 1;
+//20200730-thonsha-add-end
 				let envTexture = new THREE.TextureLoader().load(
 					scene_skybox_url,
 					function() 
@@ -898,21 +902,28 @@
 											objj.traverse(node => {
 												if (node.isMesh) {
 													if (node.material.name === obj.material[i].name) {
-														if (node.material.skinning === true ){
-															node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: true});;
-														}else{
-															node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: false});;
-														}
+														node.material = new THREE.MeshBasicMaterial({color: color, name: obj.material[i].name, skinning: node.material.skinning});
 													}
 												}
 											});
 											break;
 										case "Standard":
 											//20200512-thonsha-mod-start
-											var renderer = modelEntity.sceneEl.renderer
+											
+											var renderer = modelEntity.sceneEl.renderer;
 											objj.traverse(node => {
 												if (node.material) {
 													if (node.material.name == obj.material[i].name) {
+//20200803-thonsha-add-start
+														node.material = new THREE.MeshStandardMaterial({
+															name: obj.material[i].name, 
+															skinning: node.material.skinning , 
+															map: node.material.map, 
+															emissive:node.material.emissive,
+															emissiveMap:node.material.emissiveMap,
+															normalMap:node.material.normalMap
+														});					
+//20200803-thonsha-add-end
 														node.material.color = color;
 														node.material.metalness = obj.material[i].metallic;
 														node.material.roughness = 1 - obj.material[i].smoothness;
@@ -922,9 +933,14 @@
 														node.material.reflectivity = 0;
 														node.material.side = THREE.DoubleSide;
 														node.material.transparent = true;
-														
-														// console.log('VRFunc.js: loadGLTFModel: material(standard) node.material=', i, node.material);
-														
+														// console.log('VRFunc.js: _loadGLTFModel: obj.material',obj.material);
+														// console.log('VRFunc.js: _loadGLTFModel: standard node.material',node.material);
+//20200730-thonsha-add-start														
+														if (node.material.map){
+															node.material.map.encoding = THREE.GammaEncoding;
+															node.material.map.needsUpdate = true;
+														}
+//20200730-thonsha-add-end	
 														if(obj.material[i].mode == 0){
 															node.material.opacity = 1;
 															renderer.setClearAlpha(1);
@@ -948,11 +964,24 @@
 															node.material.blendDst = THREE.ZeroFactor;
 															node.material.blendSrcAlpha = THREE.ZeroFactor;
 															node.material.blendDstAlpha = THREE.OneFactor;
+
+															node.customDepthMaterial = new THREE.MeshDepthMaterial( {
+																depthPacking: THREE.RGBADepthPacking,
+																skinning: true,
+																map: node.material.map,
+																alphaTest: obj.material[i].cut_off
+															} );
 														}
 														else if(obj.material[i].mode == 2){
 															node.material.opacity = parseFloat(rgba[3]);
 															node.material.depthWrite = false;
 														
+															node.customDepthMaterial = new THREE.MeshDepthMaterial( {
+																depthPacking: THREE.RGBADepthPacking,
+																skinning: true,
+																map: node.material.map,
+																alphaTest: obj.material[i].cut_off
+															} );
 														}
 														else if(obj.material[i].mode == 3){
 															node.material.opacity = Math.max(parseFloat(rgba[3]), obj.material[i].metallic);
@@ -963,15 +992,20 @@
 															node.material.blendDst = THREE.OneMinusSrcAlphaFactor;
 															node.material.blendSrcAlpha = THREE.OneFactor;
 															node.material.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
+
+															node.customDepthMaterial = new THREE.MeshDepthMaterial( {
+																depthPacking: THREE.RGBADepthPacking,
+																skinning: true,
+																map: node.material.map,
+																alphaTest: obj.material[i].cut_off
+															} );
 														}
-
-
 													}
 												}
 											});
-											renderer.toneMapping = THREE.ACESFilmicToneMapping;
-											renderer.outputEncoding = THREE.sRGBEncoding;
-									
+											// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+											// renderer.outputEncoding = THREE.sRGBEncoding;
+											
 											//20200512-thonsha-mod-end
 											break;
 										case "Unlit/Transparent": // 光源
@@ -998,22 +1032,16 @@
 											objj.traverse(node => {
 												if (node.material) {
 													if (node.material.name == obj.material[i].name) {
-														
+														node.material = new THREE.MeshBasicMaterial({color: new THREE.Color(1,1,1), name: obj.material[i].name, skinning: node.material.skinning, map: node.material.map});
+//20200730-thonsha-add-start
+														if (node.material.map){
+															node.material.map.encoding = THREE.GammaEncoding;
+															node.material.map.needsUpdate = true;
+															console.log(node.material.map)
 
-														if (node.material.skinning === true ){
-															node.material = new THREE.MeshBasicMaterial({name: obj.material[i].name, skinning: true, map: node.material.map});;
-														}else{
-															node.material = new THREE.MeshBasicMaterial({name: obj.material[i].name, skinning: false, map: node.material.map});;
 														}
-
-														// node.material.metalness = 0;
-														// node.material.opacity = 1;
-														// node.material.transparent = false;
-														// node.material.emissiveIntensity = 0;
-														// node.material.needsUpdate = true;
-
-														console.log(" VRFunc.js: loadGLTFModel: material= Unlit/texture:",  node.material , node.material.lightMapIntensity , node.material.aoMapIntensity  );
-
+//20200730-thonsha-add-end
+														node.material.needsUpdate = true;
 													}
 												}
 											});
@@ -1021,6 +1049,24 @@
 										default:
 											console.log(`The shader of no. ${i} material is not supported currently.`);
 											break;
+									}
+								}
+
+								//// if there is animation exist in GLTF, but the editor not contain the animation slices, the mixer will not init.
+								//// use the first animation( usually only one), to setup animationSlice.
+								if (Array.isArray(evt.detail.model.animations)){
+									if ( evt.detail.model.animations.length>0 && !modelEntity.getAttribute("animation-mixer") ){
+										console.log("VRFunc.js: loadGFLTFModel: the model with animation but no animation-mixer, probabily older version of editor ", evt.detail.model );
+										modelEntity.setAttribute("animation-mixer", "clip: "+ evt.detail.model.animations[0].name );
+										animationSlices = [];
+										animationSlices.push({ changed:false, idle:"mifly168", uid:"mifly168" });
+										animationSlices.push({
+											animationName: evt.detail.model.animations[0].name,
+											name: evt.detail.model.animations[0].name,
+											endTime: evt.detail.model.animations[0].duration ,
+											startTime: 0,
+											uid:"mifly168"
+										});
 									}
 								}
 
@@ -2448,7 +2494,7 @@
 				let chooseVRProject = 0;
 				if ( typeof(projName) == "string" ){
 					for (let i in publishVRProjs.result ){
-						if (publishVRProjs.result[i].proj_name.toLowerCase() == projName.toLowerCase()  ){
+						if (publishVRProjs.result[i].proj_name.toLowerCase() == decodeURIComponent(projName).toLowerCase()  ){
 							chooseVRProject = i;
 						}
 					}
