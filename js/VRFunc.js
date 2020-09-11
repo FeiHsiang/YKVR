@@ -164,17 +164,63 @@
 						let skyVideo = document.createElement("video");
 						skyVideo.src = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;  
 						skyVideo.playsInline = true;
-						skyVideo.autoplay = true;
-
-						skyVideo.setAttribute("loop", "true");
+						skyVideo.setAttribute("loop", "true" ); 
 						skyVideo.setAttribute('type', 'video/mp4');
-						if (window.Browser){
-							if (window.Browser.name == undefined || window.Browser.name == "safari"){
-								skyVideo.muted = true;
-							}
-						}
 						skyVideo.onloadedmetadata = function() {
-							skyVideo.play();
+
+							//// 假如不是第一次進入場景，基本上都有點擊事件後進來
+							if (self.loadSceneCount > 1){
+								skyVideo.autoplay = true;
+								skyVideo.setAttribute("autoplay", "true" ); 
+								skyVideo.play();
+								return;
+							}
+
+							if (window.Browser){
+								//// 假如在 firefox(mozilla) 上不需要同意即可播放影片
+								//// chrome 跟 safari 上 需要跳出點擊同意視窗來啟動影片
+								if (window.Browser.name == "mozilla" ){
+									skyVideo.autoplay = true;
+									skyVideo.setAttribute("autoplay", "true" ); 
+									skyVideo.play();
+								} else {
+									skyVideo.autoplay = false;
+									skyVideo.setAttribute("autoplay", "false" ); 
+									
+									let wholeDiv = document.createElement("div");
+									wholeDiv.style.position = "absolute";
+									wholeDiv.style.top = "0px";
+									wholeDiv.style.left = "0px";
+									wholeDiv.style.width = "100%";
+									wholeDiv.style.height = "100%";
+									document.body.appendChild(wholeDiv);
+
+									let clickImg = document.createElement("img");
+									clickImg.setAttribute("id" , "clickImg" );
+									clickImg.src = "https://mifly0makar0assets.s3-ap-northeast-1.amazonaws.com/DefaultResource/2D/button/click.png";
+
+									clickImg.style.position = "absolute";
+									
+									clickImg.onload = function(){
+										clickImg.style.left = "calc(50% - " + clickImg.width/2 + "px )";
+										clickImg.style.top  = "calc(50% - " + clickImg.height/2 + "px )";
+										aSky.setAttribute('opacity', 0 );
+
+										wholeDiv.onclick = function(){
+											console.log(" **** click **** " );
+
+											skyVideo.play().then(() =>{
+												console.log(" **** play then remove clickImg **** " );
+												aSky.setAttribute('opacity', 1 );
+												wholeDiv.remove();
+											});
+										};
+									};
+
+									wholeDiv.appendChild(clickImg);
+								}
+							}
+							
 						}
 
 						skyVideo.setAttribute('crossorigin', 'anonymous');
@@ -182,9 +228,7 @@
 						skyVideo.setAttribute('id', self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id + "_" + self.loadSceneCount );
 
 						// skyVideo.play(); // play pause
-						skyVideo.setAttribute("autoplay", "true" ); 
-						// skyVideo.setAttribute("loop", "true" ); 
-	
+						
 						assets.appendChild(skyVideo); ////// add video into a-assets
 						// aSky.setAttribute("src", "#skyVideo" );  
 						aSky.setAttribute("src", "#"+self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id + "_" + self.loadSceneCount ); // 
