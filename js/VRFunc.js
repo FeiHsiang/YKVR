@@ -165,6 +165,18 @@
 						skyVideo.src = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_skybox_url;  
 						skyVideo.playsInline = true;
 						skyVideo.autoplay = true;
+
+						skyVideo.setAttribute("loop", "true");
+						skyVideo.setAttribute('type', 'video/mp4');
+						if (window.Browser){
+							if (window.Browser.name == undefined || window.Browser.name == "safari"){
+								skyVideo.muted = true;
+							}
+						}
+						skyVideo.onloadedmetadata = function() {
+							skyVideo.play();
+						}
+
 						skyVideo.setAttribute('crossorigin', 'anonymous');
 						// skyVideo.setAttribute('id', 'skyVideo');
 						skyVideo.setAttribute('id', self.VRSceneResult[projIndex].scenes[sceneIndex].scene_id + "_" + self.loadSceneCount );
