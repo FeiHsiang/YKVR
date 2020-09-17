@@ -1888,7 +1888,18 @@
 				if (intersects.length != 0 ){
 					console.log("VRFunc.js: _setupFunction: 1 endEvent, intersects=", intersects );
 					let touchObject = self.getMakarObject( intersects[0].object );
-					console.log("VRFunc.js: _setupFunction: endEvent, touchObject.behav=", touchObject.behav );
+					// console.log("VRFunc.js: _setupFunction: endEvent, touchObject.behav=", touchObject.behav );
+
+//[start-20200915- fei 0101-add]//
+					// console.log("VRFunc.js: _setupFunction: endEvent, touchObject.behav=", touchObject );
+					touchObject.traverse(function(child){
+						if (child.isMesh){
+							// console.log("VRFunc.js: _setupFunction: endEvent, child = " , child );
+						}
+
+					});
+
+//[end---20200915- fei 0101-add]//
 
 					if (touchObject.behav){
 						// self.triggerEvent( touchObject.behav[0] ); // 20190827: add the parameter obj( makarObject)
@@ -2771,6 +2782,91 @@
 				vrController.setSceneTable(projIndex);
 
 
+				/////// --------------------- 開發 OutlinePass start -----------------------------
+				//// 在相機載入完成之後，vrScene.camera 會被設定為 aCamera 的底下物件，再依照此來設定
+				////
+				if (Browser.desktop && THREE.EffectComposer && THREE.RenderPass && THREE.OutlinePass && THREE.ShaderPass && THREE.FXAAShader && THREE.CopyShader ){
+					aCamera.addEventListener("loaded", function(e){
+
+						let renderer = vrScene.renderer;
+						var composer = new THREE.EffectComposer( renderer );
+						vrController.composer = composer;
+						var renderPass = new THREE.RenderPass( vrScene.object3D , vrScene.camera);
+						
+						composer.addPass( renderPass );
+	
+						let outlinePass = new THREE.OutlinePass( new THREE.Vector2( vrScene.clientWidth, vrScene.clientHeight), vrScene.object3D, vrScene.camera );
+						outlinePass.visibleEdgeColor = new THREE.Color( 1.0, 1.0, 1.0 ); // 沒被遮擋到的邊緣顏色
+						outlinePass.hiddenEdgeColor = new THREE.Color( 0.45, 0.0, 0.0 );  // 被遮擋到的邊緣顏色
+						outlinePass.usePatternTexture = false; // 是否啟動紋路
+						
+						composer.addPass( outlinePass );
+	
+						// var onLoad = function ( texture ) {
+						// 	outlinePass.patternTexture = texture;
+						// 	texture.wrapS = THREE.RepeatWrapping;
+						// 	texture.wrapT = THREE.RepeatWrapping;
+						// };
+						// var loader = new THREE.TextureLoader();
+						// loader.load( 'https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/makar_default_objects/2D/tri_pattern.jpg', onLoad );
+	
+						let effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+						effectFXAA.uniforms[ 'resolution' ].value.set( 1 / vrScene.clientWidth, 1 / vrScene.clientHeight );
+						composer.addPass( effectFXAA );
+	
+						var selectedObjects = [];
+						var mouse = new THREE.Vector2();
+						var raycaster = new THREE.Raycaster();
+	
+						// window.addEventListener( 'mousemove', onTouchMove );
+						vrScene.canvas.addEventListener( 'mousemove', onTouchMove );
+						vrScene.canvas.addEventListener( 'touchmove', onTouchMove );
+						vrScene.canvas.addEventListener( 'touchend', onTouchMove );
+	
+						function onTouchMove( event ) {
+							var x, y;
+							if ( event.changedTouches ) {
+								x = event.changedTouches[ 0 ].pageX;
+								y = event.changedTouches[ 0 ].pageY;
+							} else {
+								x = event.clientX;
+								y = event.clientY;
+							}
+							mouse.x = ( x / vrScene.clientWidth ) * 2 - 1;
+							mouse.y = - ( y / vrScene.clientHeight ) * 2 + 1;
+							checkIntersection();
+						}
+	
+						function addSelectedObject( object ) {
+							selectedObjects = [];
+							selectedObjects.push( object );
+						}
+	
+						function checkIntersection() {
+							raycaster.setFromCamera( mouse, vrScene.camera );
+							var intersects = raycaster.intersectObject( vrScene.object3D, true );
+							if ( intersects.length > 0 ) {
+								var selectedObject = intersects[ 0 ].object;
+								if (selectedObject.el){
+									if (selectedObject.el.id != "sky" ){
+										// console.log(" ----- checkIntersection: selectedObject= " , selectedObject );
+										addSelectedObject( selectedObject );	
+										outlinePass.selectedObjects = selectedObjects;
+									}
+								}
+							} else {
+								// outlinePass.selectedObjects = [];
+								console.log(" --- " );
+	
+							}
+						}
+	
+						/////// --------------------- 開發 OutlinePass end  -----------------------------
+					});
+
+
+				}
+				
 				// console.log("VRFunc.js: initvrscene, done", vrScene, vrScene.object3D );
 			}
 	
@@ -2783,6 +2879,9 @@
 
 				vrController.GLRenderer.render( vrController.vrScene.object3D, vrController.vrScene.camera );
 
+				if (vrController.composer){
+					vrController.composer.render();
+				}
 				// console.log("renderTick");
 				requestAnimationFrame(renderTick); // dont use it, because of the haning problem
 			};
