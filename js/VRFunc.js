@@ -2785,7 +2785,7 @@
 				/////// --------------------- 開發 OutlinePass start -----------------------------
 				//// 在相機載入完成之後，vrScene.camera 會被設定為 aCamera 的底下物件，再依照此來設定
 				////
-				if (Browser.desktop && THREE.EffectComposer && THREE.RenderPass && THREE.OutlinePass && THREE.ShaderPass && THREE.FXAAShader && THREE.CopyShader ){
+				if ( ( Browser.desktop ) && THREE.EffectComposer && THREE.RenderPass && THREE.OutlinePass && THREE.ShaderPass && THREE.FXAAShader && THREE.CopyShader ){
 					aCamera.addEventListener("loaded", function(e){
 
 						let renderer = vrScene.renderer;
@@ -2818,12 +2818,18 @@
 						var mouse = new THREE.Vector2();
 						var raycaster = new THREE.Raycaster();
 	
-						// window.addEventListener( 'mousemove', onTouchMove );
-						vrScene.canvas.addEventListener( 'mousemove', onTouchMove );
+						let isMouseDown = null;
+						let isTouchMove = null; 
+						vrScene.canvas.addEventListener( 'mousedown', onMouseDown );
+						vrScene.canvas.addEventListener( 'mousemove', onMouseMove );
+						vrScene.canvas.addEventListener( 'mouseup', onMouseUp );
+
+						vrScene.canvas.addEventListener( 'touchstart', onTouchStart );
 						vrScene.canvas.addEventListener( 'touchmove', onTouchMove );
-						vrScene.canvas.addEventListener( 'touchend', onTouchMove );
-	
-						function onTouchMove( event ) {
+						vrScene.canvas.addEventListener( 'touchend', onTouchEnd );
+						//// 點擊到 sky 或是 沒有點擊到物件（不應該發生）的時候取消『選取物件』
+
+						function getChangedTouches(event){
 							var x, y;
 							if ( event.changedTouches ) {
 								x = event.changedTouches[ 0 ].pageX;
@@ -2834,9 +2840,43 @@
 							}
 							mouse.x = ( x / vrScene.clientWidth ) * 2 - 1;
 							mouse.y = - ( y / vrScene.clientHeight ) * 2 + 1;
-							checkIntersection();
 						}
-	
+
+						function onTouchStart(event){
+							// console.log(" onTouchStart " );
+							isTouchMove = false;
+						}
+
+						function onTouchMove( event ) {
+							// console.log(" onTouchMove " );
+							isTouchMove = true;
+						}
+
+						function onTouchEnd( event ) {
+							// console.log(" onTouchEnd " );
+							if (!isTouchMove){
+								getChangedTouches(event);
+								checkIntersectionAndCancel();
+							}					
+						}
+
+						function onMouseDown(event){
+							isMouseDown = true;
+						}
+
+						function onMouseMove( event ) {
+							if (!isMouseDown){
+								getChangedTouches(event);
+								checkIntersection();
+							}
+						}
+
+						function onMouseUp(event){
+							isMouseDown = false;
+							getChangedTouches(event);
+							checkIntersectionAndCancel();
+						}
+						
 						function addSelectedObject( object ) {
 							selectedObjects = [];
 							selectedObjects.push( object );
@@ -2860,13 +2900,31 @@
 	
 							}
 						}
-	
-						/////// --------------------- 開發 OutlinePass end  -----------------------------
+
+						function checkIntersectionAndCancel() {
+							raycaster.setFromCamera( mouse, vrScene.camera );
+							var intersects = raycaster.intersectObject( vrScene.object3D, true );
+							if ( intersects.length > 0 ) {
+								var selectedObject = intersects[ 0 ].object;
+								if (selectedObject.el){
+									if (selectedObject.el.id == "sky" ){
+										outlinePass.selectedObjects = [];
+										// console.log(" ----- checkIntersection: sky selectedObject= " , selectedObject );
+									}else{
+										// console.log(" ----- checkIntersection: selectedObject= " , selectedObject );
+										addSelectedObject( selectedObject );
+										outlinePass.selectedObjects = selectedObjects;
+									}
+								}
+							} else {
+								outlinePass.selectedObjects = [];
+								// console.log(" --- " );
+							}
+						}
 					});
-
-
 				}
-				
+				/////// --------------------- 開發 OutlinePass end  -----------------------------
+
 				// console.log("VRFunc.js: initvrscene, done", vrScene, vrScene.object3D );
 			}
 	
