@@ -3159,6 +3159,14 @@ TextLayout.prototype.update = function(opt) {
       var id = text.charCodeAt(i)
       var glyph = self.getGlyph(font, id)
       if (glyph) {
+
+//[start-20201022- fei -0102-add]//      
+        //// 因為使用多個 font 需要增加判斷空白
+        if ( (id == TAB_ID || id == SPACE_ID) && glyph.char != " " ){
+          continue;
+        }
+//[end---20201022- fei -0102-add]//
+
         if (lastGlyph) 
           x += getKerning(font, lastGlyph.id, glyph.id)
 
@@ -27012,7 +27020,10 @@ module.exports = anime;
 
 				if ( image === undefined ) {
 
-					console.warn( 'THREE.WebGLRenderer: Texture marked for update but image is undefined' );
+//[start-20201022- fei -0102-remove]//
+          ////// 新的文字物件會觸發此警告，移除比較好debug
+          // console.warn( 'THREE.WebGLRenderer: Texture marked for update but image is undefined' );
+//[end---20201022- fei -0102-remove]//
 
 				} else if ( image.complete === false ) {
 
@@ -41745,7 +41756,7 @@ module.exports = anime;
         request.open( 'GET', url, true );
         
 //20200106-start-thonsha-add
-        request.timeout = 5000; // time in milliseconds
+        request.timeout = 0; // time in milliseconds
         // request.withCredentials = true;
 //20200106-end-thonsha-add
 
@@ -50346,9 +50357,12 @@ module.exports = anime;
 
 					// wrap around
 
-					var loopDelta = Math.floor( time / duration ); // signed
-					time -= duration * loopDelta;
-
+          var loopDelta = Math.floor( time / duration ); // signed
+//[start-20200603-fei0096-remove]//
+          //// when the loop is trigger, do not set the time of model back to 0. 
+          //// will deal the start time in aframe-extras.js 
+					// time -= duration * loopDelta;
+//[end---20200603-fei0096-remove]//
 					loopCount += Math.abs( loopDelta );
 
 					var pending = this.repetitions - loopCount;
@@ -61563,6 +61577,54 @@ function TextGeometry (opt) {
 
 inherits(TextGeometry, Base)
 
+//[start-20200926- fei -0102-add]//
+TextGeometry.prototype.genLayout = function (opt) {
+  var _layout = createLayout(opt);
+  return _layout;
+}
+
+TextGeometry.prototype.updateForSpace = function ( offsetWidths ) {
+  
+  // console.log(" *** _TextGeometry: _updateForSpace: this=" , this  );
+
+  var glyphs = this.layout.glyphs.filter(function (glyph) {
+    var bitmap = glyph.data
+    return bitmap.width * bitmap.height > 0
+  })
+
+  var flipY = this.layout._opt.flipY !== false
+  var texWidth = this.layout._opt.font.common.scaleW;
+  var texHeight =  this.layout._opt.font.common.scaleH;
+
+  var positions = vertices.positions(glyphs)
+  var uvs = vertices.uvs(glyphs, texWidth, texHeight, flipY)
+  var indices = createIndices({
+    clockwise: true,
+    type: 'uint16',
+    count: glyphs.length
+  })
+
+  // console.log(" *** 1 _TextGeometry: _updateForSpace: positions=",  positions , glyphs , offsetWidths );
+
+  //// 針對每個文字作個別判斷，應該起始的位置該如何設置
+  for (let i = 0, len= glyphs.length; i< len; i++ ){
+    let x = offsetWidths[glyphs[i].index ];
+    positions[ i*8 + 0] = x + glyphs[i].data.xoffset ;
+    positions[ i*8 + 2] = x + glyphs[i].data.xoffset ;
+    positions[ i*8 + 4] = x + glyphs[i].data.xoffset + glyphs[i].data.width ;
+    positions[ i*8 + 6] = x + glyphs[i].data.xoffset + glyphs[i].data.width ;
+  }
+  // console.log(" *** 2 _TextGeometry: _updateForSpace: positions=",  positions  );
+
+  buffer.index(this, indices, 1, 'uint16')
+  buffer.attr(this, 'position', positions, 2)
+  buffer.attr(this, 'uv', uvs, 2)
+
+  return ;
+}
+
+//[end---20200926- fei -0102-add]//
+
 TextGeometry.prototype.update = function (opt) {
   if (typeof opt === 'string') {
     opt = { text: opt }
@@ -61619,6 +61681,14 @@ TextGeometry.prototype.update = function (opt) {
     // enable multipage rendering
     buffer.attr(this, 'page', pages, 1)
   }
+
+//[start-20201022- fei -0102-add]//
+  // console.log(" *** 1 _TextGeometry: _update: positions=",  positions , glyphs );
+  if (opt.offsetWidths){
+    this.updateForSpace( opt.offsetWidths );
+  }
+//[end---20201022- fei -0102-add]//
+
 }
 
 TextGeometry.prototype.computeBoundingSphere = function () {
@@ -64300,7 +64370,6 @@ var PoseSensor = function () {
     value: function useDeviceMotion() {
       this.api = 'devicemotion';
       this.fusionSensor = new FusionPoseSensor(this.config.K_FILTER, this.config.PREDICTION_TIME_S, this.config.YAW_ONLY, this.config.DEBUG);
-      console.log("aframe-v1.0.4.js: FusionPoseSensor: ***********  ", this.fusionSensor);
       if (this.sensor) {
         this.sensor.removeEventListener('reading', this._onSensorRead);
         this.sensor.removeEventListener('error', this._onSensorError);
@@ -69177,7 +69246,10 @@ module.exports.Component = registerComponent('look-controls', {
       position: new THREE.Vector3(),
       rotation: new THREE.Euler()
     };
-
+//[start-20201111- fei -0103-add]//
+    //// 為了知道什麼時候載入完成，可以取得 pitchObject / yawObject 
+    this.el.emit('look-controls-loaded', { "look-controls": this } );
+//[end---20201111- fei -0103-add]//    
     // Call enter VR handler if the scene has entered VR before the event listeners attached.
     if (this.el.sceneEl.is('vr-mode')) { this.onEnterVR(); }
   },
@@ -72771,6 +72843,40 @@ var textures = {};
 // Regular expression for detecting a URLs with a protocol prefix.
 var protocolRe = /^\w+:/;
 
+//[start-20201026- fei -0102-add]//
+function recordCorners(pArrays){
+  
+  let minX = minY = 1000, maxX = maxY = -1000;
+  let pArray = [];
+  for (let i = 0, len = pArrays.length; i< len; i++){
+
+    pArray = pArrays[i];
+
+    if ( pArray.length%8 != 0 ) continue;
+
+    for (let j = 0, len = pArray.length/8; j < len; j++) {
+      if (pArray[j*8 + 0] < minX ){
+        minX = pArray[j*8 + 0];
+      }
+      if (pArray[j*8 + 1] < minY ){
+        minY = pArray[j*8 + 1];
+      }
+      if (pArray[j*8 + 4] > maxX ){
+        maxX = pArray[j*8 + 4];
+      }    
+      if (pArray[j*8 + 5] > maxY ){
+        maxY = pArray[j*8 + 5];
+      } 
+    }
+  }
+
+  return [ minX , maxX , minY , maxY  ];
+
+}
+
+//[end---20201026- fei -0102-add]//
+
+
 /**
  * SDF-based text component.
  * Based on https://github.com/Jam3/three-bmfont-text.
@@ -72788,7 +72894,14 @@ module.exports.Component = registerComponent('text', {
     anchor: {default: 'center', oneOf: ['left', 'right', 'center', 'align']},
     baseline: {default: 'center', oneOf: ['top', 'center', 'bottom']},
     color: {type: 'color', default: '#FFF'},
-    font: {type: 'string', default: DEFAULT_FONT},
+
+//[start-20201022- fei -0102-mod]//
+    // font: {type: 'string', default: DEFAULT_FONT},
+    font: {type: 'array', default: DEFAULT_FONT},
+    backcolor: {type: 'string' , default: "0,0,0,0" },
+    textcolor: {type: 'string' , default: "1,1,1,1" },
+//[end---20201022- fei -0102-mod]//
+
     // `fontImage` defaults to the font name as a .png (e.g., mozillavr.fnt -> mozillavr.png).
     fontImage: {type: 'string'},
     // `height` has no default, will be populated at layout.
@@ -72824,6 +72937,12 @@ module.exports.Component = registerComponent('text', {
     this.geometry = createTextGeometry();
     this.createOrUpdateMaterial();
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+//[start-20201022- fei -0102-add]//
+    this.textMesh = new THREE.Object3D();
+    this.textures = {};
+//[end---20201022- fei -0102-add]//  
+
     this.el.setObject3D(this.attrName, this.mesh);
   },
 
@@ -72831,13 +72950,30 @@ module.exports.Component = registerComponent('text', {
     var data = this.data;
     var font = this.currentFont;
 
-    if (textures[data.font]) {
-      this.texture = textures[data.font];
-    } else {
+//[start-20201022- fei -0102-mod]//    
+      // console.log(" ***** aframe-v1.0.4.js: text: _update: this =", this );
       // Create texture per font.
       this.texture = textures[data.font] = new THREE.Texture();
       this.texture.anisotropy = MAX_ANISOTROPY;
-    }
+      //// 多張 字形對應到 多個 texture
+      if (Array.isArray(data.font)){
+        for (let i in data.font ){
+          var tempTexture = new  THREE.Texture();
+          tempTexture.anisotropy = MAX_ANISOTROPY;
+          this.textures[data.font[i]] = tempTexture;
+        }
+      }else{
+          //// origin code ////
+        if (textures[data.font]) {
+          this.texture = textures[data.font];
+        } else {
+          // Create texture per font.
+          this.texture = textures[data.font] = new THREE.Texture();
+          this.texture.anisotropy = MAX_ANISOTROPY;
+        }
+
+      }
+//[end---20201022- fei -0102-mod]//    
 
     // Update material.
     this.createOrUpdateMaterial();
@@ -72890,6 +73026,16 @@ module.exports.Component = registerComponent('text', {
       shaderName = 'sdf';
     }
 
+
+//[start-20201022- fei -0102-add]//
+    //// 為了載入多個圖片，預設格式都是 msdf
+    if (Array.isArray(data.font)){
+      if (data.font[0].indexOf('-msdf') >=0){
+        shaderName = 'msdf';
+      }
+    }
+//[end---20201022- fei -0102-add]//
+
     hasChangedShader = (this.shaderObject && this.shaderObject.name) !== shaderName;
 
     shaderData.alphaTest = data.alphaTest;
@@ -72937,47 +73083,266 @@ module.exports.Component = registerComponent('text', {
 
     // Look up font URL to use, and perform cached load.
     fontSrc = this.lookupFont(data.font || DEFAULT_FONT) || data.font;
-    cache.get(fontSrc, function doLoadFont () {
-      return loadFont(fontSrc, data.yOffset);
-    }).then(function setFont (font) {
-      var fontImgSrc;
 
-      if (font.pages.length !== 1) {
-        throw new Error('Currently only single-page bitmap fonts are supported.');
+//[start-20201022- fei -0102-add]//
+
+    let loadCount = 0; //// 由於各個字體載入時間不確定，所以每載入完成就紀錄，等到全部載入完成再執行空位判定
+    let textInfos = [];
+    let fonts = {};
+    let opts = {};
+    if (Array.isArray(fontSrc) ){
+
+      for (let i = 0; i<fontSrc.length; i++ ){
+        cache.get(fontSrc[i], function doLoadFont () {
+          return loadFont2(fontSrc[i], i, data.yOffset);
+        }).then(  setFont  ).catch(function (err) {
+          error(err.message);
+          error(err.stack);
+        });
       }
 
-      if (!fontWidthFactors[fontSrc]) {
-        font.widthFactor = fontWidthFactors[font] = computeFontWidthFactor(font);
+      function setFont (font ) {
+        loadCount += 1; //// 由於各個字體載入時間不確定，所以每載入完成就紀錄，等到全部載入完成再執行空位判定
+        fonts[ data.font[ font.index ] ] = font;
+
+        let fontImgSrc;
+        if (!fontWidthFactors[fontSrc]) {
+          font.widthFactor = fontWidthFactors[font] = computeFontWidthFactor(font);
+        }
+
+        ////// 取得各個 字形 下帶有字體的部份
+        var opt = self.getOpt( font);
+        opts[ data.font[ font.index ] ] = opt;
+
+        //// 取得此字形擁有的字
+        var layout1 = geometry.genLayout( opt ); //// 這邊的 geometry 不具意義，只是為了取得 _genLayout 這個功能
+
+        let newText = data.value.toString().replace(/\\n/g, "\n").replace(/\\t/g, " ");
+        // let newText = data.value;
+        let currentIndex = -1;
+        for (let i = 0, len = newText.length; i < len; i++ ){         
+          // let textInfo = layout1.glyphs.find( e => { return e.data.char == newText[i]  } );//// 這方法不行，會找到第一個，對換行有誤
+          //// 尋找的時候要先判斷是否有使用過，因為有換行的問題
+          let textInfo = layout1.glyphs.find( function(e, index, array) { 
+            if (index > currentIndex){
+              if (e.data.char == newText[i]){
+                currentIndex = index;
+                return e;
+              }
+            }
+          });
+          if (textInfo){
+            // console.log(" *** text: textInfo= " , i,  textInfo );
+            textInfo.font = data.font[ font.index ];
+            textInfos[i] = textInfo;  
+          }
+        }
+
+        // console.log(" *** text: _setFont: data.value , layout1 = " , layout1.glyphs , textInfos  );
+
+        self.currentFont = font;
+        if ( loadCount == fontSrc.length ){
+
+          //// 取得全部文字的起始位置。
+          let offsetWidths = [] , currentLine = 0;
+          offsetWidths[0] = 0;
+          let tempTotalWidth = 0;
+          for (let i = 0, len = textInfos.length; i < len ;i++ ){
+            let textInfo = textInfos[i];
+            if (textInfo){
+              //// 換行之後，把累加的長度歸靈
+              if (textInfo.line != currentLine){
+                currentLine = textInfo.line;
+                tempTotalWidth = 0; 
+              }
+
+              offsetWidths[ i ] = tempTotalWidth;
+
+              //// 紀錄完前一個字的寬度之後，再累加當前字
+              if (textInfo.data.width == 0){ // 空白字元
+                tempTotalWidth += 27;
+              }else{
+                tempTotalWidth += (textInfo.data.width + textInfo.data.xoffset);
+              }
+            }
+          }
+
+          //// 新增 mesh 並且取代原本 object3D
+          //// 取得 各texture
+          let cornersArray = [];
+          for (let i =0, len = data.font.length ; i < len; i++){
+            
+            let opt = opts[ data.font[i] ];
+            opt.offsetWidths = offsetWidths;
+//[start-20201023- fei -0102-add]//
+            //// 設定希望的行距
+            opt.lineHeight = opt.font.common.lineHeight = 45;
+            // console.log(" *** 1 _TextGeometry: _update: opt=",  opt );
+//[end---20201023- fei -0102-add]//
+            let g0 = createTextGeometry( opt ); 
+            //// 假如『輸入的文字』沒有在『此字形』內，則不需要製作mesh放入
+            if (g0.attributes.position.count == 0){
+              continue;
+            }
+            cornersArray.push(g0.attributes.position.array);
+            // console.log(" *** text: _setFont: textInfos = " , textInfos , fonts , opts  );
+
+            // Update geometry given font metrics.
+            // self.updateGeometry(geometry, font);
+
+            var shaderData2 = {};
+            shaderData2.alphaTest = data.alphaTest;
+            shaderData2.color = data.color;
+            shaderData2.map = self.textures[ data.font[i] ];
+            shaderData2.opacity = data.opacity;
+            shaderData2.side = parseSide(data.side);
+            shaderData2.transparent = data.transparent;
+            shaderData2.negate = data.negate;
+
+            self.textures[ data.font[i] ].needsUpdate = true; //// 這個一定要加，不然不會更新
+
+            var NewShader2 = createShader( el , 'msdf' , shaderData2);
+            var tm = NewShader2.material;
+            var tso = NewShader2.shader;
+            
+            tso.update(shaderData2);
+            NewShader2.material.transparent = shaderData2.transparent;
+            NewShader2.material.side = shaderData2.side;
+            // console.log(" *** _text: _updateFont: NewShader2 = " , NewShader2 );
+            let m0 = new THREE.Mesh( g0 , tm );
+            self.textMesh.add(m0);
+            
+          }
+
+          //// 目前文字間距與文字大小並沒有很正確的計算方式，只是經驗法則
+          let nScale = 0.004;
+
+          //// 先算出涵蓋範圍
+          let corners = recordCorners(cornersArray);
+          let pWidth, pHeight;
+          if (corners[3]-corners[2] <= 45){
+            pHeight = 45;
+          }else{
+            pHeight = corners[3]-corners[2];
+          }
+          pWidth = corners[1]-corners[0];
+          // console.log(" ***** pWidth= " , corners,  pWidth , pHeight );
+
+          //// 設置文字背景顏色，假如，alpha 數值 > 0，則增加一單一顏色背景圖案
+          let backRGBA = data.backcolor.split(",");
+          if ( parseFloat(backRGBA[3]) > 0){
+            let rgb = new THREE.Color(parseFloat(backRGBA[0]),parseFloat(backRGBA[1]),parseFloat(backRGBA[2])); 
+            let alpha = parseFloat(backRGBA[3]);
+            var pg = new THREE.PlaneGeometry( pWidth , pHeight , 1 );
+            // var pm = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide, opacity: 0.4, transparent: true} );
+            var pm = new THREE.MeshBasicMaterial( {color: rgb, side: THREE.DoubleSide, opacity: alpha, transparent: true} );
+            var pMesh = new THREE.Mesh( pg, pm );
+            pMesh.scale.copy( new THREE.Vector3( nScale , nScale , nScale ) );
+            self.el.object3D.add( pMesh );
+
+          }
+
+          // Set font and update layout.
+          self.currentFont = font;
+          self.updateLayout();
+
+          self.mesh.visible = true;
+
+          //// remove mesh and add textMesh 
+          self.el.object3D.remove(self.mesh ); // 刪除原本 object 
+          // self.textMesh.position.copy(self.mesh.position); // 複製位置
+          //// 設定文字位置
+          self.textMesh.position.x = (-corners[0]-pWidth/2)*nScale;
+          self.textMesh.position.y = (corners[3]-pHeight/2)*nScale;
+          self.textMesh.position.z = 1*nScale;
+
+          self.textMesh.scale.copy(new THREE.Vector3( nScale , -nScale , nScale )); // 複製大小，固定一種 size 
+          self.el.object3D.add(self.textMesh);  // 加入新的物件
+
+          // console.log(" *** text _updateFont self = ", self , self.el.object3D );
+
+        }
+
+        // Look up font image URL to use, and perform cached load.
+        fontImgSrc = self.getFontImageSrc2( font.index );
+        // console.log(" *** _text: _updateFont fontImgSrc=", fontImgSrc , data.font );
+
+        cache.get(fontImgSrc, function () {
+          return loadTexture(fontImgSrc);
+        }).then(function (image) {
+          // Make mesh visible and apply font image as texture.
+          var texture = self.texture;
+          texture.image = image;
+          texture.needsUpdate = true;
+          // console.log(" *** text _updateFont: _loadTexture: =" , font.index , data.font , textures , self.textures );
+          self.textures[data.font[ font.index ]].image = image;
+          self.textures[data.font[ font.index ]].needsUpdate = true;
+
+          textures[ data.font[ 0 ] ] = texture;
+          self.texture = texture;
+          // self.texture = self.textures[data.font[ 0 ]];
+
+          // self.mesh.visible = true;
+
+          el.emit('textfontset', {font: data.font[0], fontObj: font});
+        }).catch(function (err) {
+          error(err.message);
+          error(err.stack);
+        });
       }
 
-      // Update geometry given font metrics.
-      self.updateGeometry(geometry, font);
+    }else{
 
-      // Set font and update layout.
-      self.currentFont = font;
-      self.updateLayout();
+      cache.get(fontSrc, function doLoadFont () {
+        return loadFont(fontSrc, data.yOffset);
+      }).then(function setFont (font) {
+        var fontImgSrc;
+  
+        if (font.pages.length !== 1) {
+          throw new Error('Currently only single-page bitmap fonts are supported.');
+        }
+  
+        if (!fontWidthFactors[fontSrc]) {
+          font.widthFactor = fontWidthFactors[font] = computeFontWidthFactor(font);
+        }
+  
+        // Update geometry given font metrics.
+        self.updateGeometry(geometry, font);
+  
+        // Set font and update layout.
+        self.currentFont = font;
+        self.updateLayout();
+  
+        console.log(" *** text _updateFont self [object3D, mesh] = " , self.el.object3D , self.mesh);
 
-      // Look up font image URL to use, and perform cached load.
-      fontImgSrc = self.getFontImageSrc();
-      cache.get(fontImgSrc, function () {
-        return loadTexture(fontImgSrc);
-      }).then(function (image) {
-        // Make mesh visible and apply font image as texture.
-        var texture = self.texture;
-        texture.image = image;
-        texture.needsUpdate = true;
-        textures[data.font] = texture;
-        self.texture = texture;
-        self.mesh.visible = true;
-        el.emit('textfontset', {font: data.font, fontObj: font});
+        // Look up font image URL to use, and perform cached load.
+        fontImgSrc = self.getFontImageSrc();
+        cache.get(fontImgSrc, function () {
+          return loadTexture(fontImgSrc);
+        }).then(function (image) {
+          // Make mesh visible and apply font image as texture.
+          var texture = self.texture;
+          texture.image = image;
+          texture.needsUpdate = true;
+          textures[data.font] = texture;
+          self.texture = texture;
+          self.mesh.visible = true;
+          el.emit('textfontset', {font: data.font, fontObj: font});
+        }).catch(function (err) {
+          error(err.message);
+          error(err.stack);
+        });
       }).catch(function (err) {
         error(err.message);
         error(err.stack);
       });
-    }).catch(function (err) {
-      error(err.message);
-      error(err.stack);
-    });
+
+
+    }
+
+//[end---20201022- fei -0102-add]//
+
+   
   },
 
   getFontImageSrc: function () {
@@ -72991,6 +73356,14 @@ module.exports.Component = registerComponent('text', {
     }
     return THREE.LoaderUtils.extractUrlBase(fontSrc) + imageSrc;
   },
+
+//[start-20200921- fei -0102-add]//
+  getFontImageSrc2: function (index) {
+    var fontSrc = this.data.font[index];
+    let imgName = fontSrc.replace("-msdf.json", ".png");
+    return imgName;
+  },
+//[end---20200921- fei -0102-add]//
 
   /**
    * Update layout with anchor, alignment, baseline, and considering any meshes.
@@ -73074,6 +73447,30 @@ module.exports.Component = registerComponent('text', {
     return FONTS[key];
   },
 
+
+//[start-20200926- fei -0102-add]//
+  getOpt: function(  font ){
+    var geometryUpdateBase = {};
+    var geometryUpdateData = {};
+    var newLineRegex = /\\n/g;
+    var tabRegex = /\\t/g;
+
+    var data = this.data;
+    geometryUpdateData.font = font;
+    geometryUpdateData.lineHeight = data.lineHeight && isFinite(data.lineHeight)
+      ? data.lineHeight
+      : font.common.lineHeight;
+    geometryUpdateData.text = data.value.toString().replace(newLineRegex, '\n')
+                                                  .replace(tabRegex, '\t');
+    geometryUpdateData.width = computeWidth(data.wrapPixels, data.wrapCount,
+                                            font.widthFactor);
+    
+    var aa = (utils.extend(geometryUpdateBase, data, geometryUpdateData));
+    return aa;
+  },
+
+//[end---20200926- fei -0102-add]//
+
   /**
    * Update the text geometry using `three-bmfont-text.update`.
    */
@@ -73137,6 +73534,26 @@ function loadFont (src, yOffset) {
     });
   });
 }
+
+
+//[start-20200924- fei -0102-add]//
+function loadFont2 (src, index ,yOffset) {
+  return new Promise(function (resolve, reject) {
+    loadBMFont(src, function (err, font) {
+      if (err) {
+        error('Error loading font', src);
+        reject(err);
+        return;
+      }
+      // Fix negative Y offsets for Roboto MSDF font from tool. Experimentally determined.
+      if (src.indexOf('/Roboto-msdf.json') >= 0) { yOffset = 30; }
+      if (yOffset) { font.chars.map(function doOffset (ch) { ch.yoffset += yOffset; }); }
+      font.index = index; //// 第幾個載入的 font 
+      resolve(font);
+    });
+  });
+}
+//[end---20200924- fei -0102-add]//
 
 /**
  * @returns {Promise}

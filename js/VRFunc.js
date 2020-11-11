@@ -91,6 +91,106 @@
 			}
 
 
+			this.editorVerionControll = function (editor_version , projIndex , sceneIndex ){
+				let scene_objs;
+
+				//// 一定要含有大中小三個版號
+				if (editor_version.length == 3) {
+					
+					//// 大中小版號
+					let v0 = editor_version[0], v1 = editor_version[1], v2 = editor_version[2];
+
+					switch(v0){
+						case "3":
+							if ( v1 == 0 && v2 <= 6 ){
+								if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
+									console.log("VRFunc.js: _editorVerionControll the scenes[sceneIndex] is not Array, error", self.VRSceneResult[projIndex] );
+									return -1;
+								}
+								console.log("VRFunc.js: _editorVerionControll: the editor version before 3.0.6", self.VRSceneResult[projIndex] );
+								scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+							} else if ( v1 == 1 || ( v1 ==0 && v2 >= 7 ) ) {
+								console.log("VRFunc.js: _editorVerionControll: the editor version after 3.0.7", self.VRSceneResult[projIndex] );
+								scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
+							} else if ( v1 == 2  ){
+								console.log("VRFunc.js: _editorVerionControll: the editor version is 3.2.n ", self.VRSceneResult[projIndex] );
+								scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
+								//// 此版本需要由 scenes 下調整相機參數 
+								if (self.VRSceneResult[projIndex].scenes[sceneIndex].camera_rotation && self.VRSceneResult[projIndex].scenes[sceneIndex].fov){
+
+									let rotation = new THREE.Vector3().fromArray(self.VRSceneResult[projIndex].scenes[sceneIndex].camera_rotation.split(",").map(function(x){return Number(x)}) );
+									rotation.multiply( new THREE.Vector3(-1,-1,0) ).add( new THREE.Vector3(0, 180, 0) );
+									
+									let camera_cursor = document.getElementById( "camera_cursor" );
+									let aCamera = document.getElementById( "aCamera" );
+									
+									// camera_cursor.setAttribute("rotation", rotation ); ////// it is work
+									function lookContorlsLoaded(){
+										console.log("VRFunc.js: _editorVerionControll: aCamera loaded rotation=", rotation );
+										
+										// aCamera.components["look-controls"].yawObject.rotation.set(0,0,0);
+										// aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0);
+
+										aCamera.components["look-controls"].yawObject.rotation.y = rotation.y/180*Math.PI;
+										aCamera.components["look-controls"].pitchObject.rotation.x = rotation.x/180*Math.PI;
+										aCamera.object3D.position.set(0,0,0);
+										
+										console.log("VRFunc.js: _loadSceneObjects aCamera: yawr=", aCamera.components["look-controls"].yawObject.rotation ,
+																					   ", pitchr=" , aCamera.components["look-controls"].pitchObject.rotation  );
+										
+										aCamera.removeEventListener("look-controls-loaded", lookContorlsLoaded); // 假如重新載入場景，不能再執行一次
+									}
+
+									//// reset the aCamera 
+									if (aCamera.components["look-controls"].yawObject && aCamera.components["look-controls"].pitchObject){
+
+										console.log("VRFunc.js: _editorVerionControll: aCamera look-controls already set" );
+										lookContorlsLoaded({});
+									}else{
+										console.log("VRFunc.js: _editorVerionControll: aCamera look-controls not set yet" );
+										aCamera.addEventListener("look-controls-loaded" , lookContorlsLoaded );
+									}
+								}
+
+
+							}else {
+								console.error("VRFunc.js: _editorVerionControll: the editor version after 3.2 , error ", self.VRSceneResult[projIndex] );
+							}
+
+							break;
+						case "2":
+						case "1":
+							console.log("VRFunc.js: _editorVerionControll: largeVersion below 3" , self.VRSceneResult[projIndex] );
+							scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+							break;
+
+						default:
+							console.log("VRFunc.js: _editorVerionControll: missing large version " , self.VRSceneResult[projIndex] );
+					}
+
+
+ 				}else{
+
+					if ( self.VRSceneResult[projIndex].editor_ver == "" ){
+						////// the empty editor_ver , do version below 3.0.6 
+						if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
+							console.log("VRFunc.js: _loadSceneObjects the scene_objs_v2 is not Array, error", self.VRSceneResult[projIndex] );
+							return -1;
+						}
+						console.log("VRFunc.js: _loadSceneObjects: the editor version empty", self.VRSceneResult[projIndex] );
+						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
+					}
+
+
+				}
+				  
+				
+				return scene_objs;
+			}
+
+
+
+
 	////// load the sky, 360 image/video
 			this.loadSky = function( projIndex, sceneIndex ){
 				// console.log("VRFunc.js: _loadSky: main type=", VRSceneResult[projIndex].scenes[0].scene_skybox_main_type, VRSceneResult[projIndex].scenes[0].scene_skybox_url);
@@ -260,12 +360,9 @@
 					console.log("%cVRFunc.js: _loadSceneObjects: error userProjResDict not exist, return -1", "color:red");
 					return -1;
 				}
-				//20191029-start-thonsha-mod
 				
-				// let scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-				let scene_objs;
-				console.log("VRFunc.js: _loadSceneObjects: self.VRSceneResult[projIndex]=", projIndex, sceneIndex, self.VRSceneResult[projIndex] );
-				var editor_version ;
+				let scene_objs = [];
+				var editor_version = [];
 				if (typeof(self.VRSceneResult[projIndex].editor_ver) != "string" ){
 					console.log("VRFunc.js: _loadSceneObjects: the editor_ver is not string, error and return ");
 					return -1;
@@ -273,47 +370,10 @@
 					editor_version = self.VRSceneResult[projIndex].editor_ver.split(".");
 				}
 
-				if ( self.VRSceneResult[projIndex].editor_ver == "" ){
-					////// the empty editor_ver , do version below 3.0.6 
-					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
-						console.log("VRFunc.js: _loadSceneObjects the scene_objs_v2 is not Array, error", self.VRSceneResult[projIndex].scenes[sceneIndex] );
-						return -1;
-					}
-					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
-						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					}else{
-						scene_objs = [];
-					}
-				}else if ( editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] <= 6  ){
-					////// the version below 3.0.6, before about 2020 03 
-					if ( !Array.isArray(self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs ) ){
-						console.log("VRFunc.js: _loadSceneObjects the scenes[sceneIndex] is not Array, error", self.VRSceneResult[projIndex].scenes[sceneIndex] );
-						return -1;
-					}
-					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
-						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					}else{
-						scene_objs = [];
-					}
-				} else if ((editor_version[0] == 3 && editor_version[1] == 0 && editor_version[2] >= 7) || (editor_version[0] >= 3 && editor_version[1] >= 0 ) ){
-					////// the version below 3.0.5, before about 2020 03 
-					console.log("VRFunc.js: _loadSceneObjects: the editor version after 3.0.7", self.VRSceneResult[projIndex].scenes[sceneIndex] );
-					if (self.VRSceneResult[projIndex].scenes[sceneIndex].objs){
-						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].objs;
-					}else{
-						scene_objs = [];
-					}
-				}else{
-					//// the unknown version do version above 3.0.6 
-					scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					if (self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs){
-						scene_objs = self.VRSceneResult[projIndex].scenes[sceneIndex].scene_objs;
-					}else{
-						scene_objs = [];
-					}
-				}
+				//// 版本控制，3.2.0 版本以上會有 相機設定參數在 scenes 層級，也在此函式內設定
+				scene_objs = self.editorVerionControll(editor_version, projIndex , sceneIndex);
+				if (!Array.isArray(scene_objs)) return -1;
+
 
 				//// 改為 loading 一次 環景圖 在每次載入 3D Model 的時候在帶入。 
 				let scene_skybox_url;
@@ -354,6 +414,20 @@
 							
 							switch( scene_objs[i].main_type ){
 								case "camera":
+
+									//// 假如編輯器版本大於 3.2.0 不參考 camera 物件
+									if (self.VRSceneResult[projIndex].editor_ver ){
+										if ( typeof(self.VRSceneResult[projIndex].editor_ver) == "string" ){
+											var editor_version = self.VRSceneResult[projIndex].editor_ver.split(".");
+											if (editor_version.length == 3){
+												if (editor_version[0] == 3 && editor_version[1] == 2 ){
+													console.log("VRFunc.js: _loadSceneObjects: camera: editor vesion is 3.2.n , dont set" );
+													break;
+												}
+											}
+										}
+									}
+
 									let camera_cursor = document.getElementById( "camera_cursor" );
 									// camera_cursor.setAttribute("randomN", Math.random() ); ////// it is work
 		
@@ -783,10 +857,23 @@
 				textEntity.setAttribute("wrap-count",longestSplit); // 1 for 1 
 				textEntity.setAttribute("anchor","center");
 				textEntity.setAttribute("align","left");
-				textEntity.setAttribute("geometry","primitive:plane; width:auto; height:auto");
-				textEntity.setAttribute("material","opacity: 0");
+
+				// textEntity.setAttribute("geometry","primitive:plane; width:auto; height:auto");
+				// textEntity.setAttribute("material","opacity: 0");
+				
+				textEntity.setAttribute("backcolor", obj.back_color ); //// 這邊注意一重點，自己設定的 attribute 不能使用 『大寫英文』，否則aframe data內會找不到，參照 text物件
+				textEntity.setAttribute("textcolor", obj.color ); //// 暫時沒有用，假如未來文字支援『透明度』功能時候會需要
+
 				textEntity.setAttribute("side","double");
-				textEntity.setAttribute("font","font/bbttf-msdf.json");
+
+				// textEntity.setAttribute("font","font/bbttf-msdf.json");
+				var fontUrl = "https://s3-ap-northeast-1.amazonaws.com/makar.webar.defaultobject/resource/fonts/";
+				fonts = [  fontUrl + "1-msdf.json", fontUrl + "2-msdf.json" , fontUrl + "3-msdf.json", fontUrl + "4-msdf.json", fontUrl + "5-msdf.json", 
+						   fontUrl + "6-msdf.json", fontUrl + "7-msdf.json" , fontUrl + "8-msdf.json", fontUrl + "9-msdf.json", fontUrl + "10-msdf.json", 
+						   fontUrl + "11-msdf.json", fontUrl + "12-msdf.json" ];
+				// fonts = [ fontUrl + "1-msdf.json" ];
+				textEntity.setAttribute("font", fonts );
+
 				textEntity.setAttribute("negate","false");
 				textEntity.setAttribute('crossorigin', 'anonymous');
 
@@ -2541,6 +2628,18 @@
 		Module.checkMifly();
 //[end---20191111-fei0079-add]//
 
+		function forbidden( message ){
+			if (document.getElementById("freeUserWarnDiv")){
+				document.getElementById("freeUserWarnDiv").style.display = "block";
+				document.getElementById("pUserInfo").innerHTML =  message  ;
+				document.getElementById("pUserInfo").style.color = "rgba(0,201,156,1)";
+				leaveIframe.onclick = function(){
+					event.preventDefault();
+					window.open("https://www.makerar.com/", "_self");
+				}
+			}
+		}
+
 		window.showVRProjList = function(){
 //20200102-start-thonsha-add
 			requestDeviceMotionPermission();
@@ -2557,6 +2656,11 @@
 	
 			// console.log("VRFunc.js: showVRProjList: ", url, makarID);
 			getVRSceneByUserID(url, makarID, function(data){
+
+				if (window.allowedMakarIDUseWeb == false  ){
+					forbidden( "this ID <br> [" + makarID + "] <br> is free user, not allow to use webVR, visit MAKAR for more information" );
+					return ;
+				}
 				console.log("VRFunc.js: showVRProjList: getVRSceneByUserID: callback, publishVRProjs=", publishVRProjs);
 				let chooseVRProject = 0;
 				if ( typeof(projName) == "string" ){
@@ -2941,7 +3045,7 @@
 					vrController.composer.render();
 				}
 				// console.log("renderTick");
-				requestAnimationFrame(renderTick); // dont use it, because of the haning problem
+				requestAnimationFrame(renderTick); 
 			};
 			
 //20200528-thonsha-mod-start	

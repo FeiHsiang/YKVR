@@ -668,86 +668,107 @@
 						let isInNameList = (nameList.indexOf(user_id) > -1);
 	//[end---20191113-thonsha-add]//
 						if (userPayInfo.data){
-							// console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type=", userPayInfo.data.user_type );
-							switch (userPayInfo.data.user_type){
-								case "free":
-									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(free)=", userPayInfo.data );
-	//[start-20191113-thonsha-mod]//
-									if (isInNameList){
-	//[end---20191113-thonsha-mod]//
-										getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-										break;
-									}
-									if(callback) callback("this ID is free user, now allow for using webAR ");
-	
-									break;
-								case "proA":
-									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(proA)=", userPayInfo.data );
-	//[start-20191113-thonsha-mod]//
-									if (isInNameList){
-	//[end---20191113-thonsha-mod]//
-										getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-										break;
-									}
-	
-									//////// check the expire date, it is work, doesnt need now.
-									expire_date = userPayInfo.data.user_type_expire_date;
-									if (expire_date){
-										expire_date_ymd = expire_date.split(" ")[0];
-										if (expire_date_ymd){
-											expire_date_ymd_arr = expire_date_ymd.split("-");
-											if (expire_date_ymd_arr){
-												if (expire_date_ymd_arr.length == 3 ){
-													////// it is very wired, in most browser( PC firefox/chrome ), the month start from 0, both get and set
-													////// use var date = new Date( 2019, 9, 2 ), date.getMonth() = 9 
-													////// but date.toISOString() = "2019-10-01T16:00:00.000Z"
-													////// 
-													////// use var date = new Date( [2019, 9, 2] ), date.getMonth() = 8 
-													////// but date.toISOString() = "2019-09-01T16:00:00.000Z"
-	
-													////// Depend on the earliest paying user, the proA user from 2019-09-25 to 2020-07-25 are free user,
-													////// most set new type for verification user.
-													// expire_date_ymd_arr = [2020,9,28];
-													// ISOexpire_date = new Date( expire_date_ymd_arr );
-													// // var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
-													// var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
-													
-													ISOexpire_date = new Date( expire_date_ymd_arr[0], expire_date_ymd_arr[1], expire_date_ymd_arr[2] );
-													var setTime = new Date(2020,9,26);
-													// var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
-													var diffDays = ( ISOexpire_date - setTime )/1000/60/60/24; ////// it unit is millisecond 
-													
-													
-													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: expire_date_ymd_arr=", expire_date_ymd_arr, ISOexpire_date );
-													console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: diffDays=", diffDays );
-													if ( diffDays > 1 ){
-														getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-														break;
-													}else{
-														if(callback) callback("this ID is unpaid user, now allow for using webAR ");
-														break;
-													}
-												}
-											}
-										}
-									}
-									if(callback) callback("this ID is unpaid user, now allow for using webAR. ");
-	
-									break;
-	
-								case "proB":
-								case "proC":
-								case "custom":
-									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(custom/proB/proC)=", userPayInfo.data );
-									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
-	
-									break;
-	
-								default:
-									console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(default)=", userPayInfo.data );
-									if(callback) callback("this ID is not MAKAR user ");
-									break;
+							
+
+							console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: userPayInfo =", userPayInfo.data );
+
+							////// 改為使用 web_ar 這個 key 來判斷是否可以體驗，基本上 free 用戶 一定是 false, 而註冊送的一個月用戶也是 false, proA/B/C是true
+							////// 假如在 白名單列表裡面，直接設定為可以使用
+							////// 後續有一狀況，假如用戶本身為不可使用，但是透過 license 發出的專案卻需要判定可用，需要額外判斷。固在此無條件往下執行。
+							window.allowedMakarIDUseWeb = userPayInfo.data.web_ar || isInNameList ;
+							
+							if (window.allowedMakarIDUseWeb == false ){
+								if (callback){
+									callback("user not allow webVR");
+								}
 							}
+
+							getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+
+
+//[start-20201111- fei -0103-remove]//
+
+	// 						switch (userPayInfo.data.user_type){
+	// 							case "free":
+	// 								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(free)=", userPayInfo.data );
+	// //[start-20191113-thonsha-mod]//
+	// 								if (isInNameList){
+	// //[end---20191113-thonsha-mod]//
+	// 									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+	// 									break;
+	// 								}
+	// 								if(callback) callback("this ID is free user, now allow for using webAR ");
+	
+	// 								break;
+	// 							case "proA":
+	// 								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(proA)=", userPayInfo.data );
+	// //[start-20191113-thonsha-mod]//
+	// 								if (isInNameList){
+	// //[end---20191113-thonsha-mod]//
+	// 									getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+	// 									break;
+	// 								}
+	
+	// 								//////// check the expire date, it is work, doesnt need now.
+	// 								expire_date = userPayInfo.data.user_type_expire_date;
+	// 								if (expire_date){
+	// 									expire_date_ymd = expire_date.split(" ")[0];
+	// 									if (expire_date_ymd){
+	// 										expire_date_ymd_arr = expire_date_ymd.split("-");
+	// 										if (expire_date_ymd_arr){
+	// 											if (expire_date_ymd_arr.length == 3 ){
+	// 												////// it is very wired, in most browser( PC firefox/chrome ), the month start from 0, both get and set
+	// 												////// use var date = new Date( 2019, 9, 2 ), date.getMonth() = 9 
+	// 												////// but date.toISOString() = "2019-10-01T16:00:00.000Z"
+	// 												////// 
+	// 												////// use var date = new Date( [2019, 9, 2] ), date.getMonth() = 8 
+	// 												////// but date.toISOString() = "2019-09-01T16:00:00.000Z"
+	
+	// 												////// Depend on the earliest paying user, the proA user from 2019-09-25 to 2020-07-25 are free user,
+	// 												////// most set new type for verification user.
+	// 												// expire_date_ymd_arr = [2020,9,28];
+	// 												// ISOexpire_date = new Date( expire_date_ymd_arr );
+	// 												// // var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
+	// 												// var diffDays = ( ISOexpire_date - new Date([2020,9,26]) )/1000/60/60/24; ////// it unit is millisecond 
+													
+	// 												ISOexpire_date = new Date( expire_date_ymd_arr[0], expire_date_ymd_arr[1], expire_date_ymd_arr[2] );
+	// 												var setTime = new Date(2020,9,26);
+	// 												// var diffDays = ( ISOexpire_date - new Date() )/1000/60/60/24; ////// it unit is millisecond 
+	// 												var diffDays = ( ISOexpire_date - setTime )/1000/60/60/24; ////// it unit is millisecond 
+													
+													
+	// 												console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: expire_date_ymd_arr=", expire_date_ymd_arr, ISOexpire_date );
+	// 												console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: diffDays=", diffDays );
+	// 												if ( diffDays > 1 ){
+	// 													getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+	// 													break;
+	// 												}else{
+	// 													if(callback) callback("this ID is unpaid user, now allow for using webAR ");
+	// 													break;
+	// 												}
+	// 											}
+	// 										}
+	// 									}
+	// 								}
+	// 								if(callback) callback("this ID is unpaid user, now allow for using webAR. ");
+	
+	// 								break;
+	
+	// 							case "proB":
+	// 							case "proC":
+	// 							case "custom":
+	// 								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(custom/proB/proC)=", userPayInfo.data );
+	// 								getUserPublishProjsByUserID(url, user_id, main_type, sub_type, getUserPublishProjsCallback );
+	
+	// 								break;
+	
+	// 							default:
+	// 								console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: user_type(default)=", userPayInfo.data );
+	// 								if(callback) callback("this ID is not MAKAR user ");
+	// 								break;
+	// 						}
+	//[end---20201111- fei -0103-remove]//
+
 						}else{
 							console.log("networkAgent.js:_getARSceneByUserID:_getPayInfoByUserID: error, userPayInfo=", userPayInfo );	
 							if(callback) callback("this ID have some problem ");

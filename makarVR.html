@@ -35,12 +35,20 @@
 
 	<script src="node_modules/zlibjs/bin/inflate.min.js"></script>
 
-	<script src = "js/three/FXAAShader.js"></script>
+	<!-- <script src = "js/three/FXAAShader.js"></script>
 	<script src = "js/three/CopyShader.js"></script>
 	<script src = "js/three/EffectComposer.js"></script>
 	<script src = "js/three/RenderPass.js"></script>
 	<script src = "js/three/ShaderPass.js"></script>
-	<script src = "js/three/OutlinePass.js"></script>
+	<script src = "js/three/OutlinePass.js"></script> -->
+
+
+	<div id="freeUserWarnDiv">
+		<p id="pUserInfo" >  info  </p>
+		<div id = "leaveIframe">
+			MAKAR website
+		</div>
+	</div>
 
 	<script>
 		var strUrl = window.location.search;
@@ -61,7 +69,7 @@
 		} else if ( aryPara["ID"] ){
 			window.makarID = aryPara["ID"]; 
 		} else{
-			window.makarID = "fefe"; // fefe/makarvr/varlamov5264, set MAKAR ID by default
+			window.makarID = "startupterrace"; // fefe/makarvr/varlamov5264, set MAKAR ID by default
 		}
 
 		if (aryPara["pn"]){

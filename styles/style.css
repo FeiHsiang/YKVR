@@ -24,6 +24,54 @@ body {
   position: relative;
 }
 
+#freeUserWarnDiv {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+
+  z-index:3;
+  text-align: left;
+}
+
+#pUserInfo{
+  position: relative;
+  font-size:24pt;  
+  margin: 3% auto;
+  border-radius: 16px;
+  width: 85vw;
+  height: 85vh;
+  text-align: center;
+  display: block;
+}
+
+#leaveIframe {
+  position: absolute;
+  bottom: 30%;
+  width: 40%;
+  left: 30%;
+  height: 54px;
+  line-height: 54px;
+  border-radius: 16px;
+  color: #ffffff;
+  text-align: center;
+  border: 0;
+  padding: 0px 0 0 0px;
+  background: #31333f;
+  cursor: pointer;
+  font-size:24pt;  
+}
+
+#leaveIframe:active {
+  background-color: #4a4d54;
+}
+
 #loadPage{
   display: none;
   position: absolute;
