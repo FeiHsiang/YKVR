@@ -2536,6 +2536,903 @@
 
 		}
 
+		//20201201-thonsha-add-start
+
+		VRController.prototype.setGuideList = function(projIndex){ 
+			let self = this;
+
+			let guide = document.getElementById("guide");
+			let guideList = document.getElementById("guideList");
+
+			let guideClass01 = document.getElementById("guideClass01");
+			let bottomArrow01 = document.getElementById("bottomArrow01");
+			let guideStore01 = document.getElementById("guideStore01");
+
+			let guideClass02 = document.getElementById("guideClass02");
+			let bottomArrow02 = document.getElementById("bottomArrow02");
+			let guideStore02 = document.getElementById("guideStore02");
+
+			let guideClass03 = document.getElementById("guideClass03");
+			let bottomArrow03 = document.getElementById("bottomArrow03");
+			let guideStore03 = document.getElementById("guideStore03");
+
+			let guideClass04 = document.getElementById("guideClass04");
+			let bottomArrow04 = document.getElementById("bottomArrow04");
+			let guideStore04 = document.getElementById("guideStore04");
+
+			let guideClass05 = document.getElementById("guideClass05");
+			let bottomArrow05 = document.getElementById("bottomArrow05");
+			let guideStore05 = document.getElementById("guideStore05");
+
+			let guideClass06 = document.getElementById("guideClass06");
+			let bottomArrow06 = document.getElementById("bottomArrow06");
+			let guideStore06 = document.getElementById("guideStore06");
+
+			let guideClass07 = document.getElementById("guideClass07");
+			let bottomArrow07 = document.getElementById("bottomArrow07");
+			let guideStore07 = document.getElementById("guideStore07");
+
+			let guideClass08 = document.getElementById("guideClass08");
+			let bottomArrow08 = document.getElementById("bottomArrow08");
+			let guideStore08 = document.getElementById("guideStore08");
+
+			guide.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideList.style.display == "block"){
+					guideList.style.display ="none";
+				}
+				else{
+					guideList.style.display ="block";
+				}
+
+			});
+
+			guideClass01.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore01.style.display == "block"){
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="block";
+					bottomArrow01.style.transform = "rotate(135deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.65)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass02.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore02.style.display == "block"){
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="block";
+					bottomArrow02.style.transform = "rotate(135deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.65)"
+
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass03.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore03.style.display == "block"){
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="block";
+					bottomArrow03.style.transform = "rotate(135deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.65)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass04.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore04.style.display == "block"){
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="block";
+					bottomArrow04.style.transform = "rotate(135deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.65)"
+
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass05.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore05.style.display == "block"){
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore05.style.display ="block";
+					bottomArrow05.style.transform = "rotate(135deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.65)"
+					
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass06.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore06.style.display == "block"){
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore06.style.display ="block";
+					bottomArrow06.style.transform = "rotate(135deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.65)"
+					
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass07.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore07.style.display == "block"){
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore07.style.display ="block";
+					bottomArrow07.style.transform = "rotate(135deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.65)"
+					
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				
+			});
+
+			guideClass08.addEventListener('click', function(event){
+				event.preventDefault();
+				if (guideStore08.style.display == "block"){
+					guideStore08.style.display ="none";
+					bottomArrow08.style.transform = "rotate(-45deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+				}
+				else{
+					guideStore01.style.display ="none";
+					bottomArrow01.style.transform = "rotate(-45deg)"
+					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore02.style.display ="none";
+					bottomArrow02.style.transform = "rotate(-45deg)"
+					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore03.style.display ="none";
+					bottomArrow03.style.transform = "rotate(-45deg)"
+					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+
+					guideStore04.style.display ="none";
+					bottomArrow04.style.transform = "rotate(-45deg)"
+					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore05.style.display ="none";
+					bottomArrow05.style.transform = "rotate(-45deg)"
+					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore06.style.display ="none";
+					bottomArrow06.style.transform = "rotate(-45deg)"
+					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore07.style.display ="none";
+					bottomArrow07.style.transform = "rotate(-45deg)"
+					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					
+					guideStore08.style.display ="block";
+					bottomArrow08.style.transform = "rotate(135deg)"
+					guideClass08.style.background = "rgba(49, 51, 63, 0.65)"
+				}
+				
+			});
+
+			let storeTable01 = document.getElementById("storeTable01");
+			let storeTable02 = document.getElementById("storeTable02");
+			let storeTable03 = document.getElementById("storeTable03");
+			let storeTable04 = document.getElementById("storeTable04");
+			let storeTable05 = document.getElementById("storeTable05");
+			let storeTable06 = document.getElementById("storeTable06");
+			let storeTable07 = document.getElementById("storeTable07");
+			let storeTable08 = document.getElementById("storeTable08");
+			
+			// =================== table 1 =========================
+			let newRow = storeTable01.insertRow(0);
+			let newData = newRow.insertCell(0);
+			let newDiv = document.createElement("div");
+			let newTable = document.createElement("table");
+			let storeData = newTable.insertRow(0);
+			let storeLogo = storeData.insertCell(0);
+			let storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			let img = new Image();
+			img.src = 'images/store01.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>呷七碗食品有限公司</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 1 );
+				
+
+			});
+
+			newRow = storeTable01.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);	
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store02.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>麵屋黑平</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 2 );
+				
+
+			});
+
+			newRow = storeTable01.insertRow(2);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store03.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>小原田</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 3 );
+				
+
+			});
+
+			// =================== table 2 =========================
+			newRow = storeTable02.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store04.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>永康街芋頭大王(芒果冰)</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 4 );
+				
+
+			});
+
+			// =================== table 3 =========================
+
+			newRow = storeTable03.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store05.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>爵林鳳梨酥</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 5 );
+				
+
+			});
+
+			newRow = storeTable03.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store06.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>小珍珠烘培</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 6 );
+				
+
+			});
+
+			newRow = storeTable03.insertRow(2);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store07.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>聖比德</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 7 );
+				
+
+			});
+
+			// =================== table 4 =========================
+
+			newRow = storeTable04.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store08.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>小茶栽堂-<br>Le Salon永康店</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 8 );
+				
+
+			});
+
+			newRow = storeTable04.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store09.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>御尚璽</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 9 );
+				
+
+			});
+
+			newRow = storeTable04.insertRow(2);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store10.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>興華名茶</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 10 );
+				
+
+			});
+
+			// =================== table 5 =========================
+
+			newRow = storeTable05.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store11.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>框影咖啡</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 11 );
+				
+
+			});
+
+			newRow = storeTable05.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store12.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>Nous deux 努得咖啡</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 12 );
+				
+
+			});
+
+			// =================== table 6 =========================
+
+			newRow = storeTable06.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store13.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>一茶工房</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 13 );
+				
+
+			});
+
+			newRow = storeTable06.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store14.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>三良品茶</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 14 );
+				
+
+			});
+
+			// =================== table 7 =========================
+
+			newRow = storeTable07.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store15.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>幸福可可</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 15 );
+				
+
+			});
+
+			// =================== table 8 =========================
+
+			newRow = storeTable08.insertRow(0);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store16.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>Florame法恩</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 16 );
+				
+
+			});
+
+			newRow = storeTable08.insertRow(1);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store17.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>晧雅日本生活百貨</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 17 );
+				
+
+			});
+
+			newRow = storeTable08.insertRow(2);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store18.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>飛比樂有限公司</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 18 );
+				
+
+			});
+
+			newRow = storeTable08.insertRow(3);
+			newData = newRow.insertCell(0);
+			newDiv = document.createElement("div");
+			newTable = document.createElement("table");
+			storeData = newTable.insertRow(0);
+			storeLogo = storeData.insertCell(0);
+			storeName = storeData.insertCell(1);
+			newTable.classList.toggle( 'storeDiv' );
+			img = new Image();
+			img.src = 'images/store19.png';
+			img.style = "width:100px;"
+			storeLogo.appendChild(img);
+			storeName.innerHTML = "<h5>阿原肥皂</h5>"
+			newDiv.appendChild(newTable);
+			newData.appendChild(newDiv);
+			newDiv.addEventListener('click', function(event){
+				event.preventDefault();
+				guideList.style.display ="none";
+				//// 先將觸控關閉，再跳轉場景
+				self.triggerEnable = false;
+				self.loadScene(projIndex, 19 );
+				
+
+			});
+
+		}
+		//20201201-thonsha-add-end
+
 		VRController.prototype.setSceneTable = function(projIndex){ 
 			let self = this;
 			////// get the variables
@@ -2765,11 +3662,13 @@
 				// vrScene.children[2].remove(); ////// 20190921: Fei want to remove the default camera, 
 
 				////// add the listener for show the panel or not
-				vrScene.canvas.addEventListener("touchstart", startEvent, false);
-				vrScene.canvas.addEventListener("mousedown", startEvent, false);
-				function startEvent(event){
-					bottomScenes.className = bottomArrow.className = scenesInfo.className = "collapsed";
-				}
+				// 20201202-thonsha-remove-start
+				// vrScene.canvas.addEventListener("touchstart", startEvent, false);
+				// vrScene.canvas.addEventListener("mousedown", startEvent, false);
+				// function startEvent(event){
+				// 	bottomScenes.className = bottomArrow.className = scenesInfo.className = "collapsed";
+				// }
+				// 20201202-thonsha-remove-end
 				
 
 				////// set member into vrController
@@ -2883,7 +3782,10 @@
 				renderTick();
 	
 				//// 製作下方，場景資訊
-				vrController.setSceneTable(projIndex);
+				// 20201202-thonsha-mod-start
+				// vrController.setSceneTable(projIndex);
+				vrController.setGuideList(projIndex);
+				// 20201202-thonsha-mod-end
 
 
 				/////// --------------------- 開發 OutlinePass start -----------------------------

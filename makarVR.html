@@ -12,7 +12,7 @@
 	<script src="js/vconsole.min.js"></script>
 	<script>
 		if ( window.navigator.userAgent.toLowerCase().indexOf("mobile") >= 0 && window.navigator.userAgent.toLowerCase().indexOf("chrome") < 0 ){
-            var vConsole = new VConsole();
+            // var vConsole = new VConsole();
             console.log("The system is mobile: ", window.navigator.userAgent.toLowerCase() );
 		}else{
             console.log("The system is PC: ", window.navigator.userAgent.toLowerCase() );
@@ -69,7 +69,8 @@
 		} else if ( aryPara["ID"] ){
 			window.makarID = aryPara["ID"]; 
 		} else{
-			window.makarID = "startupterrace"; // fefe/makarvr/varlamov5264, set MAKAR ID by default
+			// window.makarID = "startupterrace"; // fefe/makarvr/varlamov5264, set MAKAR ID by default
+			window.makarID = "taipeiyongkang";
 		}
 
 		if (aryPara["pn"]){
@@ -124,14 +125,14 @@
 
 	</script>
 	<!-- develop -->
-	<!-- <script src = "js/checkBrowser.js"></script>
+	<script src = "js/checkBrowser.js"></script>
 	<script src = "js/networkAgentVR.js"></script>
 	<script src = "js/whiteList.min.js"></script>
 	<script src = "js/aframe-gif-shader.js"></script>
 	<script src = "js/aframe-extras.js"></script>
-	<script src = "js/VRFunc.js"></script> -->
+	<script src = "js/VRFunc.js"></script>
 	<!-- release -->
-	<script src = "lib/appVR.min.js"> </script>
+	<!-- <script src = "lib/appVR.min.js"> </script> -->
 
 	<div id = "loadPage">
 		Loading ...
@@ -144,7 +145,8 @@
 		</p>
 	</div>
 
-	<div id = "bottomScenes" class="collapsed"  >
+	<!-- 20201202-thonsha-remove-start -->
+	<!-- <div id = "bottomScenes" class="collapsed"  >
 		<h4> 
 			VR 場景 &ensp;
 			<i id="bottomArrow" class="collapsed" ></i>
@@ -155,6 +157,100 @@
 			<tr id="scene_name"></tr>
 			<tr id="scene_snapshot"></tr>
 		</table>
+	</div> -->
+	<!-- 20201202-thonsha-remove-end -->
+
+	<!-- 永康商圈 VR導覽 -->
+	<div id = "guide" >
+		<h5>
+			VR導覽 &ensp;
+		</h5>
+	</div>
+
+	<div id = "guideList">
+		<div id = "guideClass01" class="guideClass" >
+			<h4> 
+				餐廳料理&emsp;&ensp;
+				<i id="bottomArrow01"></i>
+			</h4>
+		</div>
+		<div id = "guideClass02" class="guideClass" >
+			<h4> 
+				傳統甜品&emsp;&ensp;
+				<i id="bottomArrow02"></i>
+			</h4>
+		</div>
+		<div id = "guideClass03" class="guideClass" >
+			<h4> 
+				點心烘培&emsp;&ensp;
+				<i id="bottomArrow03"></i>
+			</h4>
+		</div>
+		<div id = "guideClass04" class="guideClass" >
+			<h4> 
+				茶館&emsp;&emsp;&emsp;&ensp;
+				<i id="bottomArrow04"></i>
+			</h4>
+		</div>
+		<div id = "guideClass05" class="guideClass" >
+			<h4> 
+				咖啡店&emsp;&emsp;&ensp;
+				<i id="bottomArrow05"></i>
+			</h4>
+		</div>
+		<div id = "guideClass06" class="guideClass" >
+			<h4> 
+				手搖飲&emsp;&emsp;&ensp;
+				<i id="bottomArrow06"></i>
+			</h4>
+		</div>
+		<div id = "guideClass07" class="guideClass" >
+			<h4> 
+				手工巧克力&ensp;
+				<i id="bottomArrow07"></i>
+			</h4>
+		</div>
+		<div id = "guideClass08" class="guideClass" >
+			<h4> 
+				雜貨精品&emsp;&ensp;
+				<i id="bottomArrow08"></i>
+			</h4>
+		</div>
+
+		<div id = "guideStore01" class="guideStoreList">
+			<table id = storeTable01 class="storeTable" >
+			</table>
+		</div>
+		<div id = "guideStore02" class="guideStoreList">
+			<table id = storeTable02 class="storeTable">
+			</table>
+		</div>
+		<div id = "guideStore03" class="guideStoreList">
+			<table id = storeTable03 class="storeTable">
+			</table>
+		</div>
+		<div id = "guideStore04" class="guideStoreList">
+			<table id = storeTable04 class="storeTable" >
+			</table>
+		</div>
+		<div id = "guideStore05" class="guideStoreList">
+			<table id = storeTable05 class="storeTable" >
+			</table>
+		</div>
+		<div id = "guideStore06" class="guideStoreList">
+			<table id = storeTable06 class="storeTable" >
+			</table>
+		</div>
+		<div id = "guideStore07" class="guideStoreList">
+			<table id = storeTable07 class="storeTable" >
+			</table>
+		</div>
+		<div id = "guideStore08" class="guideStoreList">
+			<table id = storeTable08 class="storeTable" >
+			</table>
+		</div>
+
+	
 	</div>
 
 	<script>
@@ -183,18 +279,23 @@
 		};
 
 		////// control the bottom panel
-		let bottomScenes = document.getElementById("bottomScenes");
-		let scenesInfo = document.getElementById("scenesInfo");
-		let bottomArrow = document.getElementById("bottomArrow");
 
-		bottomScenes.addEventListener('click', function(event){
-			event.preventDefault();
-			console.log("makarVR.html: bottomScenes click: scenesInfo=" , scenesInfo.className );
-			scenesInfo.classList.toggle( 'collapsed' );
-			bottomScenes.classList.toggle( 'collapsed' );
-			bottomArrow.classList.toggle( 'collapsed' );
+		// 20201202-thonsha-remove-start
 
-		});
+		// let bottomScenes = document.getElementById("bottomScenes");
+		// let scenesInfo = document.getElementById("scenesInfo");
+		// let bottomArrow = document.getElementById("bottomArrow");
+
+		// bottomScenes.addEventListener('click', function(event){
+		// 	event.preventDefault();
+		// 	console.log("makarVR.html: bottomScenes click: scenesInfo=" , scenesInfo.className );
+		// 	scenesInfo.classList.toggle( 'collapsed' );
+		// 	bottomScenes.classList.toggle( 'collapsed' );
+		// 	bottomArrow.classList.toggle( 'collapsed' );
+
+		// });
+
+		// 20201202-thonsha-remove-end
 
 	</script>
 
