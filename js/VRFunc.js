@@ -57,11 +57,15 @@
 			////// At first, will called for load the first scene. 
 			this.loadScene = function(projIndex, sceneIndex) {
 				console.log("VRFunc.js: VRController: _loadScene: [projectIndex, sceneIndex]=", projIndex, sceneIndex, self.VRSceneResult[projIndex].scenes[sceneIndex]);
-				loadPage.style.display = "block";
+				// loadPage.style.display = "block";
 
-				if (self.VRSceneResult[projIndex].scenes[sceneIndex] == undefined ){
+				if (self.currentSceneIndex == sceneIndex){
+					console.log("VRFunc.js: VRController: _loadScene: same scene");
+				}
+				else if (self.VRSceneResult[projIndex].scenes[sceneIndex] == undefined ){
 					console.log("VRFunc.js: VRController: _loadScene: error, [valid sceneIndex]=", self.VRSceneResult[projIndex].scenes.length, sceneIndex);
 				}else{
+					loadPage.style.display = "block";
 
 					if (self.makarObjects){ //// clean the additional object( without default object like, camera, cursor,  )
 						for (let i = 0; i < self.makarObjects.length; i++ ){
