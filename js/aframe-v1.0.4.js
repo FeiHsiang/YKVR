@@ -71361,8 +71361,10 @@ module.exports.Component = registerComponent('device-orientation-permission-ui',
     // Show dialog only if permission has not yet been granted.
     DeviceOrientationEvent.requestPermission().catch(function () {
       self.devicePermissionDialogEl = createPermissionDialog(
-        'This immersive website requires access to your device motion sensors.',
-        self.onDeviceMotionDialogAllowClicked,
+//[start-20201125- fei -0001-mod]//
+        // 'This immersive website requires access to your device motion sensors.',
+        '請點擊同意來啟動動作感應器',
+//[end---20201125- fei -0001-mod]//        self.onDeviceMotionDialogAllowClicked,
         self.onDeviceMotionDialogDenyClicked);
       self.el.appendChild(self.devicePermissionDialogEl);
     }).then(function () {
@@ -71432,13 +71434,20 @@ function createPermissionDialog (text, onAllowClicked, onDenyClicked) {
   denyButton = document.createElement('button');
   denyButton.classList.add(DIALOG_BUTTON_CLASS, DIALOG_DENY_BUTTON_CLASS);
   denyButton.setAttribute(constants.AFRAME_INJECTED, '');
+//[start-20201125- fei -0001-mod]//
   denyButton.innerHTML = 'Deny';
-  buttonsContainer.appendChild(denyButton);
+// buttonsContainer.appendChild(denyButton);
+//[end---20201125- fei -0001-mod]//
 
   acceptButton = document.createElement('button');
   acceptButton.classList.add(DIALOG_BUTTON_CLASS, DIALOG_ALLOW_BUTTON_CLASS);
   acceptButton.setAttribute(constants.AFRAME_INJECTED, '');
-  acceptButton.innerHTML = 'Allow';
+//[start-20201125- fei -0001-mod]//  
+  // acceptButton.innerHTML = 'Allow';
+  buttonsContainer.style.display = "block";
+  acceptButton.style.backgroundColor = "#69918b"; 
+  acceptButton.innerHTML = '同意';
+//[end---20201125- fei -0001-mod]//  
   buttonsContainer.appendChild(acceptButton);
 
   // Ask for sensor events to be used
