@@ -3062,7 +3062,7 @@
 			img.src = 'images/store05.png';
 			img.style = "width:100px;"
 			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>爵林鳳梨酥</h5>"
+			storeName.innerHTML = "<h5>爵林堅果坊</h5>"
 			newDiv.appendChild(newTable);
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
