@@ -136,7 +136,8 @@
 										// aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0);
 
 										aCamera.components["look-controls"].yawObject.rotation.y = rotation.y/180*Math.PI;
-										aCamera.components["look-controls"].pitchObject.rotation.x = rotation.x/180*Math.PI;
+										// aCamera.components["look-controls"].pitchObject.rotation.x = rotation.x/180*Math.PI;
+										aCamera.components["look-controls"].pitchObject.rotation.x = 0
 										aCamera.object3D.position.set(0,0,0);
 										
 										console.log("VRFunc.js: _loadSceneObjects aCamera: yawr=", aCamera.components["look-controls"].yawObject.rotation ,
