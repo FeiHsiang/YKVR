@@ -3409,30 +3409,6 @@
 
 			});
 
-			newRow = storeTable08.insertRow(3);
-			newData = newRow.insertCell(0);
-			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
-			img = new Image();
-			img.src = 'images/store19.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>阿原肥皂</h5>"
-			newDiv.appendChild(newTable);
-			newData.appendChild(newDiv);
-			newDiv.addEventListener('click', function(event){
-				event.preventDefault();
-				guideList.style.display ="none";
-				//// 先將觸控關閉，再跳轉場景
-				self.triggerEnable = false;
-				self.loadScene(projIndex, 19 );
-				
-
-			});
 
 		}
 		//20201201-thonsha-add-end
