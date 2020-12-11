@@ -125,6 +125,9 @@
 									let rotation = new THREE.Vector3().fromArray(self.VRSceneResult[projIndex].scenes[sceneIndex].camera_rotation.split(",").map(function(x){return Number(x)}) );
 									rotation.multiply( new THREE.Vector3(-1,-1,0) ).add( new THREE.Vector3(0, 180, 0) );
 									
+									let circle = Math.round (rotation.x / 360);
+									rotation.x -= circle*360;
+
 									let camera_cursor = document.getElementById( "camera_cursor" );
 									let aCamera = document.getElementById( "aCamera" );
 									
@@ -136,8 +139,7 @@
 										// aCamera.components["look-controls"].pitchObject.rotation.set(0,0,0);
 
 										aCamera.components["look-controls"].yawObject.rotation.y = rotation.y/180*Math.PI;
-										// aCamera.components["look-controls"].pitchObject.rotation.x = rotation.x/180*Math.PI;
-										aCamera.components["look-controls"].pitchObject.rotation.x = 0
+										aCamera.components["look-controls"].pitchObject.rotation.x = rotation.x/180*Math.PI;
 										aCamera.object3D.position.set(0,0,0);
 										
 										console.log("VRFunc.js: _loadSceneObjects aCamera: yawr=", aCamera.components["look-controls"].yawObject.rotation ,
