@@ -2880,16 +2880,8 @@
 			let newData = newRow.insertCell(0);
 			let newDiv = document.createElement("div");
 
-			// let newTable = document.createElement("table");
-			// let storeData = newTable.insertRow(0);
-			// let storeLogo = storeData.insertCell(0);
-			// let storeName = storeData.insertCell(1);
-
 			newDiv.classList.toggle( 'storeDiv' );
-			let storeBG = new Image();
-			storeBG.src = '../images/ui/vr/store/pressed.png';
-			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
-			newDiv.appendChild(storeBG)
+			newDiv.style.height = "50px"
 
 			let img = new Image();
 			img.src = 'images/store01.png';
@@ -2898,10 +2890,14 @@
 			logoDiv.classList.toggle( 'logoDiv' );
 			logoDiv.appendChild(img)
 			newDiv.appendChild(logoDiv)
-	
-			let storeNameDiv = document.createElement("div");
+			
+			storeNameDiv = document.createElement("div");
 			storeNameDiv.classList.toggle( 'storeNameDiv' );
-			storeNameDiv.innerHTML="<h5>呷七碗食品有限公司</h5>";
+			storeNameDiv.style.height = "50px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>呷七碗食品有限公司</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
 			newDiv.appendChild(storeNameDiv)
 			
 			newData.appendChild(newDiv);
@@ -2919,16 +2915,9 @@
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
 
-			// newTable = document.createElement("table");
-			// storeData = newTable.insertRow(0);	
-			// storeLogo = storeData.insertCell(0);
-			// storeName = storeData.insertCell(1);
-
 			newDiv.classList.toggle( 'storeDiv' );
-			storeBG = new Image();
-			storeBG.src = '../images/ui/vr/store/pressed.png';
-			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
-			newDiv.appendChild(storeBG)
+			newDiv.style.height = "50px"
+
 			img = new Image();
 			img.src = 'images/store02.png';
 			img.style = "width: 100%;height:100%;object-fit: fill;"
@@ -2936,10 +2925,14 @@
 			logoDiv.classList.toggle( 'logoDiv' );
 			logoDiv.appendChild(img)
 			newDiv.appendChild(logoDiv)
-	
+			
 			storeNameDiv = document.createElement("div");
 			storeNameDiv.classList.toggle( 'storeNameDiv' );
-			storeNameDiv.innerHTML="<h5>麵屋黑平</h5>";
+			storeNameDiv.style.height = "50px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>麵屋黑平</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
 			newDiv.appendChild(storeNameDiv)
 	
 			newData.appendChild(newDiv);
@@ -2957,16 +2950,8 @@
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
 
-			// newTable = document.createElement("table");
-			// storeData = newTable.insertRow(0);
-			// storeLogo = storeData.insertCell(0);
-			// storeName = storeData.insertCell(1);
-
 			newDiv.classList.toggle( 'storeDiv' );
-			storeBG = new Image();
-			storeBG.src = '../images/ui/vr/store/pressed.png';
-			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
-			newDiv.appendChild(storeBG)
+			newDiv.style.height = "50px"
 
 			img = new Image();
 			img.src = 'images/store03.png';
@@ -2975,10 +2960,14 @@
 			logoDiv.classList.toggle( 'logoDiv' );
 			logoDiv.appendChild(img)
 			newDiv.appendChild(logoDiv)
-
+			
 			storeNameDiv = document.createElement("div");
 			storeNameDiv.classList.toggle( 'storeNameDiv' );
-			storeNameDiv.innerHTML="<h5>小原田</h5>";
+			storeNameDiv.style.height = "50px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>小原田</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
 			newDiv.appendChild(storeNameDiv)
 
 			// newDiv.appendChild(newTable);
@@ -2997,17 +2986,27 @@
 			newRow = storeTable02.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "50px"
+
 			img = new Image();
 			img.src = 'images/store04.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>永康街芋頭大王(芒果冰)</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "50px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>永康街芋頭大王</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+		
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3024,17 +3023,24 @@
 			newRow = storeTable03.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+	
+			newDiv.classList.toggle( 'storeDiv' );
 			img = new Image();
 			img.src = 'images/store05.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>爵林堅果坊</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>爵林堅果坊</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+		
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3049,17 +3055,24 @@
 			newRow = storeTable03.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
 			img = new Image();
 			img.src = 'images/store06.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>小珍珠烘培</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>小珍珠烘培</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3074,17 +3087,24 @@
 			newRow = storeTable03.insertRow(2);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+			
+			newDiv.classList.toggle( 'storeDiv' );
 			img = new Image();
 			img.src = 'images/store07.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>聖比德</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>聖比德</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3101,17 +3121,24 @@
 			newRow = storeTable04.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
 			img = new Image();
 			img.src = 'images/store08.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>小茶栽堂-<br>Le Salon永康店</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>小茶栽堂<br>Le Salon永康店</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+			
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3126,17 +3153,24 @@
 			newRow = storeTable04.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
 			img = new Image();
 			img.src = 'images/store09.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>御尚璽</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>御尚璽</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3151,17 +3185,26 @@
 			newRow = storeTable04.insertRow(2);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "80px"
 			img = new Image();
 			img.src = 'images/store10.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>興華名茶</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "80px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>興華名茶</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3178,17 +3221,26 @@
 			newRow = storeTable05.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+	
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "60px"
 			img = new Image();
 			img.src = 'images/store11.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>框影咖啡</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "60px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>框影咖啡</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+			
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3203,17 +3255,26 @@
 			newRow = storeTable05.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "100px"
 			img = new Image();
 			img.src = 'images/store12.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>Nous deux 努得咖啡</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "100px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>Nous deux<br>努得咖啡</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3230,17 +3291,25 @@
 			newRow = storeTable06.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+
 			img = new Image();
 			img.src = 'images/store13.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>一茶工房</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>一茶工房</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+			
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3255,17 +3324,26 @@
 			newRow = storeTable06.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "120px"
 			img = new Image();
 			img.src = 'images/store14.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>三良品茶</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "120px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>三良品茶</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+			
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3284,10 +3362,7 @@
 			newDiv = document.createElement("div");
 
 			newDiv.classList.toggle( 'storeDiv' );
-			storeBG = new Image();
-			storeBG.src = '../images/ui/vr/store/pressed.png';
-			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
-			// newDiv.appendChild(storeBG)
+	
 			img = new Image();
 			img.src = 'images/store15.png';
 			img.style = "width: 100%;height:100%;object-fit: fill;"
@@ -3298,9 +3373,7 @@
 	
 			storeNameDiv = document.createElement("div");
 			storeNameDiv.classList.toggle( 'storeNameDiv' );
-			// storeNameDiv.innerHTML="<h5>幸福可可</h5>";
-
-			let storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv = document.createElement("div");
 			storeNameTextDiv.classList.toggle( 'centerText' );
 			storeNameTextDiv.innerHTML="<h5>幸福可可</h5>";
 			storeNameDiv.appendChild(storeNameTextDiv);
@@ -3317,47 +3390,31 @@
 
 			});
 
-			// newRow = storeTable07.insertRow(0);
-			// newData = newRow.insertCell(0);
-			// newDiv = document.createElement("div");
-			// newTable = document.createElement("table");
-			// storeData = newTable.insertRow(0);
-			// storeLogo = storeData.insertCell(0);
-			// storeName = storeData.insertCell(1);
-			// newTable.classList.toggle( 'storeDiv' );
-			// img = new Image();
-			// img.src = 'images/store15.png';
-			// img.style = "width:100px;"
-			// storeLogo.appendChild(img);
-			// storeName.innerHTML = "<h5>幸福可可</h5>"
-			// newDiv.appendChild(newTable);
-			// newData.appendChild(newDiv);
-			// newDiv.addEventListener('click', function(event){
-			// 	event.preventDefault();
-			// 	guideList.style.display ="none";
-			// 	//// 先將觸控關閉，再跳轉場景
-			// 	self.triggerEnable = false;
-			// 	self.loadScene(projIndex, 15 );
-				
-
-			// });
-
 			// =================== table 8 =========================
 
 			newRow = storeTable08.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			newDiv.style.height = "80px"
 			img = new Image();
 			img.src = 'images/store16.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>Florame法恩</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+			
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.style.height = "80px"
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>Florame法恩</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3372,17 +3429,25 @@
 			newRow = storeTable08.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+
 			img = new Image();
 			img.src = 'images/store17.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>晧雅日本生活百貨</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>晧雅日本生活百貨</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3397,17 +3462,25 @@
 			newRow = storeTable08.insertRow(2);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+
 			img = new Image();
 			img.src = 'images/store18.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>飛比樂有限公司</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>飛比樂有限公司</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
+			newDiv.appendChild(storeNameDiv)
+
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
