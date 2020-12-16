@@ -3287,7 +3287,7 @@
 			storeBG = new Image();
 			storeBG.src = '../images/ui/vr/store/pressed.png';
 			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
-			newDiv.appendChild(storeBG)
+			// newDiv.appendChild(storeBG)
 			img = new Image();
 			img.src = 'images/store15.png';
 			img.style = "width: 100%;height:100%;object-fit: fill;"
@@ -3298,7 +3298,12 @@
 	
 			storeNameDiv = document.createElement("div");
 			storeNameDiv.classList.toggle( 'storeNameDiv' );
-			storeNameDiv.innerHTML="<h5>幸福可可</h5>";
+			// storeNameDiv.innerHTML="<h5>幸福可可</h5>";
+
+			let storeNameTextDiv = document.createElement("div");
+			storeNameTextDiv.classList.toggle( 'centerText' );
+			storeNameTextDiv.innerHTML="<h5>幸福可可</h5>";
+			storeNameDiv.appendChild(storeNameTextDiv);
 			newDiv.appendChild(storeNameDiv)
 	
 			newData.appendChild(newDiv);
