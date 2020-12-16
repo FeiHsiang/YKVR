@@ -183,24 +183,17 @@ hr {
   position: absolute;
   float: left;
   top: 10px;
-  left: 10px;
-  height: 20px;
-  width: 70px;
+  left: 15px;
+  /* height: 20px; */
+  width: 130px;
   z-index:2;
   cursor:pointer;
-
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  background: rgba(49, 51, 63, 0.65); 
 }
 
-#guide h5 {
-  text-align: center;
-  margin: 1px;
-  padding-left: 10px;
-  color: rgba(200, 200, 200, 1.0);
+#guideImg{
+  width: 100%;
+  height:100%;
+  object-fit: cover;
 }
 
 #guideList{
@@ -208,40 +201,61 @@ hr {
 }
 
 #guideClass01{
-  top:31px
+  top:60px
 }
 #guideClass02{
-  top:61px
+  top:88px
 }
 #guideClass03{
-  top:91px
+  top:116px
 }
 #guideClass04{
-  top:121px
+  top:144px
 }
 #guideClass05{
-  top:151px
+  top:172px
 }
 #guideClass06{
-  top:181px
+  top:200px
 }
 #guideClass07{
-  top:211px
+  top:228px
 }
 #guideClass08{
-  top:241px
+  top:256px
 }
 
 
 .guideClass{
   position:absolute;
-  left:10px;
-  height:30px;
-  width:125px;
+  left:15px;
+  /* height:30px; */
+  width:130px;
   cursor:pointer;
   z-index:2;
 
-  background: rgba(49, 51, 63, 0.85); 
+  /* background: rgba(49, 51, 63, 0.85);  */
+}
+
+.guideListImg{
+  width: 100%;
+  height:100%;
+  object-fit: cover;
+}
+
+.bottomArrow{
+  position:absolute;
+  top: 12%;
+  right:5%;
+  /* height:30px; */
+  width:18%;
+
+}
+
+.bottomArrowImg{
+  width:100%;
+  height:100%;
+  object-fit: fill;
 }
 
 .guideClass h4{
@@ -264,59 +278,81 @@ hr {
 }
 
 #guideStore01 {
-  top:31px;
+  top:60px;
   display: none;
 }
 #guideStore02 {
-  top:61px;
+  top:88px;
   display: none;
 }
 #guideStore03 {
-  top:91px;
+  top:116px;
   display: none;
 }
 #guideStore04{
-  top:121px;
+  top:144px;
   display: none;
 }
 #guideStore05{
-  top:151px;
+  top:172px;
   display: none;
 }
 #guideStore06{
-  top:181px;
+  top:200px;
   display: none;
 }
 #guideStore07{
-  top:211px;
+  top:228px;
   display: none;
 }
 #guideStore08{
-  top:241px;
+  top:256px;
   display: none;
 }
 
 .guideStoreList{
   position:absolute;
-  left:136px;
-  /* height:30px; */
-  /* width:95px; */
+  left:145px;
+  /* height:100px; */
+  width:235px;
   /* cursor:pointer; */
   z-index:2;
 
-  background: rgba(49, 51, 63, 0.85);
+  /* background: rgba(49, 51, 63, 0.85); */
+}
+
+#guideStoreBGImg{
+  width: 100%;
+  height:100%;
+  object-fit: cover;
 }
 
 .storeDiv{
+  /* height:100px; */
+  position:relative;
   cursor:pointer;
   z-index:2;
 }
 
+.logoDiv{
+  position:absolute;
+  left:5%;
+  top:15%;
+  width:35%;
+}
+
+.storeNameDiv{
+  position:absolute;
+  left:40%;
+  top:25%;
+  width:55%;
+}
+
 .guideStoreList h5{
-  text-align: center;
+  text-align: left;
   margin: 1px;
   padding-left: 1px;
-  color: rgba(200, 200, 200, 1.0);
+  color: #F47165;
 }
 
 #bottomScenes {

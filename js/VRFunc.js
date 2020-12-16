@@ -2598,41 +2598,32 @@
 				event.preventDefault();
 				if (guideStore01.style.display == "block"){
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(0deg)"
 				}
 				else{
 					guideStore01.style.display ="block";
-					bottomArrow01.style.transform = "rotate(135deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow01.style.transform = "rotate(180deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(0deg)"
 
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(0deg)"
 
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(0deg)"
 
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(0deg)"
 
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(0deg)"
 				}
 				
 			});
@@ -2641,41 +2632,32 @@
 				event.preventDefault();
 				if (guideStore02.style.display == "block"){
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="block";
-					bottomArrow02.style.transform = "rotate(135deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow02.style.transform = "rotate(180deg)"
 
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2684,41 +2666,32 @@
 				event.preventDefault();
 				if (guideStore03.style.display == "block"){
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="block";
-					bottomArrow03.style.transform = "rotate(135deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow03.style.transform = "rotate(180deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2727,41 +2700,32 @@
 				event.preventDefault();
 				if (guideStore04.style.display == "block"){
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="block";
-					bottomArrow04.style.transform = "rotate(135deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow04.style.transform = "rotate(180deg)"
 
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2770,41 +2734,32 @@
 				event.preventDefault();
 				if (guideStore05.style.display == "block"){
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 					
 					guideStore05.style.display ="block";
-					bottomArrow05.style.transform = "rotate(135deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow05.style.transform = "rotate(180deg)"
 					
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2813,41 +2768,32 @@
 				event.preventDefault();
 				if (guideStore06.style.display == "block"){
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 					
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 					
 					guideStore06.style.display ="block";
-					bottomArrow06.style.transform = "rotate(135deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow06.style.transform = "rotate(180deg)"
 					
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2856,41 +2802,32 @@
 				event.preventDefault();
 				if (guideStore07.style.display == "block"){
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 					
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 					
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 					
 					guideStore07.style.display ="block";
-					bottomArrow07.style.transform = "rotate(135deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow07.style.transform = "rotate(180deg)"
 					
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				
 			});
@@ -2899,41 +2836,32 @@
 				event.preventDefault();
 				if (guideStore08.style.display == "block"){
 					guideStore08.style.display ="none";
-					bottomArrow08.style.transform = "rotate(-45deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow08.style.transform = "rotate(-0deg)"
 				}
 				else{
 					guideStore01.style.display ="none";
-					bottomArrow01.style.transform = "rotate(-45deg)"
-					guideClass01.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow01.style.transform = "rotate(-0deg)"
 
 					guideStore02.style.display ="none";
-					bottomArrow02.style.transform = "rotate(-45deg)"
-					guideClass02.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow02.style.transform = "rotate(-0deg)"
 					
 					guideStore03.style.display ="none";
-					bottomArrow03.style.transform = "rotate(-45deg)"
-					guideClass03.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow03.style.transform = "rotate(-0deg)"
 
 					guideStore04.style.display ="none";
-					bottomArrow04.style.transform = "rotate(-45deg)"
-					guideClass04.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow04.style.transform = "rotate(-0deg)"
 					
 					guideStore05.style.display ="none";
-					bottomArrow05.style.transform = "rotate(-45deg)"
-					guideClass05.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow05.style.transform = "rotate(-0deg)"
 					
 					guideStore06.style.display ="none";
-					bottomArrow06.style.transform = "rotate(-45deg)"
-					guideClass06.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow06.style.transform = "rotate(-0deg)"
 					
 					guideStore07.style.display ="none";
-					bottomArrow07.style.transform = "rotate(-45deg)"
-					guideClass07.style.background = "rgba(49, 51, 63, 0.85)"
+					bottomArrow07.style.transform = "rotate(-0deg)"
 					
 					guideStore08.style.display ="block";
-					bottomArrow08.style.transform = "rotate(135deg)"
-					guideClass08.style.background = "rgba(49, 51, 63, 0.65)"
+					bottomArrow08.style.transform = "rotate(180deg)"
 				}
 				
 			});
@@ -2951,17 +2879,31 @@
 			let newRow = storeTable01.insertRow(0);
 			let newData = newRow.insertCell(0);
 			let newDiv = document.createElement("div");
-			let newTable = document.createElement("table");
-			let storeData = newTable.insertRow(0);
-			let storeLogo = storeData.insertCell(0);
-			let storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			// let newTable = document.createElement("table");
+			// let storeData = newTable.insertRow(0);
+			// let storeLogo = storeData.insertCell(0);
+			// let storeName = storeData.insertCell(1);
+
+			newDiv.classList.toggle( 'storeDiv' );
+			let storeBG = new Image();
+			storeBG.src = '../images/ui/vr/store/pressed.png';
+			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
+			newDiv.appendChild(storeBG)
+
 			let img = new Image();
 			img.src = 'images/store01.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>呷七碗食品有限公司</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			let logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+	
+			let storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.innerHTML="<h5>呷七碗食品有限公司</h5>";
+			newDiv.appendChild(storeNameDiv)
+			
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -2976,19 +2918,31 @@
 			newRow = storeTable01.insertRow(1);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);	
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			// newTable = document.createElement("table");
+			// storeData = newTable.insertRow(0);	
+			// storeLogo = storeData.insertCell(0);
+			// storeName = storeData.insertCell(1);
+
+			newDiv.classList.toggle( 'storeDiv' );
+			storeBG = new Image();
+			storeBG.src = '../images/ui/vr/store/pressed.png';
+			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
+			newDiv.appendChild(storeBG)
 			img = new Image();
 			img.src = 'images/store02.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>麵屋黑平</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+	
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.innerHTML="<h5>麵屋黑平</h5>";
+			newDiv.appendChild(storeNameDiv)
+	
 			newData.appendChild(newDiv);
-
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
 				guideList.style.display ="none";
@@ -3002,17 +2956,32 @@
 			newRow = storeTable01.insertRow(2);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			// newTable = document.createElement("table");
+			// storeData = newTable.insertRow(0);
+			// storeLogo = storeData.insertCell(0);
+			// storeName = storeData.insertCell(1);
+
+			newDiv.classList.toggle( 'storeDiv' );
+			storeBG = new Image();
+			storeBG.src = '../images/ui/vr/store/pressed.png';
+			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
+			newDiv.appendChild(storeBG)
+
 			img = new Image();
 			img.src = 'images/store03.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>小原田</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.innerHTML="<h5>小原田</h5>";
+			newDiv.appendChild(storeNameDiv)
+
+			// newDiv.appendChild(newTable);
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3313,17 +3282,25 @@
 			newRow = storeTable07.insertRow(0);
 			newData = newRow.insertCell(0);
 			newDiv = document.createElement("div");
-			newTable = document.createElement("table");
-			storeData = newTable.insertRow(0);
-			storeLogo = storeData.insertCell(0);
-			storeName = storeData.insertCell(1);
-			newTable.classList.toggle( 'storeDiv' );
+
+			newDiv.classList.toggle( 'storeDiv' );
+			storeBG = new Image();
+			storeBG.src = '../images/ui/vr/store/pressed.png';
+			storeBG.style = "width: 100%;height:100%;object-fit: fill;"
+			newDiv.appendChild(storeBG)
 			img = new Image();
 			img.src = 'images/store15.png';
-			img.style = "width:100px;"
-			storeLogo.appendChild(img);
-			storeName.innerHTML = "<h5>幸福可可</h5>"
-			newDiv.appendChild(newTable);
+			img.style = "width: 100%;height:100%;object-fit: fill;"
+			logoDiv = document.createElement("div");
+			logoDiv.classList.toggle( 'logoDiv' );
+			logoDiv.appendChild(img)
+			newDiv.appendChild(logoDiv)
+	
+			storeNameDiv = document.createElement("div");
+			storeNameDiv.classList.toggle( 'storeNameDiv' );
+			storeNameDiv.innerHTML="<h5>幸福可可</h5>";
+			newDiv.appendChild(storeNameDiv)
+	
 			newData.appendChild(newDiv);
 			newDiv.addEventListener('click', function(event){
 				event.preventDefault();
@@ -3334,6 +3311,31 @@
 				
 
 			});
+
+			// newRow = storeTable07.insertRow(0);
+			// newData = newRow.insertCell(0);
+			// newDiv = document.createElement("div");
+			// newTable = document.createElement("table");
+			// storeData = newTable.insertRow(0);
+			// storeLogo = storeData.insertCell(0);
+			// storeName = storeData.insertCell(1);
+			// newTable.classList.toggle( 'storeDiv' );
+			// img = new Image();
+			// img.src = 'images/store15.png';
+			// img.style = "width:100px;"
+			// storeLogo.appendChild(img);
+			// storeName.innerHTML = "<h5>幸福可可</h5>"
+			// newDiv.appendChild(newTable);
+			// newData.appendChild(newDiv);
+			// newDiv.addEventListener('click', function(event){
+			// 	event.preventDefault();
+			// 	guideList.style.display ="none";
+			// 	//// 先將觸控關閉，再跳轉場景
+			// 	self.triggerEnable = false;
+			// 	self.loadScene(projIndex, 15 );
+				
+
+			// });
 
 			// =================== table 8 =========================
 
